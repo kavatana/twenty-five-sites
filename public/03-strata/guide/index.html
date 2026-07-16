@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How STRATA Is Made — Conservation Notes</title>
+  <meta name="description" content="Conservation notes for STRATA: how a seeded flow-field painting is minted from mulberry32, value-noise fBm, and batched Canvas 2D strokes — and how the site was iterated.">
+  <meta property="og:title" content="How STRATA Is Made — Conservation Notes">
+  <meta property="og:description" content="The techniques behind the gallery that paints again: seeded PRNG, curl-style noise fields, particle advection, and museum lighting in CSS.">
+  <meta property="og:type" content="article">
+  <meta name="theme-color" content="#0E0D0B">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230E0D0B'/%3E%3Cpath d='M14 22c10-5 26 5 36-2' stroke='%23C05020' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 33c10-5 26 5 36-2' stroke='%23A6854D' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 44c10-5 26 5 36-2' stroke='%23EFE9DD' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@400..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .doc {
+      max-width: 46rem;
+      margin: 0 auto;
+      padding: clamp(120px, 16vh, 170px) clamp(20px, 5vw, 40px) clamp(70px, 9vh, 110px);
+      position: relative;
+    }
+    .doc .spot { position: fixed; }
+    .doc header { margin-bottom: 3.2rem; }
+    .doc h1 { font-size: clamp(2.2rem, 4.4vw, 3.4rem); margin: 1.3rem 0 1.2rem; }
+    .doc .lede { font-size: 1rem; }
+    .doc h2 {
+      font-family: var(--font-d);
+      font-weight: 460;
+      font-variation-settings: "opsz" 60, "SOFT" 60, "WONK" 1;
+      font-size: 1.35rem;
+      margin: 2.8rem 0 0.9rem;
+      padding-top: 2.2rem;
+      border-top: 1px solid var(--hairline);
+      position: relative;
+    }
+    .doc h2::before {
+      content: attr(data-no);
+      position: absolute;
+      top: 2.35rem;
+      left: -3.4rem;
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--brass);
+      font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+    }
+    .doc p { color: var(--muted); font-size: 0.9375rem; margin-bottom: 1rem; max-width: none; }
+    .doc p strong { color: var(--white); font-weight: 500; }
+    .doc code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.8em;
+      color: var(--brass-hi);
+      background: rgba(166, 133, 77, 0.1);
+      border: 1px solid rgba(166, 133, 77, 0.2);
+      padding: 1px 6px 2px;
+      border-radius: 3px;
+    }
+    .doc .plaque { margin: 0; text-align: left; display: inline-block; min-width: 0; padding: 10px 22px 9px; }
+    .back {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--brass);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+    }
+    .back:hover { color: var(--brass-hi); border-color: var(--brass-hi); }
+    @media (max-width: 900px) { .doc h2::before { display: none; } }
+  </style>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-head">
+    <a class="wordmark" href="../">STRATA <span class="tick" aria-hidden="true"></span></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="../">Return to the gallery</a>
+    </nav>
+  </header>
+
+  <main class="doc">
+    <div class="spot" aria-hidden="true"></div>
+    <header>
+      <span class="eyebrow">Conservation Department · File 03</span>
+      <h1 class="display">Notes on the making of a gallery that repaints itself.</h1>
+      <div class="plaque">
+        <div class="p-no">Object: STRATA · one HTML file, one stylesheet, one engine</div>
+        <div class="p-seed">no images were used, harmed, or downloaded</div>
+      </div>
+    </header>
+
+    <h2 data-no="01">Concept</h2>
+    <p>Most galleries protect paintings from change. STRATA does the opposite: the artwork exists only as a <strong>seed</strong> — a single 32-bit integer — and the painting is re-performed from it on every visit. The plaque is honest. Edition No. 4821-C is not a picture of anything stored anywhere; it is what the mathematics does when asked politely, twice the same way.</p>
+
+    <h2 data-no="02">Technique</h2>
+    <p>The seed feeds <code>mulberry32</code>, a tiny hand-rolled PRNG, which shuffles a permutation table for <strong>seeded 2D value noise</strong>. Summed over octaves (fBm) and scaled, the noise becomes a direction field: sample any point, receive an angle. A few thousand particles are advected through it — ask, step, ask again — each leaving a low-alpha stroke on a <strong>Canvas 2D</strong> surface that is never cleared, so pigment accumulates like sediment. Color is assigned at birth from a second, coarser noise read, which is why each palette settles into geological bands rather than confetti.</p>
+    <p>Performance is mostly one trick: strokes are <strong>batched by ink and width</strong> into single <code>beginPath()</code> calls, so a frame costs about eighteen <code>stroke()</code> calls instead of thousands. Development front-loads nine simulation substeps per frame and eases down to one; after the label flips to "on view," the field offsets drift almost imperceptibly so the surface never fully dies. <code>devicePixelRatio</code> is capped at 2, and the whole loop halts on <code>document.hidden</code>.</p>
+    <p>The lighting is CSS: radial-gradient spotlight cones that breathe on an 9-second cycle, an SVG <code>feTurbulence</code> grain overlay, and a cursor lamp — a soft radial gradient in <code>mix-blend-mode: screen</code> that brightens whatever it crosses. The process diagram is live, not looped video: 117 SVG arrows re-aimed every frame by the same fBm function that paints Room I. Under <code>prefers-reduced-motion</code>, paintings fast-forward to their finished state in chunked frames and every ambient animation stands down.</p>
+
+    <h2 data-no="03">Iteration passes</h2>
+    <p>Pass one built the engine and hung the show, then a review — done the way the audience actually sees it, screenshots at 1440×900 and 390×844 plus a delayed frame to prove the ambient motion reads — caught a header that ghosted over scrolled content and a mobile layout that buried the painting under paragraphs of wall text. Pass two drove the live page with a pointer instead of trusting the code: it gave the hero frame a cursor-tilt so the commission reads as a hung object, kept Room II's six canvases breathing instead of freezing solid, and caught a real bug where the wall's next-arrow was clicking straight past every painting to the end. Pass three did the unglamorous work — contrast-checked every shade of ink against gallery black, gave the standing collection's prev/next buttons a disabled state at each true edge, and named this file's rule out loud: fix what the photograph and the screen reader both show, not what the code intends.</p>
+
+    <p style="margin-top:2.6rem"><a class="back" href="../">← Return to the gallery</a></p>
+  </main>
+
+  <footer class="site-foot">
+    <p><b>03 / 25 · STRATA</b> — designed &amp; coded by Claude Fable 5</p>
+    <nav aria-label="Site">
+      <a href="/">Index</a>
+      <a href="./">How it's made</a>
+    </nav>
+  </footer>
+
+</body>
+</html>

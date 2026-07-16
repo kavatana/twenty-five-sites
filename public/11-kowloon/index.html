@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOWLOON NIGHTS — a neon night-market street, 25 sites</title>
+<meta name="description" content="Kowloon Nights: a hand-coded isometric night-market street in pure CSS 3D — flickering neon signs, canvas rain on asphalt, steam off the noodle stall, and a directory of stalls that ignite on hover. Site 11 of 25.">
+<meta property="og:title" content="KOWLOON NIGHTS">
+<meta property="og:description" content="Rain on asphalt, humming signs, a street built from transformed divs. One dying letter, six stalls, and a marquee that never stops talking.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2307070f'/%3E%3Ctext x='32' y='30' font-family='sans-serif' font-weight='700' font-size='22' fill='%23FF2E88' text-anchor='middle' filter='url(%23g)'%3E%E9%BA%B5%3C/text%3E%3Cfilter id='g'%3E%3CfeGaussianBlur stdDeviation='1.1'/%3E%3C/filter%3E%3Crect x='6' y='42' width='52' height='4' fill='%2300E5FF' opacity='.85'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+<div class="viewport" id="viewport">
+  <canvas id="rain" aria-hidden="true"></canvas>
+
+  <div class="world" id="world">
+    <div class="street" id="street" aria-hidden="true"></div>
+  </div>
+
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="hero-copy">
+    <p class="eyebrow">N°11 <span class="sep">/</span> 25 <span class="sep">·</span> Night Market, Wet District</p>
+    <h1 class="hero-title"><span>Kowloon</span><span>Nights</span></h1>
+    <p class="hero-sub">九龍夜 <span class="sep">·</span> the rain keeps every receipt</p>
+    <a class="scroll-cue" href="#directory">the directory <span class="arrow">↓</span></a>
+  </header>
+</div>
+
+<main>
+  <section id="directory" class="directory">
+    <div class="directory-head">
+      <p class="kicker">巷 — The Directory</p>
+      <h2>Six doors on a wet street. All of them lit for somebody.</h2>
+    </div>
+
+    <ul class="stall-grid">
+      <li class="stall-card" style="--glow: var(--cyan);">
+        <span class="card-kanji">麺</span>
+        <h3>Golden Bowl<small>金碗麺 — noodle stall, unit 4</small></h3>
+        <p class="tag">open till the broth runs out</p>
+        <p class="desc">The pot's been on since the last typhoon. Nobody asks what's in the stock. Everybody's back by Thursday.</p>
+      </li>
+
+      <li class="stall-card" style="--glow: var(--pink);">
+        <span class="card-kanji">縫</span>
+        <h3>Lucky Eight Tailor<small>好運裁縫 — bespoke, upstairs</small></h3>
+        <p class="tag">cash, or something worth more</p>
+        <p class="desc">He'll cut you a suit sharp enough to sign divorce papers in. Measurements taken once. Never forgotten.</p>
+      </li>
+
+      <li class="stall-card" style="--glow: var(--yellow);">
+        <span class="card-kanji">拳</span>
+        <h3>Neon Dynasty<small>霓虹拳館 — arcade, back alley</small></h3>
+        <p class="tag">the tubes hum louder than the games</p>
+        <p class="desc">High score's belonged to the landlord's kid since '91. The cabinet on the left still remembers you.</p>
+      </li>
+
+      <li class="stall-card" style="--glow: var(--pink);">
+        <span class="card-kanji">卜</span>
+        <h3>Madam Su's Fortunes<small>蘇太算命 — folding table, corner</small></h3>
+        <p class="tag">reads condensation, not cards</p>
+        <p class="desc">She's never once been wrong and never once been thanked. Tonight's forecast: rain, then more rain, then you.</p>
+      </li>
+
+      <li class="stall-card" style="--glow: var(--cyan);">
+        <span class="card-kanji">當</span>
+        <h3>Pawn &amp; Promise<small>當舖 — third window, ring the bell</small></h3>
+        <p class="tag">everything here meant something once</p>
+        <p class="desc">Watches, wedding rings, one glass eye. Thirty days to want it back. Nobody ever does.</p>
+      </li>
+
+      <li class="stall-card" style="--glow: var(--cjkred, var(--pink));">
+        <span class="card-kanji">墨</span>
+        <h3>Ink &amp; Iron<small>墨鐵紋身 — tattoo, no appointments</small></h3>
+        <p class="tag">the needle hums in the same key as the sign</p>
+        <p class="desc">He says that's on purpose. Ask for the koi. Everyone asks for the koi.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="ticker-wrap" aria-label="market announcements">
+    <div class="ticker">
+      <div class="ticker-track" id="tickerTrack" aria-hidden="true">
+        <span>
+          BLACKOUT ON SECTION 4 TONIGHT — BRING YOUR OWN LIGHTER<i>◆</i>
+          停電通知 · SECTION 4<i>◆</i>
+          FRESH EEL AT STALL 12, ASK FOR LAU<i>◆</i>
+          RAIN EXPECTED UNTIL THE SUN GIVES UP<i>◆</i>
+          LOST: ONE RED UMBRELLA, ANSWERS TO NOTHING<i>◆</i>
+          麻雀枱 OPEN TIL FOUR<i>◆</i>
+          THE NOODLE MAN REMEMBERS YOUR ORDER, NOT YOUR NAME<i>◆</i>
+          NEW TENANT, UNIT 9 — ASK NO QUESTIONS<i>◆</i>
+        </span>
+        <span aria-hidden="true">
+          BLACKOUT ON SECTION 4 TONIGHT — BRING YOUR OWN LIGHTER<i>◆</i>
+          停電通知 · SECTION 4<i>◆</i>
+          FRESH EEL AT STALL 12, ASK FOR LAU<i>◆</i>
+          RAIN EXPECTED UNTIL THE SUN GIVES UP<i>◆</i>
+          LOST: ONE RED UMBRELLA, ANSWERS TO NOTHING<i>◆</i>
+          麻雀枱 OPEN TIL FOUR<i>◆</i>
+          THE NOODLE MAN REMEMBERS YOUR ORDER, NOT YOUR NAME<i>◆</i>
+          NEW TENANT, UNIT 9 — ASK NO QUESTIONS<i>◆</i>
+        </span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <span class="foot-id">11 / 25 · KOWLOON NIGHTS — designed &amp; coded by Claude Fable 5</span>
+  <span class="foot-links">
+    <a href="/">Index</a>
+    <a href="guide/">How it's made</a>
+  </span>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

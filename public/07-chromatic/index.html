@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHROMATIC.SYS — the graphics driver for dreams</title>
+<meta name="description" content="CHROMATIC.SYS hooks the visual cortex at ring 0 and renders your subconscious at 240 Hz. Liquid chrome. Holographic foil. No restart required.">
+<meta property="og:title" content="CHROMATIC.SYS — the graphics driver for dreams">
+<meta property="og:description" content="Renders your subconscious at 240 Hz. Liquid chrome, holographic foil, precognitive vsync. Takes effect at your next REM cycle.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='c' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f6f7fb'/%3E%3Cstop offset='.45' stop-color='%23c9cede'/%3E%3Cstop offset='.5' stop-color='%23565b70'/%3E%3Cstop offset='.55' stop-color='%23e8e8f0'/%3E%3Cstop offset='1' stop-color='%239fa4b8'/%3E%3C/linearGradient%3E%3ClinearGradient id='h' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FF71CE'/%3E%3Cstop offset='.5' stop-color='%2301CDFE'/%3E%3Cstop offset='1' stop-color='%2305FFA1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%230B0B12'/%3E%3Ccircle cx='32' cy='32' r='20' fill='url(%23c)'/%3E%3Ccircle cx='32' cy='32' r='20' fill='url(%23h)' opacity='.35'/%3E%3Ccircle cx='25' cy='24' r='6' fill='white' opacity='.85'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ambient background: rotating holo sheen, lens flares, grain -->
+<div class="bg" aria-hidden="true">
+  <div class="holo-sheen"></div>
+  <div class="flare f1"></div>
+  <div class="flare f2"></div>
+  <div class="flare f3"></div>
+  <div class="flare f4"></div>
+  <div class="grain"></div>
+</div>
+
+<nav class="nav">
+  <a class="brand chrome-text" href="#top">CHROMATIC.SYS</a>
+  <div class="nav-links">
+    <a href="#specs">Specs</a>
+    <a href="#pass">Pass</a>
+    <a href="#download">Download</a>
+    <a href="#changelog">Changelog</a>
+  </div>
+  <span class="ver-chip">v9.9.1999</span>
+</nav>
+
+<header class="hero" id="top">
+  <!-- liquid chrome metaballs -->
+  <svg class="goo-field" id="gooField" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <filter id="goo" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="gooBlur" in="SourceGraphic" stdDeviation="20" result="b"/>
+        <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11"/>
+      </filter>
+      <linearGradient id="chromeA" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbfcff"/>
+        <stop offset=".30" stop-color="#e8e8f0"/>
+        <stop offset=".46" stop-color="#aab0c4"/>
+        <stop offset=".50" stop-color="#4e5468"/>
+        <stop offset=".54" stop-color="#d9dde9"/>
+        <stop offset=".72" stop-color="#f4f5fa"/>
+        <stop offset="1" stop-color="#878ca1"/>
+      </linearGradient>
+      <linearGradient id="chromeB" x1="0" y1="0" x2=".4" y2="1">
+        <stop offset="0" stop-color="#eef0f7"/>
+        <stop offset=".42" stop-color="#9fa4b8"/>
+        <stop offset=".5" stop-color="#5b6076"/>
+        <stop offset=".58" stop-color="#cfd4e2"/>
+        <stop offset="1" stop-color="#7d8298"/>
+      </linearGradient>
+    </defs>
+    <g filter="url(#goo)">
+      <circle data-blob cx="280" cy="640" r="150" fill="url(#chromeA)"/>
+      <circle data-blob cx="510" cy="730" r="115" fill="url(#chromeB)"/>
+      <circle data-blob cx="1130" cy="345" r="122" fill="url(#chromeA)"/>
+      <circle data-blob cx="1240" cy="540" r="105" fill="url(#chromeB)" data-desk/>
+      <circle data-blob cx="170" cy="210" r="95"  fill="url(#chromeB)" data-desk/>
+      <circle data-blob cx="920" cy="740" r="125" fill="url(#chromeA)"/>
+      <circle data-blob cx="420" cy="660" r="70"  fill="#d9a8cf"/>
+      <circle data-blob cx="1195" cy="270" r="58" fill="#9fc4dd"/>
+      <circle data-blob cx="1180" cy="630" r="55"  fill="#a8d8c2" data-desk/>
+      <circle data-blob cx="240" cy="570" r="26"  fill="#ffffff"/>
+      <circle data-blob cx="1080" cy="270" r="22" fill="#ffffff"/>
+    </g>
+  </svg>
+
+  <div class="hero-inner">
+    <p class="eyebrow rise d1">DRIVER RELEASE v9.9.1999 · WHQL-CERTIFIED FOR SLEEP</p>
+    <h1 class="chrome-text hero-title rise d2">CHROMATIC<span class="sys">.SYS</span></h1>
+    <p class="tagline rise d3">The graphics driver for dreams.</p>
+    <p class="sub rise d4">CHROMATIC.SYS installs between your eyes and everything else. It hooks the visual cortex at ring&nbsp;0 and renders your subconscious at 240&nbsp;Hz — liquid, glossy, impossibly smooth. You close your eyes. We push the frames.</p>
+    <div class="cta-row rise d5">
+      <a class="btn" href="#download">Download v9.9</a>
+      <a class="btn-ghost" href="#changelog">Read changelog</a>
+    </div>
+    <ul class="chip-row rise d6" aria-label="headline specifications">
+      <li>240 Hz subjective</li>
+      <li>−4 ms latency</li>
+      <li>141% gamut</li>
+    </ul>
+  </div>
+  <div class="scroll-hint rise d6" aria-hidden="true">▼</div>
+</header>
+
+<main>
+  <!-- DRIVER SPECS — premium Win98 windows -->
+  <section class="section" id="specs">
+    <div class="section-glow" aria-hidden="true"></div>
+    <div class="rule reveal" aria-hidden="true"><i></i><span></span><i></i></div>
+    <p class="eyebrow reveal">CONTROL PANEL → DISPLAY → DREAMS</p>
+    <h2 class="chrome-text section-title reveal">Driver specifications</h2>
+    <div class="win-grid">
+
+      <article class="win reveal">
+        <header class="win-title">
+          <div class="marq"><div class="marq-inner"><span>DISPLAY.PROPERTIES ··· OUTPUT DEVICE: SUBCONSCIOUS ··· SIGNAL: LOCKED ···&nbsp;</span><span aria-hidden="true">DISPLAY.PROPERTIES ··· OUTPUT DEVICE: SUBCONSCIOUS ··· SIGNAL: LOCKED ···&nbsp;</span></div></div>
+          <div class="win-btns" aria-hidden="true"><i>–</i><i>□</i><i>×</i></div>
+        </header>
+        <div class="win-body">
+          <dl class="spec-list">
+            <div class="spec-row"><dt>Refresh rate</dt><span class="dots"></span><dd>240 Hz (subjective)</dd></div>
+            <div class="spec-row"><dt>Latency</dt><span class="dots"></span><dd>−4 ms · precognitive vsync</dd></div>
+            <div class="spec-row"><dt>Color depth</dt><span class="dots"></span><dd>1.07 billion feelings</dd></div>
+            <div class="spec-row"><dt>Gamut</dt><span class="dots"></span><dd>141% of waking life</dd></div>
+          </dl>
+        </div>
+        <footer class="win-status"><span>REM LINK OK</span><span>0 ERRORS</span></footer>
+      </article>
+
+      <article class="win reveal">
+        <header class="win-title">
+          <div class="marq"><div class="marq-inner"><span>PIPELINE.DLL ··· LIQUID METAL RASTERIZER ··· WET RENDER PATH ···&nbsp;</span><span aria-hidden="true">PIPELINE.DLL ··· LIQUID METAL RASTERIZER ··· WET RENDER PATH ···&nbsp;</span></div></div>
+          <div class="win-btns" aria-hidden="true"><i>–</i><i>□</i><i>×</i></div>
+        </header>
+        <div class="win-body">
+          <dl class="spec-list">
+            <div class="spec-row"><dt>Renderer</dt><span class="dots"></span><dd>liquid-metal rasterizer</dd></div>
+            <div class="spec-row"><dt>Anti-aliasing</dt><span class="dots"></span><dd>16× dream-sample</dd></div>
+            <div class="spec-row"><dt>Shadows</dt><span class="dots"></span><dd>emotional, ray-traced</dd></div>
+            <div class="spec-row"><dt>Fog</dt><span class="dots"></span><dd>unresolved memories</dd></div>
+          </dl>
+        </div>
+        <footer class="win-status"><span>GLOSS: 100%</span><span>DRY FRAMES: 0</span></footer>
+      </article>
+
+      <article class="win reveal">
+        <header class="win-title">
+          <div class="marq"><div class="marq-inner"><span>COMPAT.TXT ··· READ BEFORE SLEEPING ··· DO NOT UNINSTALL ···&nbsp;</span><span aria-hidden="true">COMPAT.TXT ··· READ BEFORE SLEEPING ··· DO NOT UNINSTALL ···&nbsp;</span></div></div>
+          <div class="win-btns" aria-hidden="true"><i>–</i><i>□</i><i>×</i></div>
+        </header>
+        <div class="win-body">
+          <dl class="spec-list">
+            <div class="spec-row"><dt>OS</dt><span class="dots"></span><dd>WIN98 SE / OS X / REM 3+</dd></div>
+            <div class="spec-row"><dt>Memory</dt><span class="dots"></span><dd>64 MB of childhood</dd></div>
+            <div class="spec-row"><dt>Storage</dt><span class="dots"></span><dd>one recurring dream</dd></div>
+            <div class="spec-row"><dt>Uninstall</dt><span class="dots"></span><dd>not recommended</dd></div>
+          </dl>
+        </div>
+        <footer class="win-status"><span>SIGNED: ✓</span><span>MOON: RENDERED</span></footer>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- HOLOGRAPHIC FOIL CARD -->
+  <section class="section" id="pass">
+    <div class="section-glow" aria-hidden="true"></div>
+    <div class="pass-grid">
+      <div class="pass-copy">
+        <p class="eyebrow reveal">ONE PER INSTALL · NON-TRANSFERABLE ACROSS BODIES</p>
+        <h2 class="chrome-text section-title reveal">The Dream Pass</h2>
+        <p class="body-copy reveal">Every install mints one holographic operator license. It lives in your wallet during the day and in your temporal lobe at night. Border control between waking and sleeping accepts no other document.</p>
+        <p class="body-copy dim reveal">Tilt it. The foil answers.</p>
+        <ul class="pass-meta reveal">
+          <li><span>Material</span><b>liquid chrome</b></li>
+          <li><span>Format</span><b>holographic foil</b></li>
+          <li><span>Expires</span><b>never</b></li>
+        </ul>
+      </div>
+      <div class="card-scene reveal" id="cardScene">
+        <div class="foil-card" id="foilCard" role="img" aria-label="Holographic Dream Pass operator license, refresh 240 hertz, clearance REM-3, valid while asleep">
+          <div class="foil-layer foil-rainbow" aria-hidden="true"></div>
+          <div class="foil-layer foil-sheen" aria-hidden="true"></div>
+          <div class="card-content">
+            <div class="card-top">
+              <span class="card-brand">CHROMATIC.SYS</span>
+              <span class="card-holo" aria-hidden="true"></span>
+            </div>
+            <div class="card-chip" aria-hidden="true"></div>
+            <h3 class="card-name chrome-text">DREAM PASS</h3>
+            <dl class="card-fields">
+              <div><dt>Operator</dt><dd>YOU</dd></div>
+              <div><dt>Clearance</dt><dd>REM-3</dd></div>
+              <div><dt>Refresh</dt><dd>240 Hz</dd></div>
+              <div><dt>Valid</dt><dd>WHILE ASLEEP</dd></div>
+            </dl>
+            <div class="card-barcode" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section class="section dl-section" id="download">
+    <div class="section-glow" aria-hidden="true"></div>
+    <div class="rule reveal" aria-hidden="true"><i></i><span></span><i></i></div>
+    <p class="eyebrow reveal">38.7 MB · NO RESTART REQUIRED</p>
+    <h2 class="chrome-text section-title reveal">Ship the upgrade</h2>
+    <p class="body-copy center reveal">Install tonight. Takes effect at your next REM cycle.</p>
+    <div class="dl-stack reveal">
+      <button class="btn-mega" id="dlBtn" type="button">
+        <span class="btn-mega-label">DOWNLOAD CHROMATIC.SYS</span>
+        <span class="btn-mega-sub">v9.9.1999 · WIN98 / OS X / REM</span>
+      </button>
+      <div class="win dl-win" id="dlWin" hidden>
+        <header class="win-title">
+          <div class="marq"><div class="marq-inner"><span>TRANSFER.EXE ··· WRITING TO C:\WINDOWS\SYSTEM\DREAMS\ ···&nbsp;</span><span aria-hidden="true">TRANSFER.EXE ··· WRITING TO C:\WINDOWS\SYSTEM\DREAMS\ ···&nbsp;</span></div></div>
+          <div class="win-btns" aria-hidden="true"><i>–</i><i>□</i><i>×</i></div>
+        </header>
+        <div class="win-body dl-body">
+          <div class="dl-track" aria-hidden="true"><div class="dl-fill" id="dlBar"></div></div>
+          <p class="dl-msg" id="dlMsg" aria-live="polite">Negotiating with the sandman…</p>
+        </div>
+      </div>
+      <p class="fine-print reveal">By downloading you agree your dreams may become too beautiful to describe at breakfast. CHROMATIC.SYS accepts no liability for lucidity.</p>
+    </div>
+  </section>
+
+  <!-- CHANGELOG -->
+  <section class="section" id="changelog">
+    <div class="section-glow" aria-hidden="true"></div>
+    <div class="rule reveal" aria-hidden="true"><i></i><span></span><i></i></div>
+    <p class="eyebrow reveal">C:\DREAMS\PATCHNOTES</p>
+    <h2 class="chrome-text section-title reveal">Changelog</h2>
+    <div class="term reveal">
+      <ol class="log-list">
+        <li class="log-row">
+          <span class="log-ver">v9.9</span><span class="log-date">1999.12.31</span>
+          <p class="log-text">Chrome everywhere. Rewrote the moon in liquid metal. Fixed a leak where daylight entered the render path.</p>
+        </li>
+        <li class="log-row">
+          <span class="log-ver">v9.7</span><span class="log-date">1999.10.04</span>
+          <p class="log-text">Lucidity API opened to the public. Deprecated nightmares.dll — legacy users may notice it persisting for compatibility.</p>
+        </li>
+        <li class="log-row">
+          <span class="log-ver">v9.4</span><span class="log-date">1999.07.19</span>
+          <p class="log-text">Added 16× dream-sampling. Falling no longer clips through the floor; it fades to velvet.</p>
+        </li>
+        <li class="log-row">
+          <span class="log-ver">v9.1</span><span class="log-date">1999.04.02</span>
+          <p class="log-text">Specular highlights on every memory. Known issue: some operators report dreams “too beautiful to wake from.” Working as intended.</p>
+        </li>
+        <li class="log-row">
+          <span class="log-ver">v8.8</span><span class="log-date">1999.01.11</span>
+          <p class="log-text">First public build. The night ships in chrome.</p>
+        </li>
+      </ol>
+      <p class="term-prompt" aria-hidden="true">C:\DREAMS\&gt; awaiting next build<span class="caret">▌</span></p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p class="footer-line">07 / 25 · <span class="chrome-text footer-brand">CHROMATIC.SYS</span> — designed &amp; coded by Claude Fable 5</p>
+  <nav class="footer-links">
+    <a href="/">Index</a>
+    <span aria-hidden="true">·</span>
+    <a href="guide/">How it's made</a>
+  </nav>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

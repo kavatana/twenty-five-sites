@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSCILLATE — a playable analog-modeled synthesizer</title>
+<meta name="description" content="OSCILLATE is a hand-coded WebAudio polysynth: two detuned oscillators into a resonant lowpass and a warm delay, played by click, touch or QWERTY keys. Knobs, an arpeggiator, an oscilloscope and a spectrum field — no samples, no plugins.">
+<meta property="og:title" content="OSCILLATE — a playable analog-modeled synthesizer">
+<meta property="og:description" content="A 1984-polysynth-meets-Miami-dusk instrument, fully synthesized in the browser. Turn the knobs. Play the keys. Watch the scope breathe.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D0221'/%3E%3Cpath d='M2 36 Q12 16 20 36 T38 36 T56 36 T74 36' stroke='%2300F0B5' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='2' cy='36' r='3.5' fill='%23FF3CAC'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="horizon" aria-hidden="true">
+  <div class="sun"></div>
+  <div class="horizon-line"></div>
+  <div class="horizon-grid"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="page">
+
+  <header class="topbar rise" style="--d:.05s">
+    <div class="brandmark">
+      <span class="brandmark-glyph" aria-hidden="true">◈</span>
+      <span class="brandmark-text">OSCILLATE</span>
+      <span class="brandmark-model">MODEL OS&#8209;84</span>
+    </div>
+    <button id="powerSwitch" class="power-switch" type="button" aria-pressed="false" aria-label="Power the synthesizer on">
+      <span class="power-led" id="powerLed" aria-hidden="true"></span>
+      <span class="power-toggle" aria-hidden="true"><span class="power-nub"></span></span>
+      <span class="power-text">PWR</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <canvas id="scopeCanvas" class="scope-canvas" aria-hidden="true"></canvas>
+    <p class="hero-eyebrow rise" style="--d:.12s">SIGNAL&nbsp;PATH — OSC&nbsp;×2 (DETUNE) → LPF → DELAY</p>
+    <h1 class="hero-title rise" style="--d:.2s">OSCILLATE</h1>
+    <p class="hero-sub rise" style="--d:.32s">A polysynth built for one long Miami dusk. Every tone is generated live in your browser&nbsp;&mdash; no samples, no plugins, just oscillators, a filter and a delay line that never quite lets go.</p>
+    <p class="hero-spec rise" style="--d:.42s">WAVE: SAW·SQR·TRI&emsp;·&emsp;RANGE: C4–F&#9839;5&emsp;·&emsp;INPUT: CLICK · TOUCH · QWERTY&emsp;·&emsp;POWER: GESTURE&nbsp;REQUIRED</p>
+  </section>
+
+  <main class="faceplate rise" id="faceplate" style="--d:.5s" aria-label="Synthesizer control panel">
+    <span class="screw screw-tl" aria-hidden="true"></span>
+    <span class="screw screw-tr" aria-hidden="true"></span>
+    <span class="screw screw-bl" aria-hidden="true"></span>
+    <span class="screw screw-br" aria-hidden="true"></span>
+
+    <div class="panel-top">
+      <div class="module wave-module">
+        <p class="silk">WAVEFORM</p>
+        <div class="segmented" id="waveSwitch" role="radiogroup" aria-label="Oscillator waveform">
+          <button class="seg-btn is-active" type="button" data-wave="sawtooth" role="radio" aria-checked="true">SAW</button>
+          <button class="seg-btn" type="button" data-wave="square" role="radio" aria-checked="false">SQR</button>
+          <button class="seg-btn" type="button" data-wave="triangle" role="radio" aria-checked="false">TRI</button>
+          <span class="seg-highlight" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="module led-module">
+        <p class="silk">BOOT&nbsp;SEQUENCE</p>
+        <div class="led-row" id="ledRow" aria-hidden="true">
+          <div class="led" data-i="0"><span class="led-bulb"></span><em>OSC&nbsp;I</em></div>
+          <div class="led" data-i="1"><span class="led-bulb"></span><em>OSC&nbsp;II</em></div>
+          <div class="led" data-i="2"><span class="led-bulb"></span><em>FILT</em></div>
+          <div class="led" data-i="3"><span class="led-bulb"></span><em>DLY</em></div>
+          <div class="led" data-i="4"><span class="led-bulb"></span><em>ARP</em></div>
+          <div class="led" data-i="5"><span class="led-bulb"></span><em>SIG</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-mid">
+      <div class="module knob-module">
+        <p class="silk">VOICE</p>
+        <div class="knob-rack" id="voiceKnobs"></div>
+      </div>
+
+      <div class="module arp-module">
+        <p class="silk">ARPEGGIATOR</p>
+        <div class="arp-controls">
+          <button id="arpToggle" class="rocker" type="button" aria-pressed="false">
+            <span class="rocker-track" aria-hidden="true"><span class="rocker-thumb"></span></span>
+            <span class="rocker-label">AUTO&#8209;DEMO</span>
+          </button>
+          <div class="knob-rack" id="arpKnobs"></div>
+        </div>
+        <p class="silk-note">PRESET PATTERN · PLAYS ITSELF</p>
+      </div>
+    </div>
+
+    <div class="panel-bottom">
+      <p class="silk">MANUAL — C4 TO F&#9839;5</p>
+      <div class="keyboard" id="keyboard" role="group" aria-label="On-screen keyboard, C4 to F sharp 5, also playable with A W S E D F T G Y H U J K"></div>
+    </div>
+  </main>
+
+  <section class="spectrum-strip rise" style="--d:.6s">
+    <canvas id="spectrumCanvas" class="spectrum-canvas" aria-hidden="true"></canvas>
+  </section>
+
+  <footer class="site-foot rise" style="--d:.68s">
+    <span class="foot-id">13 / 25 · OSCILLATE — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </span>
+  </footer>
+
+</div>
+
+<script type="module" src="audio.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+- generic [active] [ref=f12e1]:
+  - link "Skip to content" [ref=f12e2] [cursor=pointer]:
+    - /url: "#compositions"
+  - banner [ref=f12e3]:
+    - link "Aurelia — home" [ref=f12e4] [cursor=pointer]:
+      - /url: "#top"
+      - text: A
+      - emphasis [ref=f12e5]: urelia
+    - navigation "Primary" [ref=f12e6]:
+      - link "Compositions" [ref=f12e7] [cursor=pointer]:
+        - /url: "#compositions"
+      - link "Accords" [ref=f12e8] [cursor=pointer]:
+        - /url: "#accords"
+      - link "Maison" [ref=f12e9] [cursor=pointer]:
+        - /url: "#maison"
+  - generic [ref=f12e10]:
+    - generic [ref=f12e12]:
+      - paragraph [ref=f12e13]: Maison de haute parfumerie · Grasse · depuis 1947
+      - heading "Aurelia" [level=1] [ref=f12e14]:
+        - generic [ref=f12e15]: A
+        - generic [ref=f12e16]: U
+        - generic [ref=f12e17]: R
+        - generic [ref=f12e18]: E
+        - generic [ref=f12e19]: L
+        - generic [ref=f12e20]: I
+        - generic [ref=f12e21]: A
+      - paragraph [ref=f12e22]: La lumière, distillée.
+    - generic [ref=f12e23]:
+      - link "Découvrir" [ref=f12e24] [cursor=pointer]:
+        - /url: "#compositions"
+      - generic [ref=f12e26]: Trois compositions · une seule heure chacune
+  - generic [ref=f12e27]:
+    - generic [ref=f12e28]:
+      - paragraph [ref=f12e29]: Les Compositions
+      - heading [level=2] [ref=f12e30]:
+        - text: Three hours of light,
+        - emphasis [ref=f12e31]: held still
+      - paragraph [ref=f12e32]: Each Aurelia is a single hour of the day, caught at its point of turning — then suspended, indefinitely. We make three. There is no fourth hour worth keeping.
+    - generic [ref=f12e33]:
+      - article [ref=f12e34]:
+        - generic [ref=f12e38]:
+          - paragraph [ref=f12e39]: N° I — 5h04
+          - heading "Aube" [level=3] [ref=f12e40]
+          - paragraph [ref=f12e41]: « La première lueur, encore froide. »
+          - paragraph [ref=f12e42]: Cold light on white stone. A garden not yet awake, and no intention of waking it.
+          - paragraph [ref=f12e43]: Bergamote givrée · Poire nashi · Muguet · Musc de soie
+          - generic [ref=f12e44]:
+            - generic [ref=f12e45]: Eau de parfum · 75 ml
+            - generic [ref=f12e46]: 240 €
+      - article [ref=f12e47]:
+        - generic [ref=f12e51]:
+          - paragraph [ref=f12e52]: N° II — 12h00
+          - heading "Méridien" [level=3] [ref=f12e53]
+          - paragraph [ref=f12e54]: « Le plein soleil, immobile. »
+          - paragraph [ref=f12e55]: Noon vertical over the orange grove. Shade you could pour into a glass.
+          - paragraph [ref=f12e56]: Fleur d’oranger · Iris beurré · Miel blanc · Santal
+          - generic [ref=f12e57]:
+            - generic [ref=f12e58]: Eau de parfum · 75 ml
+            - generic [ref=f12e59]: 260 €
+      - article [ref=f12e60]:
+        - generic [ref=f12e64]:
+          - paragraph [ref=f12e65]: N° III — 00h00
+          - heading "Minuit" [level=3] [ref=f12e66]
+          - paragraph [ref=f12e67]: « Ce qui luit quand tout s’éteint. »
+          - paragraph [ref=f12e68]: The last lit window on the street. Smoke settling, slowly, into velvet.
+          - paragraph [ref=f12e69]: Encens · Prune noire · Rose sombre · Ambre gris
+          - generic [ref=f12e70]:
+            - generic [ref=f12e71]: Eau de parfum · 75 ml
+            - generic [ref=f12e72]: 280 €
+  - generic [ref=f12e74]:
+    - generic [ref=f12e75]:
+      - paragraph [ref=f12e76]: L’Architecture
+      - heading [level=2] [ref=f12e77]:
+        - text: Anatomy of
+        - emphasis [ref=f12e78]: an accord
+      - paragraph [ref=f12e79]: "We compose in three registers, the way dawn arrives: an instant, an hour, a memory."
+      - list [ref=f12e80]:
+        - listitem [ref=f12e81]:
+          - generic [ref=f12e82]: Tête
+          - generic [ref=f12e83]:
+            - generic [ref=f12e84]: The instant
+            - paragraph [ref=f12e85]: Bergamote, aldéhydes, poire givrée. It vanishes in twenty minutes; we spend two years on it.
+        - listitem [ref=f12e86]:
+          - generic [ref=f12e87]: Cœur
+          - generic [ref=f12e88]:
+            - generic [ref=f12e89]: The hour
+            - paragraph [ref=f12e90]: Rose de mai, iris pallida, fleur d’oranger. The temperature of skin, the exact middle of the day.
+        - listitem [ref=f12e91]:
+          - generic [ref=f12e92]: Fond
+          - generic [ref=f12e93]:
+            - generic [ref=f12e94]: The memory
+            - paragraph [ref=f12e95]: Santal, musc blanc, ambre gris. What the room remembers after you have gone.
+    - generic [ref=f12e96]:
+      - generic [ref=f12e105]: tête
+      - generic [ref=f12e106]: cœur
+      - generic [ref=f12e107]: fond
+  - generic [ref=f12e108]:
+    - paragraph [ref=f12e109]: La Maison
+    - blockquote [ref=f12e111]:
+      - paragraph [ref=f12e112]:
+        - text: We do not bottle flowers.We bottle
+        - emphasis [ref=f12e113]: the hour they opened.
+    - generic [ref=f12e114]:
+      - paragraph [ref=f12e115]: Aurelia was founded in Grasse in 1947, in a house with seventeen windows and no electric light. Élise Aurel composed only between five and seven in the morning, when the air was still cold enough to hold one scent apart from another.
+      - paragraph [ref=f12e116]: We keep her hours. Three compositions, never more; each touched only when its hour changes — which is to say, never quickly. The rest is patience, silk, and weather.
+      - paragraph [ref=f12e117]: É. Aurel
+  - contentinfo [ref=f12e118]:
+    - generic [ref=f12e119]:
+      - generic [ref=f12e120]: A
+      - generic [ref=f12e121]: Aurelia — parfums de lumière
+    - paragraph [ref=f12e122]: 01 / 25 · AURELIA — designed & coded by Claude Fable 5
+    - navigation "Meta" [ref=f12e123]:
+      - link "Index" [ref=f12e124] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f12e125]: ·
+      - link "How it’s made" [ref=f12e126] [cursor=pointer]:
+        - /url: guide/

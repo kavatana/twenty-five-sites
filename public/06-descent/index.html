@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESCENT — 10,935 metres in one held breath</title>
+<meta name="description" content="A scroll-driven descent from the sunlit surface to the floor of the Challenger Deep. Five encounters, one bathyscaphe, ten kilometres of dark.">
+<meta property="og:title" content="DESCENT — 10,935 metres in one held breath">
+<meta property="og:description" content="Scroll from the surface of the Pacific to the deepest place on Earth. The light gives up at 200 metres. You keep going.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2302030F'/%3E%3Cpath d='M20 27a12 12 0 0 1 24 0c0 4.5-24 4.5-24 0Z' fill='%237FFFD4'/%3E%3Cpath d='M25 32v9M32 32v13M39 32v9' stroke='%23FF7EB6' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- fixed atmosphere layers -->
+<div class="sea" id="sea" aria-hidden="true"></div>
+<div class="rays" id="rays" aria-hidden="true">
+  <i class="ray r1"></i><i class="ray r2"></i><i class="ray r3"></i><i class="ray r4"></i><i class="ray r5"></i>
+  <i class="surface-glow"></i>
+</div>
+<canvas class="snow" id="snow" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- fixed chrome -->
+<a class="wordmark" href="#top">DESCENT<span>· 06/25</span></a>
+
+<aside class="hud" aria-hidden="true">
+  <p class="hud-label">Depth</p>
+  <div class="hud-rail">
+    <div class="hud-cap"></div>
+    <div class="hud-tape" id="tape"></div>
+    <div class="hud-needle"></div>
+  </div>
+  <p class="hud-read"><span id="depthNum">0</span><span class="hud-unit">m</span></p>
+  <p class="hud-zone" id="zoneLabel">sunlight</p>
+  <p class="hud-press" id="pressLabel">1 atm</p>
+</aside>
+
+<main id="top">
+
+  <!-- 0 m ─ surface -->
+  <header class="hero">
+    <p class="hero-kicker">11°22′ N · 142°35′ E — above the Mariana Trench</p>
+    <h1 class="hero-title">DESCENT</h1>
+    <p class="hero-sub">Below you: 10,935 metres of open water, and almost none of it has ever been seen. The light gives up in the first two hundred. You won't.</p>
+    <div class="scroll-cue">
+      <span>scroll to sink</span>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </header>
+
+  <!-- 200 m ─ last light -->
+  <section class="marker" data-depth="200">
+    <p class="marker-line reveal">— 200 metres. The last usable sunlight dissolves here. Everything below has been dark for four billion years.</p>
+    <p class="marker-sub reveal">Photosynthesis ends. From this point down, light is something animals make.</p>
+  </section>
+
+  <!-- 400 m ─ jellyfish -->
+  <section class="encounter" data-depth="400">
+    <span class="ghost-num" aria-hidden="true">400</span>
+    <div class="stage reveal">
+      <svg class="creature jelly" viewBox="0 0 320 400" role="img" aria-label="Atolla jellyfish, bell pulsing softly">
+        <defs>
+          <radialGradient id="bellGrad" cx="50%" cy="42%" r="62%">
+            <stop offset="0%" stop-color="#FF7EB6" stop-opacity=".75"/>
+            <stop offset="45%" stop-color="#7FFFD4" stop-opacity=".28"/>
+            <stop offset="100%" stop-color="#7FFFD4" stop-opacity=".05"/>
+          </radialGradient>
+          <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFD3E6" stop-opacity=".9"/>
+            <stop offset="100%" stop-color="#FF7EB6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <g class="jelly-bell">
+          <path d="M42,150 C42,72 118,34 160,34 C202,34 278,72 278,150 C278,170 240,182 160,182 C80,182 42,170 42,150 Z"
+                fill="url(#bellGrad)" stroke="#7FFFD4" stroke-opacity=".55" stroke-width="1.5"/>
+          <ellipse cx="160" cy="118" rx="46" ry="34" fill="url(#coreGrad)" class="jelly-core"/>
+          <path d="M60,158 C90,148 230,148 260,158" fill="none" stroke="#7FFFD4" stroke-opacity=".35" stroke-width="1"/>
+          <path d="M74,120 C100,104 220,104 246,120" fill="none" stroke="#FF7EB6" stroke-opacity=".22" stroke-width="1"/>
+        </g>
+        <g class="tent t1"><path d="M84,180 C80,240 92,290 78,352" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2"/></g>
+        <g class="tent t2"><path d="M112,184 C110,250 122,300 108,376" fill="none" stroke="#7FFFD4" stroke-opacity=".42" stroke-width="2"/></g>
+        <g class="tent t3"><path d="M140,186 C142,252 130,312 146,388" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2.4"/></g>
+        <g class="tent t4"><path d="M160,186 C162,260 152,320 164,396" fill="none" stroke="#FF7EB6" stroke-opacity=".45" stroke-width="3.4"/></g>
+        <g class="tent t5"><path d="M182,186 C180,252 194,312 178,388" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2.4"/></g>
+        <g class="tent t6"><path d="M210,184 C214,250 200,300 216,372" fill="none" stroke="#7FFFD4" stroke-opacity=".42" stroke-width="2"/></g>
+        <g class="tent t7"><path d="M238,180 C244,238 230,288 246,348" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2"/></g>
+      </svg>
+    </div>
+    <div class="card reveal">
+      <div class="card-head">
+        <p class="card-depth">400 m · twilight zone</p>
+        <p class="card-index">01 / 05</p>
+      </div>
+      <h2 class="card-name">Atolla wyvillei</h2>
+      <p class="card-tag">the alarm jelly</p>
+      <p class="card-fact">When seized, the Atolla spins a silent pinwheel of blue light visible thirty metres away — a burglar alarm meant to summon something large enough to eat whatever is eating it.</p>
+    </div>
+  </section>
+
+  <!-- 1,200 m ─ anglerfish -->
+  <section class="encounter flip" data-depth="1200">
+    <span class="ghost-num" aria-hidden="true">1,200</span>
+    <div class="stage reveal">
+      <svg class="creature angler" viewBox="0 0 440 300" role="img" aria-label="Humpback anglerfish, lure flickering">
+        <defs>
+          <radialGradient id="lureGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="40%" stop-color="#7FFFD4"/>
+            <stop offset="100%" stop-color="#7FFFD4" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="lureHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#7FFFD4" stop-opacity=".5"/>
+            <stop offset="100%" stop-color="#7FFFD4" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <g class="angler-body">
+          <path d="M78,168 C70,112 146,64 226,70 C310,76 386,120 386,168 C386,214 308,248 222,242 C142,236 86,222 78,168 Z"
+                fill="#102138" stroke="#7FFFD4" stroke-opacity=".28" stroke-width="1.4"/>
+          <path d="M120,92 C170,66 260,62 320,84" fill="none" stroke="#CFE9F2" stroke-opacity=".14" stroke-width="5" stroke-linecap="round"/>
+          <!-- dorsal spines -->
+          <path d="M200,72 L206,44 L216,70 M240,70 L250,46 L258,72 M282,76 L294,54 L300,80" fill="none" stroke="#7FFFD4" stroke-opacity=".3" stroke-width="1.6"/>
+          <!-- tail -->
+          <path d="M386,168 C412,140 428,132 436,126 C428,158 428,178 436,210 C426,204 410,196 386,180 Z" fill="#0C1A2E" stroke="#7FFFD4" stroke-opacity=".22" stroke-width="1.2"/>
+          <!-- pectoral fin -->
+          <path d="M250,190 C276,196 292,214 288,236 C264,228 248,212 244,196 Z" fill="#0C1A2E" stroke="#7FFFD4" stroke-opacity=".2" stroke-width="1.2" class="angler-fin"/>
+          <!-- mouth cavity -->
+          <path d="M78,168 C104,146 138,140 166,150 L166,198 C136,210 102,198 78,168 Z" fill="#01030A"/>
+          <!-- teeth: upper -->
+          <g fill="#E9F5F5" opacity=".9">
+            <path d="M100,152 l3,16 l4,-15 Z"/><path d="M116,148 l3,18 l4,-17 Z"/><path d="M134,146 l3,17 l4,-16 Z"/><path d="M152,148 l2,14 l4,-13 Z"/>
+            <path d="M104,192 l4,-14 l4,13 Z"/><path d="M122,197 l4,-16 l4,15 Z"/><path d="M142,199 l3,-15 l4,14 Z"/>
+          </g>
+          <!-- eye -->
+          <circle cx="176" cy="118" r="8" fill="#040810" stroke="#7FFFD4" stroke-opacity=".6" stroke-width="1.6"/>
+          <circle cx="173" cy="115" r="2.2" fill="#CFE9F2" opacity=".85"/>
+          <!-- illicium + esca -->
+          <path d="M186,84 C150,44 108,44 92,92" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="1.8"/>
+          <circle cx="90" cy="102" r="26" fill="url(#lureHalo)" class="lure-halo"/>
+          <circle cx="90" cy="102" r="8" fill="url(#lureGrad)" class="lure-bulb"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card reveal">
+      <div class="card-head">
+        <p class="card-depth">1,200 m · midnight zone</p>
+        <p class="card-index">02 / 05</p>
+      </div>
+      <h2 class="card-name">Melanocetus johnsonii</h2>
+      <p class="card-tag">the humpback anglerfish</p>
+      <p class="card-fact">Her lure glows with a colony of captive bacteria. When a male finds her in the dark, he bites on and dissolves — skin to skin, then vein to vein. Two animals, one bloodstream, no way home.</p>
+    </div>
+  </section>
+
+  <!-- 3,000 m ─ gulper eel -->
+  <section class="encounter tint-pink" data-depth="3000">
+    <span class="ghost-num" aria-hidden="true">3,000</span>
+    <div class="stage reveal">
+      <svg class="creature gulper" viewBox="0 0 460 280" role="img" aria-label="Gulper eel, tail light blinking">
+        <defs>
+          <radialGradient id="tailGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFD3E6"/>
+            <stop offset="45%" stop-color="#FF7EB6"/>
+            <stop offset="100%" stop-color="#FF7EB6" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="pouchGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#152238"/>
+            <stop offset="100%" stop-color="#241B33"/>
+          </linearGradient>
+        </defs>
+        <g class="gulper-body">
+          <!-- upper jaw -->
+          <path d="M26,108 C88,66 158,60 200,86 C162,98 96,104 40,122 Z" fill="#152238" stroke="#7FFFD4" stroke-opacity=".3" stroke-width="1.3"/>
+          <!-- lower jaw pouch -->
+          <path d="M26,116 C52,190 150,226 208,178 C176,152 92,140 26,116 Z" fill="url(#pouchGrad)" stroke="#FF7EB6" stroke-opacity=".25" stroke-width="1.3"/>
+          <path d="M46,132 C70,168 130,192 178,176" fill="none" stroke="#FF7EB6" stroke-opacity=".18" stroke-width="1"/>
+          <!-- eye at snout -->
+          <circle cx="42" cy="104" r="4.5" fill="#040810" stroke="#7FFFD4" stroke-opacity=".7" stroke-width="1.4"/>
+          <circle cx="40.5" cy="102.5" r="1.2" fill="#CFE9F2"/>
+          <!-- body taper -->
+          <path d="M198,88 C258,92 300,116 330,140 C354,158 380,168 404,164 C384,182 348,182 318,166 C286,150 248,142 204,176 C214,140 202,112 198,88 Z"
+                fill="#152238" stroke="#7FFFD4" stroke-opacity=".26" stroke-width="1.3"/>
+          <!-- tail whip -->
+          <g class="gulper-tail">
+            <path d="M404,164 C436,156 446,132 428,116 C420,108 408,108 404,116" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round"/>
+            <circle cx="404" cy="118" r="18" fill="url(#tailGrad)" opacity=".5" class="tail-halo"/>
+            <circle cx="404" cy="118" r="4.5" fill="#FFD3E6" class="tail-light"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="card reveal">
+      <div class="card-head">
+        <p class="card-depth">3,000 m · midnight zone</p>
+        <p class="card-index">03 / 05</p>
+      </div>
+      <h2 class="card-name">Eurypharynx pelecanoides</h2>
+      <p class="card-tag">the gulper eel</p>
+      <p class="card-fact">Mostly mouth, barely muscle. Its jaws unhinge around prey larger than itself, and its whip of a tail ends in a small pink light — bait, dangled a full body-length away from the teeth.</p>
+    </div>
+  </section>
+
+  <!-- 5,000 m ─ dumbo octopus -->
+  <section class="encounter flip tint-pink" data-depth="5000">
+    <span class="ghost-num" aria-hidden="true">5,000</span>
+    <div class="stage reveal">
+      <svg class="creature dumbo" viewBox="0 0 320 310" role="img" aria-label="Dumbo octopus, ear fins slowly flapping">
+        <defs>
+          <radialGradient id="dumboGrad" cx="50%" cy="38%" r="72%">
+            <stop offset="0%" stop-color="#E88BAF"/>
+            <stop offset="70%" stop-color="#8A4064"/>
+            <stop offset="100%" stop-color="#5E2B46"/>
+          </radialGradient>
+        </defs>
+        <g class="dumbo-body">
+          <path class="fin fin-l" d="M86,104 C50,70 26,84 38,114 C46,134 72,136 88,122 Z" fill="#B45C85" stroke="#FF7EB6" stroke-opacity=".5" stroke-width="1.4"/>
+          <path class="fin fin-r" d="M234,104 C270,70 294,84 282,114 C274,134 248,136 232,122 Z" fill="#B45C85" stroke="#FF7EB6" stroke-opacity=".5" stroke-width="1.4"/>
+          <path d="M160,58 C222,58 260,108 260,166 C260,220 214,252 160,252 C106,252 60,220 60,166 C60,108 98,58 160,58 Z"
+                fill="url(#dumboGrad)" stroke="#FF7EB6" stroke-opacity=".45" stroke-width="1.5"/>
+          <!-- webbed skirt -->
+          <path d="M74,208 C84,240 104,252 118,238 C126,254 148,262 160,246 C172,262 194,254 202,238 C216,252 236,240 246,208 C220,236 100,236 74,208 Z"
+                fill="#7E3B5E" stroke="#FF7EB6" stroke-opacity=".3" stroke-width="1.2"/>
+          <!-- curled arm tips -->
+          <path d="M112,248 C110,266 120,272 130,268 M160,254 C160,274 172,278 180,272 M206,246 C210,264 200,272 192,268"
+                fill="none" stroke="#FF7EB6" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+          <!-- eyes -->
+          <circle cx="128" cy="158" r="15" fill="#1B0A16"/>
+          <circle cx="192" cy="158" r="15" fill="#1B0A16"/>
+          <circle cx="123" cy="152" r="4" fill="#F6E7EE" opacity=".9"/>
+          <circle cx="187" cy="152" r="4" fill="#F6E7EE" opacity=".9"/>
+          <!-- blush -->
+          <circle cx="106" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
+          <circle cx="214" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card reveal">
+      <div class="card-head">
+        <p class="card-depth">5,000 m · abyssal zone</p>
+        <p class="card-index">04 / 05</p>
+      </div>
+      <h2 class="card-name">Grimpoteuthis</h2>
+      <p class="card-tag">the dumbo octopus</p>
+      <p class="card-fact">The deepest-living octopus known, filmed nearly seven kilometres down. It rows through the abyss on ear-like fins and has given up its ink entirely — in a world without light, there is nothing left to blind.</p>
+    </div>
+  </section>
+
+  <!-- 8,000 m ─ hadal marker -->
+  <section class="marker" data-depth="8000">
+    <p class="marker-line reveal">— 8,000 metres. The hadal zone, named for the god of the underworld. Eight hundred atmospheres press on every centimetre of you.</p>
+    <p class="marker-sub reveal">Snailfish live here — translucent, soft-boned, unbothered. Nothing about the deep asks permission to be alive.</p>
+  </section>
+
+  <!-- 10,935 m ─ Trieste -->
+  <section class="encounter trench" data-depth="10935">
+    <span class="ghost-num" aria-hidden="true">10,935</span>
+    <div class="stage reveal">
+      <svg class="creature trieste" viewBox="0 0 360 430" role="img" aria-label="The bathyscaphe Trieste, cabin light glowing">
+        <defs>
+          <radialGradient id="portGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFF3D6"/>
+            <stop offset="55%" stop-color="#FFDFA0" stop-opacity=".85"/>
+            <stop offset="100%" stop-color="#FFDFA0" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFE9BC" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#FFE9BC" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <g class="trieste-body">
+          <!-- conning tower -->
+          <rect x="162" y="38" width="36" height="34" rx="7" fill="#0C1626" stroke="#AFC8D4" stroke-opacity=".7" stroke-width="1.6"/>
+          <path d="M158,38 h44 M170,28 v10 M190,28 v10 M166,28 h28" stroke="#AFC8D4" stroke-opacity=".55" stroke-width="1.4" fill="none"/>
+          <!-- float hull -->
+          <rect x="40" y="70" width="280" height="92" rx="46" fill="#0C1626" stroke="#AFC8D4" stroke-opacity=".8" stroke-width="2"/>
+          <path d="M92,72 v88 M136,71 v90 M224,71 v90 M268,72 v88" stroke="#AFC8D4" stroke-opacity=".22" stroke-width="1.2"/>
+          <path d="M52,100 C110,86 250,86 308,100" fill="none" stroke="#AFC8D4" stroke-opacity=".28" stroke-width="1.2"/>
+          <text x="180" y="128" text-anchor="middle" class="hull-name">TRIESTE</text>
+          <!-- struts -->
+          <path d="M150,162 L164,206 M210,162 L196,206" stroke="#AFC8D4" stroke-opacity=".6" stroke-width="2"/>
+          <!-- gondola sphere -->
+          <circle cx="180" cy="252" r="48" fill="#0A1322" stroke="#AFC8D4" stroke-opacity=".85" stroke-width="2"/>
+          <path d="M141,226 C158,212 202,212 219,226" fill="none" stroke="#AFC8D4" stroke-opacity=".3" stroke-width="1.2"/>
+          <!-- porthole -->
+          <circle cx="166" cy="260" r="22" fill="url(#portGrad)" class="port-halo"/>
+          <circle cx="166" cy="260" r="9" fill="#FFECC2" stroke="#AFC8D4" stroke-opacity=".6" stroke-width="1.4" class="port-glass"/>
+          <!-- searchlight beam -->
+          <path d="M150,290 L104,414 L188,414 Z" fill="url(#beamGrad)" class="beam"/>
+          <!-- guide chain -->
+          <path d="M196,298 V420" stroke="#AFC8D4" stroke-opacity=".5" stroke-width="2" stroke-dasharray="2 7" class="chain"/>
+        </g>
+      </svg>
+    </div>
+    <div class="card plaque reveal">
+      <div class="card-head">
+        <p class="card-depth">10,935 m · challenger deep</p>
+        <p class="card-index">05 / 05</p>
+      </div>
+      <h2 class="card-name plaque-name">Bathyscaphe Trieste</h2>
+      <p class="card-tag">23 January 1960 · Jacques Piccard &amp; Don Walsh</p>
+      <p class="card-fact">Four hours and forty-seven minutes of falling. Twenty minutes on the bottom. Through the single porthole, Piccard swore he watched a flatfish glide calmly away — life, waiting at the deepest place on Earth, entirely unimpressed by the visit.</p>
+    </div>
+  </section>
+
+  <!-- finale -->
+  <section class="finale">
+    <p class="finale-line reveal">The deep sea is not empty. It is only unlit.</p>
+    <button class="ascend reveal" id="ascend" type="button">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      return to surface
+    </button>
+  </section>
+
+  <footer class="site-footer">
+    <p>06 / 25 · DESCENT — designed &amp; coded by Claude Fable 5</p>
+    <nav>
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </nav>
+  </footer>
+
+</main>
+
+<script src="script.js" defer></script>
+</body>
+</html>

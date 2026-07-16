@@ -1,0 +1,127 @@
+- generic [active] [ref=f18e1]:
+  - generic [ref=f18e2] [cursor=pointer]:
+    - generic [ref=f18e3]: DEEPFIEL
+    - generic [ref=f18e6]: ANY KEY OR CLICK SKIPS SELF-TEST
+  - alert [ref=f18e7]
+  - generic [ref=f18e8]:
+    - banner [ref=f18e9]:
+      - generic [ref=f18e10]: ▚▚ DEEPFIELD STATION
+      - generic [ref=f18e11]: DSS-4 “LONGWAIT” · 2.4 M PHOTON TELESCOPE · ELEV 4 267 M
+      - generic [ref=f18e12]:
+        - generic [ref=f18e13]: UTC --:--:--
+        - generic [ref=f18e14]: MET ---:--:--
+        - generic [ref=f18e15]: REV 1147
+    - main [ref=f18e16]:
+      - generic [ref=f18e17]:
+        - generic [ref=f18e18]:
+          - heading "┤ TELEMETRY ├" [level=2] [ref=f18e19]
+          - generic [ref=f18e20]:
+            - generic [ref=f18e21]: PHOTON COUNT
+            - generic [ref=f18e22]: ····································
+            - generic [ref=f18e23]: "0"
+          - generic [ref=f18e24]:
+            - generic [ref=f18e25]: COUNT RATE
+            - generic [ref=f18e26]: ····································
+            - generic [ref=f18e27]: "0"
+            - generic [ref=f18e28]: c/s
+          - generic [ref=f18e30]:
+            - generic [ref=f18e31]: GIMBAL AZ
+            - generic [ref=f18e32]: ····································
+            - generic [ref=f18e33]: "0"
+            - generic [ref=f18e34]: deg
+          - generic [ref=f18e35]:
+            - generic [ref=f18e36]: GIMBAL EL
+            - generic [ref=f18e37]: ····································
+            - generic [ref=f18e38]: "0"
+            - generic [ref=f18e39]: deg
+          - generic [ref=f18e40]:
+            - generic [ref=f18e41]: GUIDE DRIFT
+            - generic [ref=f18e42]: ····································
+            - generic [ref=f18e43]: "0"
+            - generic [ref=f18e44]: ″
+          - generic [ref=f18e45]:
+            - generic [ref=f18e46]: FRAMES CO-ADDED
+            - generic [ref=f18e47]: ····································
+            - generic [ref=f18e48]: 40,112
+          - generic [ref=f18e49]:
+            - generic [ref=f18e50]: FOCAL TEMP
+            - generic [ref=f18e51]: ····································
+            - generic [ref=f18e52]: "6.02"
+            - generic [ref=f18e53]: K
+          - generic [ref=f18e54]:
+            - generic [ref=f18e55]: BUS A
+            - generic [ref=f18e56]: ····································
+            - generic [ref=f18e57]: "28.4"
+            - generic [ref=f18e58]: VDC
+          - generic [ref=f18e59]:
+            - generic [ref=f18e60]: SNR
+            - generic [ref=f18e61]: ····································
+            - generic [ref=f18e62]: —
+          - generic [ref=f18e63]: ┤ 120 MS POLL ├
+        - generic [ref=f18e64]:
+          - heading "┤ SUBSYSTEMS ├" [level=2] [ref=f18e65]
+          - generic [ref=f18e66]:
+            - generic [ref=f18e67]: CRYO LOOP B
+            - generic [ref=f18e68]: ····································
+            - generic [ref=f18e69]: NOMINAL
+          - generic [ref=f18e70]:
+            - generic [ref=f18e71]: PCA ARRAY
+            - generic [ref=f18e72]: ····································
+            - generic [ref=f18e73]: NOMINAL
+          - generic [ref=f18e74]:
+            - generic [ref=f18e75]: TAPE DECK 2
+            - generic [ref=f18e76]: ····································
+            - generic [ref=f18e77]: SPOOLING
+          - generic [ref=f18e78]:
+            - generic [ref=f18e79]: X-BAND DOWNLINK
+            - generic [ref=f18e80]: ····································
+            - generic [ref=f18e81]: LOCK
+          - generic [ref=f18e82]:
+            - generic [ref=f18e83]: THERMAL SHROUD
+            - generic [ref=f18e84]: ····································
+            - generic [ref=f18e85]: NOMINAL
+          - generic [ref=f18e86]:
+            - generic [ref=f18e87]: SIDEREAL DRIVE
+            - generic [ref=f18e88]: ····································
+            - generic [ref=f18e89]: TRACKING
+          - generic [ref=f18e90]:
+            - generic [ref=f18e91]: DOME HEATERS
+            - generic [ref=f18e92]: ····································
+            - generic [ref=f18e93]: CYCLING
+          - generic [ref=f18e94]: ┤ BUS A ├
+      - generic [ref=f18e95]:
+        - heading "┤ DEEPFIELD SURVEY MAP ├" [level=2] [ref=f18e96]
+        - generic [ref=f18e99]:
+          - generic [ref=f18e100]: RA --h--m--s
+          - generic [ref=f18e101]: DEC ---°--′
+          - generic [ref=f18e102]: TGT —
+          - generic [ref=f18e103]: ACQ
+          - generic [ref=f18e104]: CLICK FIELD TO POINT DISH
+        - generic [ref=f18e105]: ┤ SAO-78 OVERLAY ├
+      - generic [ref=f18e106]:
+        - heading "┤ EVENT LOG ├" [level=2] [ref=f18e107]
+        - generic [ref=f18e109]: ┤ AIR-GROUND LOOP ├
+      - generic [ref=f18e110]:
+        - heading "┤ COMMAND ├" [level=2] [ref=f18e111]
+        - generic [ref=f18e112]:
+          - generic [ref=f18e113]: UPTIME 00:00:00
+          - generic [ref=f18e114]: CHANNEL OPEN
+          - generic [ref=f18e115]: AUTO-OP T-05S
+        - generic [ref=f18e118]:
+          - generic [ref=f18e119]: DSS-4>
+          - textbox "Console command input" [ref=f18e121]
+        - generic [ref=f18e122]:
+          - generic [ref=f18e123]: "PRESET KEYS:"
+          - button "HELP" [ref=f18e124] [cursor=pointer]
+          - button "SCAN" [ref=f18e125] [cursor=pointer]
+          - button "TARGET ANDROMEDA" [ref=f18e126] [cursor=pointer]
+          - button "DIAGNOSTICS" [ref=f18e127] [cursor=pointer]
+          - button "ACK" [ref=f18e128] [cursor=pointer]
+        - generic [ref=f18e129]: ┤ UPLINK 2.048 KBPS ├
+    - contentinfo [ref=f18e130]:
+      - generic [ref=f18e131]: 04 / 25 · DEEPFIELD STATION — designed & coded by Claude Fable 5
+      - generic [ref=f18e132]:
+        - link "Index" [ref=f18e133] [cursor=pointer]:
+          - /url: /
+        - link "How it's made" [ref=f18e134] [cursor=pointer]:
+          - /url: guide/

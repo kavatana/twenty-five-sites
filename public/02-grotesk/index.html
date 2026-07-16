@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROTESK™ — Type Is Infrastructure</title>
+<meta name="description" content="GROTESK™ is a single-family brutalist type foundry. One typeface, nine hundred weights, zero apologies. Drag the headline. Stress the glyphs. License the load-bearing letters.">
+<meta property="og:title" content="GROTESK™ — Type Is Infrastructure">
+<meta property="og:description" content="A brutalist variable-font specimen. Drag the headline to warp it live across the wght and wdth axes. Nothing eases.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Crect y='52' width='64' height='12' fill='%23FF2D2D'/%3E%3Ctext x='32' y='47' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='900' text-anchor='middle' fill='%23FAFAFA'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="wipe" aria-hidden="true"></div>
+<div id="cur" aria-hidden="true"><span id="curlab">DRAG</span></div>
+
+<header class="bar">
+  <a class="logo" href="#top">GROTESK<sup>™</sup></a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#specimen">Specimen</a>
+    <a href="#waterfall">Waterfall</a>
+    <a href="#license">License</a>
+  </nav>
+  <span class="live"><i class="blink" aria-hidden="true"></i>V2.0</span>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO / DRAG-TO-WARP ============ -->
+  <section class="hero ruled" id="hero" aria-label="Interactive variable specimen">
+    <div class="hero-meta">
+      <span class="mono">VARIABLE SPECIMEN — ANYBODY<br>WGHT 100→900 · WDTH 50→150</span>
+      <span class="mono axes" id="axes" aria-hidden="true">WGHT 800 · WDTH 100</span>
+    </div>
+
+    <h1 class="word" id="word" aria-label="GROTESK">
+      <span class="lw" aria-hidden="true"><span class="lt" style="--i:0">G</span></span><span class="lw" aria-hidden="true"><span class="lt" style="--i:1">R</span></span><span class="lw" aria-hidden="true"><span class="lt" style="--i:2">O</span></span><br class="brk" aria-hidden="true"><span class="lw" aria-hidden="true"><span class="lt" style="--i:3">T</span></span><span class="lw" aria-hidden="true"><span class="lt" style="--i:4">E</span></span><span class="lw" aria-hidden="true"><span class="lt" style="--i:5">S</span></span><span class="lw" aria-hidden="true"><span class="lt" style="--i:6">K</span></span>
+    </h1>
+
+    <div class="hero-foot">
+      <p class="tag">ONE FAMILY. NINE HUNDRED WEIGHTS.<br>ZERO APOLOGIES.</p>
+      <p class="hint" id="hint">DRAG THE HEADLINE TO WARP IT ↘</p>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="strip" aria-hidden="true">
+    <div class="strip-in" id="mq"></div>
+  </div>
+
+  <!-- ============ DOCTRINE ============ -->
+  <section class="sec ruled" id="doctrine">
+    <header class="shead" data-reveal>
+      <span class="sno mono">01</span>
+      <h2>DOCTRINE</h2>
+    </header>
+    <div class="creed">
+      <p class="line" data-reveal>TYPE IS<br>INFRASTRUCTURE.</p>
+      <p class="line" data-reveal>DECORATION<br>IS DEBT.</p>
+      <p class="line red" data-reveal>EVERY GLYPH<br>CARRIES LOAD.</p>
+    </div>
+    <div class="body-copy" data-reveal>
+      <p>GROTESK™ cuts one typeface and cuts it hard. Nine hundred weights of it, engineered like rebar, hinted to the pixel, shipped with the axes exposed. No scripts. No serifs. No seasonal drops. When a letter has a job to do, it shows up in work boots.</p>
+      <p>Every form in this specimen is load-bearing. Drag it. Stress it. Put nine hundred units of weight on it — it will not buckle. That is the entire warranty.</p>
+    </div>
+  </section>
+
+  <!-- ============ SPECIMEN GRID ============ -->
+  <section class="sec" id="specimen">
+    <header class="shead" data-reveal>
+      <span class="sno mono">02</span>
+      <h2>SPECIMEN</h2>
+      <p class="skick mono">36 FORMS · HOVER TO INVERT · NOTHING EASES</p>
+    </header>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- ============ WATERFALL ============ -->
+  <section class="sec ruled" id="waterfall">
+    <header class="shead" data-reveal>
+      <span class="sno mono">03</span>
+      <h2>WATERFALL</h2>
+      <p class="skick mono">ONE SENTENCE · TWELVE SIZES · NO MERCY</p>
+    </header>
+    <div class="wfall" id="wfall" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ LICENSE ============ -->
+  <section class="sec" id="license">
+    <header class="shead" data-reveal>
+      <span class="sno mono">04</span>
+      <h2>LICENSE</h2>
+      <p class="skick mono">PAY ONCE · SET IN CONCRETE</p>
+    </header>
+
+    <div class="plans" data-reveal>
+      <article class="plan">
+        <h3>DESK</h3>
+        <p class="price">$90</p>
+        <ul class="feat mono">
+          <li>1 USER</li>
+          <li>DESKTOP + WEB</li>
+          <li>50K VIEWS / MO</li>
+          <li>STATIC INSTANCES</li>
+        </ul>
+        <button class="btn" type="button" data-plan="DESK" aria-label="License the DESK plan, $90">LICENSE IT →</button>
+      </article>
+
+      <article class="plan plan--hot">
+        <span class="hot-tag mono">MOST POURED</span>
+        <h3>STUDIO</h3>
+        <p class="price">$340</p>
+        <ul class="feat mono">
+          <li>10 USERS</li>
+          <li>DESKTOP + WEB + APP</li>
+          <li>1M VIEWS / MO</li>
+          <li>VARIABLE AXES UNLOCKED</li>
+        </ul>
+        <button class="btn" type="button" data-plan="STUDIO" aria-label="License the STUDIO plan, $340, most poured">LICENSE IT →</button>
+      </article>
+
+      <article class="plan">
+        <h3>CITY</h3>
+        <p class="price">$2,900</p>
+        <ul class="feat mono">
+          <li>UNLIMITED USERS</li>
+          <li>EVERY MEDIUM, FOREVER</li>
+          <li>BROADCAST + OOH</li>
+          <li>SOURCE FILES</li>
+        </ul>
+        <button class="btn" type="button" data-plan="CITY" aria-label="License the CITY plan, $2,900">LICENSE IT →</button>
+      </article>
+    </div>
+    <p class="fine mono" data-reveal>NO SUBSCRIPTIONS. NO UPDATES-AS-A-SERVICE. THE LETTERS ALREADY WORK.</p>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="crop" aria-hidden="true">
+    <span class="mark" id="mark">GROTESK</span>
+  </div>
+  <div class="foot-bar">
+    <p class="mono">02 / 25 · GROTESK™ — designed &amp; coded by Claude Fable 5</p>
+    <nav class="mono" aria-label="Meta">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+[
+{"num":"02","slug":"grotesk","title":"GROTESK™","tagline":"Type is infrastructure. Decoration is debt.","accent":"#FF2D2D","bg":"#0A0A0A","fontDisplay":"Archivo Black","blurb":"A brutalist type-foundry specimen site where dragging the headline live-warps a variable font's weight and width axes."},
+{"num":"03","slug":"strata","title":"STRATA","tagline":"Every visit, the gallery paints again","accent":"#A6854D","bg":"#0E0D0B","fontDisplay":"Fraunces","blurb":"A generative gallery that mints a unique seeded flow-field painting on every visit, with a re-mint button that commissions a fresh one."},
+{"num":"04","slug":"deepfield","title":"DEEPFIELD STATION","tagline":"All systems nominal. Until they aren't.","accent":"#33FF66","bg":"#050805","fontDisplay":"VT323","blurb":"A live 1978 mission console for a deep-space telescope — telemetry ticks, a survey map slews, and the sky occasionally misbehaves."},
+{"num":"05","slug":"ma","title":"間 MA","tagline":"The pause between ink and paper","accent":"#C73E2E","bg":"#F5F1E8","fontDisplay":"Noto Serif JP","blurb":"A fictional Kyoto paper-and-ink studio built as a meditation on negative space — a self-drawing sumi-e brushstroke, morphing stone, seasonal haiku, and a hanko seal that stamps the footer."}
+]

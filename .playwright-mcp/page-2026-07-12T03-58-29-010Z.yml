@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2] [cursor=pointer]:
+    - generic [ref=e3]: DEE
+    - generic [ref=e6]: ANY KEY OR CLICK SKIPS SELF-TEST
+  - alert [ref=e7]
+  - generic [ref=e8]:
+    - banner [ref=e9]:
+      - generic [ref=e10]: ▚▚ DEEPFIELD STATION
+      - generic [ref=e11]: DSS-4 “LONGWAIT” · 2.4 M PHOTON TELESCOPE · ELEV 4 267 M
+      - generic [ref=e12]:
+        - generic [ref=e13]: UTC --:--:--
+        - generic [ref=e14]: MET ---:--:--
+        - generic [ref=e15]: REV 1147
+    - main [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - heading "┤ TELEMETRY ├" [level=2] [ref=e19]
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]: PHOTON COUNT
+              - generic [ref=e23]: ····································
+              - generic [ref=e24]: "0"
+            - generic [ref=e25]:
+              - generic [ref=e26]: COUNT RATE
+              - generic [ref=e27]: ····································
+              - generic [ref=e28]: "0"
+              - generic [ref=e29]: c/s
+            - generic [ref=e31]:
+              - generic [ref=e32]: GIMBAL AZ
+              - generic [ref=e33]: ····································
+              - generic [ref=e34]: "0"
+              - generic [ref=e35]: deg
+            - generic [ref=e36]:
+              - generic [ref=e37]: GIMBAL EL
+              - generic [ref=e38]: ····································
+              - generic [ref=e39]: "0"
+              - generic [ref=e40]: deg
+            - generic [ref=e41]:
+              - generic [ref=e42]: GUIDE DRIFT
+              - generic [ref=e43]: ····································
+              - generic [ref=e44]: "0"
+              - generic [ref=e45]: ″
+            - generic [ref=e46]:
+              - generic [ref=e47]: FRAMES CO-ADDED
+              - generic [ref=e48]: ····································
+              - generic [ref=e49]: 40,112
+            - generic [ref=e50]:
+              - generic [ref=e51]: FOCAL TEMP
+              - generic [ref=e52]: ····································
+              - generic [ref=e53]: "6.02"
+              - generic [ref=e54]: K
+            - generic [ref=e55]:
+              - generic [ref=e56]: BUS A
+              - generic [ref=e57]: ····································
+              - generic [ref=e58]: "28.4"
+              - generic [ref=e59]: VDC
+            - generic [ref=e60]:
+              - generic [ref=e61]: SNR
+              - generic [ref=e62]: ····································
+              - generic [ref=e63]: —
+          - generic [ref=e64]: ┤ 120 MS POLL ├
+        - generic [ref=e65]:
+          - heading "┤ SUBSYSTEMS ├" [level=2] [ref=e66]
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]: CRYO LOOP B
+              - generic [ref=e70]: ····································
+              - generic [ref=e71]: NOMINAL
+            - generic [ref=e72]:
+              - generic [ref=e73]: PCA ARRAY
+              - generic [ref=e74]: ····································
+              - generic [ref=e75]: NOMINAL
+            - generic [ref=e76]:
+              - generic [ref=e77]: TAPE DECK 2
+              - generic [ref=e78]: ····································
+              - generic [ref=e79]: SPOOLING
+            - generic [ref=e80]:
+              - generic [ref=e81]: X-BAND DOWNLINK
+              - generic [ref=e82]: ····································
+              - generic [ref=e83]: LOCK
+            - generic [ref=e84]:
+              - generic [ref=e85]: THERMAL SHROUD
+              - generic [ref=e86]: ····································
+              - generic [ref=e87]: NOMINAL
+            - generic [ref=e88]:
+              - generic [ref=e89]: SIDEREAL DRIVE
+              - generic [ref=e90]: ····································
+              - generic [ref=e91]: TRACKING
+            - generic [ref=e92]:
+              - generic [ref=e93]: DOME HEATERS
+              - generic [ref=e94]: ····································
+              - generic [ref=e95]: CYCLING
+          - generic [ref=e96]: ┤ BUS A ├
+      - generic [ref=e97]:
+        - heading "┤ DEEPFIELD SURVEY MAP ├" [level=2] [ref=e98]
+        - generic [ref=e101]:
+          - generic [ref=e102]: RA --h--m--s
+          - generic [ref=e103]: DEC ---°--′
+          - generic [ref=e104]: TGT —
+          - generic [ref=e105]: ACQ
+          - generic [ref=e106]: CLICK FIELD TO POINT DISH
+        - generic [ref=e107]: ┤ SAO-78 OVERLAY ├
+      - generic [ref=e108]:
+        - heading "┤ EVENT LOG ├" [level=2] [ref=e109]
+        - generic [ref=e111]: ┤ AIR-GROUND LOOP ├
+      - generic [ref=e112]:
+        - heading "┤ COMMAND ├" [level=2] [ref=e113]
+        - generic [ref=e114]:
+          - generic [ref=e115]: UPTIME 00:00:00
+          - generic [ref=e116]: CHANNEL OPEN
+          - generic [ref=e117]: AUTO-OP T-05S
+        - generic [ref=e120]:
+          - generic [ref=e121]: DSS-4>
+          - textbox "Console command input" [ref=e123]
+        - generic [ref=e124]:
+          - generic [ref=e125]: "PRESET KEYS:"
+          - button "HELP" [ref=e126] [cursor=pointer]
+          - button "SCAN" [ref=e127] [cursor=pointer]
+          - button "TARGET ANDROMEDA" [ref=e128] [cursor=pointer]
+          - button "DIAGNOSTICS" [ref=e129] [cursor=pointer]
+          - button "ACK" [ref=e130] [cursor=pointer]
+        - generic [ref=e131]: ┤ UPLINK 2.048 KBPS ├
+    - contentinfo [ref=e132]:
+      - generic [ref=e133]: 04 / 25 · DEEPFIELD STATION — designed & coded by Claude Fable 5
+      - generic [ref=e134]:
+        - link "Index" [ref=e135] [cursor=pointer]:
+          - /url: /
+        - link "How it's made" [ref=e136] [cursor=pointer]:
+          - /url: guide/

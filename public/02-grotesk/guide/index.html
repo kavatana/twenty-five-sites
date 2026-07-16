@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROTESK™ — How It's Made</title>
+<meta name="description" content="How the GROTESK™ brutalist specimen was built: variable-font warp fields, hand-rolled springs, scroll-velocity skew, and hard-snap hovers. No libraries.">
+<meta property="og:title" content="GROTESK™ — How It's Made">
+<meta property="og:description" content="The build notes behind the drag-to-warp variable-font specimen. Pointer events, Gaussian falloff, damped springs, zero easing where it counts.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Crect y='52' width='64' height='12' fill='%23FF2D2D'/%3E%3Ctext x='32' y='47' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='900' text-anchor='middle' fill='%23FAFAFA'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .gwrap { padding: clamp(40px, 7vh, 88px) var(--pad) clamp(56px, 9vh, 110px); max-width: 980px; }
+  .gtitle { font-size: clamp(40px, 7.2vw, 104px); line-height: .95; letter-spacing: -.02em; margin: 18px 0 10px; }
+  .gtitle em { font-style: normal; color: var(--red); }
+  .gsub { max-width: 60ch; font-weight: 500; font-size: clamp(16px, 1.35vw, 19px); }
+  .gsec { margin-top: clamp(40px, 6vh, 64px); border-top: var(--b4); padding-top: 22px; }
+  .gsec h2 { font-size: clamp(20px, 2.2vw, 30px); margin: 6px 0 14px; }
+  .glab { color: var(--red); font-weight: 700; }
+  .gsec p { max-width: 66ch; margin-bottom: 1em; font-weight: 500; }
+  .gsec p:last-child { margin-bottom: 0; }
+  code {
+    font-family: "Space Grotesk", monospace; font-weight: 700; font-size: .88em;
+    background: var(--ink); color: var(--paper); padding: 2px 7px; white-space: nowrap;
+  }
+  .warp-demo {
+    font-family: "Anybody", Arial, sans-serif;
+    font-variation-settings: "wght" 800, "wdth" 100;
+    font-size: clamp(34px, 5vw, 60px); line-height: 1;
+    display: block; margin: 10px 0 4px;
+    animation: breathe 4s ease-in-out infinite alternate;
+  }
+  @keyframes breathe {
+    from { font-variation-settings: "wght" 300, "wdth" 62; }
+    to   { font-variation-settings: "wght" 900, "wdth" 140; }
+  }
+  @media (prefers-reduced-motion: reduce) { .warp-demo { animation: none; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="logo" href="../">GROTESK<sup>™</sup></a>
+  <nav class="nav" aria-label="Sections">
+    <a href="../">Specimen</a>
+  </nav>
+  <span class="live"><i class="blink" aria-hidden="true"></i>NOTES</span>
+</header>
+
+<main class="gwrap">
+  <p class="mono glab">BUILD NOTES · 02 / 25</p>
+  <h1 class="gtitle">HOW IT'S <em>MADE.</em></h1>
+  <p class="gsub">GROTESK™ is a specimen site for a foundry that treats letters like structural steel. Everything on it is hand-rolled: no animation libraries, no physics libraries, no images. Three colors, two families, one variable font under stress.</p>
+
+  <section class="gsec">
+    <p class="mono glab">01 — THE WARP</p>
+    <h2>DRAG A HEADLINE, BEND AN AXIS</h2>
+    <span class="warp-demo" aria-hidden="true">GROTESK</span>
+    <p>The headline is set in <strong>Anybody</strong>, a variable font served by the Google Fonts <code>css2</code> API with two exposed axes. Dragging maps the pointer straight onto them: vertical position drives <code>wght</code> (100–900), horizontal drives <code>wdth</code> (50–150), written per letter through <code>font-variation-settings</code> every frame.</p>
+    <p>The trick that makes it feel physical is a <strong>Gaussian falloff field</strong>: each letter's pull toward the pointer target is scaled by <code>exp(−dx²)</code> of its distance from the cursor, so weight piles up under your hand and decays across the word. Each axis on each letter runs through a hand-rolled <strong>damped spring</strong> (semi-implicit Euler: accelerate toward target, bleed velocity, integrate), so releasing a drag wobbles once and settles. Idle, the springs chase a slow sine wave — the word breathes so a screen recording is never static. Pointer Events plus <code>setPointerCapture</code> make the same gesture work with mouse and thumb.</p>
+  </section>
+
+  <section class="gsec">
+    <p class="mono glab">02 — THE MOTION SYSTEM</p>
+    <h2>EASE ONLY ON ARRIVAL</h2>
+    <p>Brutalism here means motion is either a slam or a snap. Entrances use one steep curve, <code>cubic-bezier(.05,.92,.1,1)</code> — fast in, dead stop — staggered per letter and per block via <code>IntersectionObserver</code>. The red load wipe collapses in four hard jumps using <code>steps(4, end)</code>. Hover states in the A–Z grid have <code>transition: none</code> on purpose: the invert must hit like a switch, and each entry re-rolls random axis values so no two hovers match.</p>
+    <p>The glyph marquee runs in the same single <code>requestAnimationFrame</code> loop as the warp. Scroll velocity is measured per frame, smoothed, and fed into a <code>skewX</code> transform — scroll hard and the strip leans like it took a hit. The loop pauses on <code>document.hidden</code>, and <code>prefers-reduced-motion</code> swaps all of it for a static, fully legible page.</p>
+  </section>
+
+  <section class="gsec">
+    <p class="mono glab">03 — THE PASSES</p>
+    <h2>BUILT IN LAYERS, LIKE A SLAB</h2>
+    <p>Pass one poured the structure: palette, 8px borders, block underlines, the warp engine, marquee, specimen grid, waterfall, license table, cropped footer wordmark. Pass two pushed the motion — the idle wave was widened to sweep the full published <code>100–900</code> / <code>50–150</code> range instead of idling near the middle, hard-snap invert reached the pricing cards, and the crosshair cursor learned to relabel itself per zone: <code>DRAG</code>, <code>INVERT</code>, <code>SCAN</code>. Pass three was the tightening pass — contrast checked, license buttons given distinct names for screen readers, a mobile headline that was silently clipping off-screen fixed at the root (a grid item's <code>min-width: auto</code>, not just its font-size), and a stray per-frame layout read cut from the idle loop. Screenshot audits ran at 1440×900 and 390×844 throughout — critiquing renders, not intent. Nothing decorative was added at any point. That was the point.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="crop" aria-hidden="true">
+    <span class="mark">GROTESK</span>
+  </div>
+  <div class="foot-bar">
+    <p class="mono">02 / 25 · GROTESK™ — designed &amp; coded by Claude Fable 5</p>
+    <nav class="mono" aria-label="Meta">
+      <a href="/">Index</a>
+      <a href="./">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

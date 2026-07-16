@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How it&rsquo;s made — 間 MA</title>
+<meta name="description" content="How 間 MA was built: self-drawing sumi-e strokes with stroke-dashoffset, feTurbulence brush texture, vertical-rl typography, and a hanko that stamps with an overshoot bezier.">
+<meta property="og:title" content="How it's made — 間 MA">
+<meta property="og:description" content="The techniques behind a meditation on negative space: layered SVG brushstrokes, seasonal tint crossfades, and radical whitespace.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#F5F1E8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23C73E2E'/%3E%3Ctext x='32' y='46' font-size='38' text-anchor='middle' fill='%23F5F1E8' font-family='serif'%3E%E9%96%93%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .guide-wrap {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 16vh 7vw 10vh;
+    position: relative;
+  }
+  .guide-head { margin-bottom: 6rem; position: relative; }
+  .guide-kicker {
+    font-size: .68rem;
+    letter-spacing: .38em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .guide-title {
+    margin-top: 1.6rem;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    letter-spacing: .1em;
+    line-height: 1.5;
+  }
+  .guide-vertical {
+    position: absolute;
+    top: .4rem;
+    right: 0;
+    writing-mode: vertical-rl;
+    font-family: 'Noto Serif JP', serif;
+    font-size: .85rem;
+    letter-spacing: .5em;
+    color: var(--ink-soft);
+  }
+  .guide-seal {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--vermillion);
+    border-radius: 1.5px;
+    margin-left: .9rem;
+    vertical-align: baseline;
+  }
+  .guide-wrap h2 {
+    margin: 4.6rem 0 1.4rem;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 400;
+    font-size: 1.02rem;
+    letter-spacing: .3em;
+  }
+  .guide-wrap h2 .en {
+    display: block;
+    margin-top: .3rem;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: .64rem;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .guide-wrap p {
+    font-size: .92rem;
+    color: var(--ink-soft);
+    letter-spacing: .03em;
+    margin-bottom: 1.3rem;
+  }
+  .guide-wrap code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: .82em;
+    color: var(--sumi);
+    background: rgba(28, 26, 23, .06);
+    padding: .1em .45em;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .guide-rule {
+    border: none;
+    height: 1px;
+    width: 4rem;
+    margin: 5.5rem auto;
+    background: rgba(28, 26, 23, .25);
+  }
+  .guide-foot {
+    margin-top: 7rem;
+    text-align: center;
+  }
+  .guide-foot .foot-credit { margin-top: 0; }
+  .guide-foot .foot-links { justify-content: center; }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<main class="guide-wrap">
+  <header class="guide-head">
+    <p class="guide-kicker">05 / 25 &mdash; How it&rsquo;s made<span class="guide-seal" aria-hidden="true"></span></p>
+    <h1 class="guide-title">間 &mdash; a site made<br>mostly of nothing</h1>
+    <p class="guide-vertical" lang="ja" aria-hidden="true">作り方</p>
+  </header>
+
+  <h2 lang="ja">概念 <span class="en" lang="en">Concept</span></h2>
+  <p>Ma (間) is the Japanese idea that the interval — the pause, the margin, the held breath — is not absence but material. So the site treats emptiness as its primary component: content occupies roughly a third of any viewport, sections are separated by whole screens of washi, and every view carries exactly one tiny drop of vermillion, the way a sumi-e painting carries one seal. The copy is bilingual and koan-short, because a studio that sells margins should not fill them.</p>
+
+  <h2 lang="ja">技法 <span class="en" lang="en">Technique</span></h2>
+  <p>The hero brushstroke is seven stacked SVG paths pretending to be one. Each is measured with <code>getTotalLength()</code>, hidden behind its own <code>stroke-dasharray</code>, then released by transitioning <code>stroke-dashoffset</code> to zero on a <code>cubic-bezier(.65,.01,.22,1)</code> — staggered so the thick core lands first and thin strands chase it. The dry-brush edge comes from <code>feTurbulence</code> fed into <code>feDisplacementMap</code>; the ink bleed is a fat duplicate under <code>feGaussianBlur</code> at 13% opacity. The kasure — flying white — is the best trick: two washi-colored strokes painted <em>over</em> the ink tail, so the brush appears to run dry. The ensō reuses the same machinery, two arc commands triggered by an <code>IntersectionObserver</code>.</p>
+  <p>Japanese headings run in <code>writing-mode: vertical-rl</code>, including the haiku, which crossfade through four seasons while a masked pool behind them transitions <code>background-color</code> — spring blush to winter grey. The stone is a radial-gradient div whose <code>border-radius</code> morphs over sixteen seconds. The paper grain is a data-URI <code>feTurbulence</code> tile, fixed, multiply-blended at 5%. The hanko stamps in on <code>cubic-bezier(.3,1.4,.45,1)</code> — scale 2.4 to 1 with overshoot, settling 3° off square, because a true stamp never lands straight.</p>
+
+  <h2 lang="ja">手順 <span class="en" lang="en">Process</span></h2>
+  <p>The build laid the skeleton: palette, type, the stroke rig, all copy. Each pass since has worked from screenshots at 1440×900 and 390×844, not intentions. Pass one caught the hero's worst fault — the brushstroke's mid-band scored straight through 間 like a strikethrough — and moved the stroke below the glyph as a grounding accent instead of a rival. Pass two chased motion: a scroll cue drifting onto the closing line on short phones, a brushstroke gone inert the moment it finished drawing, a hanko landing with no sense of contact — all three fixed, plus an ink-bloom on the seal and a click ripple. Pass three tuned craft against hard numbers — vermillion-on-washi text darkened from a marginal 4.48:1 to 5.86:1, the cursor's idle loop taught to stop spending frames once it catches the pointer. <code>prefers-reduced-motion</code> collapses every pass's motion at once — strokes pre-drawn, seasons held, the garden already still.</p>
+
+  <hr class="guide-rule">
+
+  <footer class="guide-foot">
+    <p class="foot-credit">05 / 25 · 間 MA — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="/">Index</a>
+      <a href="../">Back to the studio</a>
+    </nav>
+  </footer>
+</main>
+
+</body>
+</html>

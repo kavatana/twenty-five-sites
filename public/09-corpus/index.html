@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORPUS — a particle universe</title>
+<meta name="description" content="CORPUS is a WebGL particle universe: 45,000 points morphing between a torus knot, a spiral galaxy, a lattice, and their own name. Hold to scatter — it remembers.">
+<meta property="og:title" content="CORPUS — a particle universe">
+<meta property="og:description" content="45,000 particles. Four formations. One body that always remembers its shape. Hand-coded WebGL, site 09 of 25.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060614'/%3E%3Ccircle cx='23' cy='27' r='10' fill='%237DF9FF' opacity='.85'/%3E%3Ccircle cx='40' cy='25' r='8' fill='%23B39DFF' opacity='.8'/%3E%3Ccircle cx='33' cy='41' r='9' fill='%23FF6EC7' opacity='.75'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"></div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="ui">
+
+  <header class="brand rise" style="--d:.1s">
+    <h1 class="brand-name">CORPUS</h1>
+    <p class="brand-tag">a particle universe</p>
+  </header>
+
+  <p class="meta rise" style="--d:.2s">N°09 — one body,<br>four formations</p>
+
+  <section class="stage-copy" aria-live="polite">
+    <p class="kicker rise" style="--d:.35s">Formation <span id="formIndex">01</span> <span class="kicker-dim">/ 04</span></p>
+
+    <div class="headlines rise" style="--d:.45s">
+      <h2 class="headline is-active" data-f="0">One thread, tied<br>to itself, forever.</h2>
+      <h2 class="headline" data-f="1">A hundred billion<br>suns, rehearsed small.</h2>
+      <h2 class="headline" data-f="2">Order is chaos<br>holding its breath.</h2>
+      <h2 class="headline" data-f="3">The body spells<br>its own name.</h2>
+    </div>
+
+    <div class="decks rise" style="--d:.55s">
+      <p class="deck is-active" data-f="0">A (2,3) torus knot — the simplest tangle the universe refuses to undo.</p>
+      <p class="deck" data-f="1">Three arms wound by hand-rolled noise, thin as a coin at the rim.</p>
+      <p class="deck" data-f="2">A perfect crystal of light. Every particle knows its address.</p>
+      <p class="deck" data-f="3">Six letters sampled from canvas ink, forty-five thousand signatures deep.</p>
+    </div>
+
+    <p class="hint rise" style="--d:.7s"><span class="hint-key">Hold</span> anywhere to scatter the body. Release — it remembers its shape.</p>
+  </section>
+
+  <nav class="formnav rise" style="--d:.6s" aria-label="Formations">
+    <button type="button" class="fbtn is-active" data-f="0" style="--accent:#7DF9FF" aria-current="true">
+      <span class="flab"><b>01</b> Knot</span><i class="fdot"></i>
+    </button>
+    <button type="button" class="fbtn" data-f="1" style="--accent:#B39DFF">
+      <span class="flab"><b>02</b> Galaxy</span><i class="fdot"></i>
+    </button>
+    <button type="button" class="fbtn" data-f="2" style="--accent:#FF6EC7">
+      <span class="flab"><b>03</b> Lattice</span><i class="fdot"></i>
+    </button>
+    <button type="button" class="fbtn" data-f="3" style="--accent:#EDEFFF">
+      <span class="flab"><b>04</b> Sigil</span><i class="fdot"></i>
+    </button>
+  </nav>
+
+  <p class="stats rise" style="--d:.8s"><span id="statCount">45,000</span> particles · <span id="statFps">—</span> fps · dpr ≤ 2 · additive</p>
+
+  <footer class="site-foot rise" style="--d:.9s">
+    <span class="foot-id">09 / 25 · CORPUS — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </span>
+  </footer>
+
+</div>
+
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

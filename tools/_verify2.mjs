@@ -1,0 +1,28 @@
+import { chromium } from 'playwright';
+const url = 'http://localhost:4173/08-meridian/';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const errs = [];
+page.on('console', m=>{ if(m.type()==='error') errs.push(m.text()); });
+page.on('pageerror', e=>errs.push(e.message));
+await page.goto(url, { waitUntil: 'networkidle' });
+await page.waitForTimeout(600);
+await page.evaluate(() => document.querySelector('.contents').scrollIntoView({block:'start'}));
+await page.waitForTimeout(1000);
+await page.screenshot({ path: '/private/tmp/claude-501/-Users-user-Vibe-Coding-25-2030-Website/ac7140fd-2d0f-4dc1-ad9e-2f07ababb55a/scratchpad/v2-contents.png' });
+await page.evaluate(() => document.querySelector('#essay').scrollIntoView({block:'start'}));
+await page.waitForTimeout(1000);
+await page.screenshot({ path: '/private/tmp/claude-501/-Users-user-Vibe-Coding-25-2030-Website/ac7140fd-2d0f-4dc1-ad9e-2f07ababb55a/scratchpad/v2-essay.png' });
+await page.evaluate(() => document.querySelector('#colophon').scrollIntoView({block:'start'}));
+await page.waitForTimeout(1000);
+await page.screenshot({ path: '/private/tmp/claude-501/-Users-user-Vibe-Coding-25-2030-Website/ac7140fd-2d0f-4dc1-ad9e-2f07ababb55a/scratchpad/v2-colophon.png' });
+console.log('ERRS:', JSON.stringify(errs));
+await page.close();
+
+const page2 = await browser.newPage({ viewport: { width: 390, height: 844 } });
+await page2.goto(url, { waitUntil: 'networkidle' });
+await page2.waitForTimeout(600);
+await page2.evaluate(() => document.querySelector('.contents').scrollIntoView({block:'start'}));
+await page2.waitForTimeout(1000);
+await page2.screenshot({ path: '/private/tmp/claude-501/-Users-user-Vibe-Coding-25-2030-Website/ac7140fd-2d0f-4dc1-ad9e-2f07ababb55a/scratchpad/v2-m-contents.png', clip:{x:0,y:500,width:390,height:260} });
+await browser.close();

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STRATA — The Gallery That Paints Again</title>
+  <meta name="description" content="STRATA is a generative gallery holding exactly one painting: a seeded flow-field artwork minted fresh for every visitor. Re-mint it, and the edition you saw is gone forever.">
+  <meta property="og:title" content="STRATA — The Gallery That Paints Again">
+  <meta property="og:description" content="One room, one painting, minted for you on arrival. Curl-noise flow fields, seeded pigment, and a brass plaque that never lies.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0E0D0B">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230E0D0B'/%3E%3Cpath d='M14 22c10-5 26 5 36-2' stroke='%23C05020' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 33c10-5 26 5 36-2' stroke='%23A6854D' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 44c10-5 26 5 36-2' stroke='%23EFE9DD' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Inter:wght@400..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="lamp" id="lamp" aria-hidden="true"></div>
+
+  <header class="site-head">
+    <a class="wordmark" href="#top" aria-label="STRATA — home">STRATA <span class="tick" aria-hidden="true"></span></a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open the room index">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav" id="siteNav" aria-label="Rooms">
+      <a href="#room-i">Room I</a>
+      <a href="#room-ii">Room II</a>
+      <a href="#process">Process</a>
+      <a class="nav-guide" href="guide/">How it's made</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ ROOM I : THE COMMISSION ============ -->
+    <section class="room-one" id="room-i" aria-labelledby="h1">
+      <div class="spot" aria-hidden="true"></div>
+
+      <div class="wall-text">
+        <span class="eyebrow enter enter-1">Room I · The Commission</span>
+        <h1 class="display enter enter-2" id="h1">Every visit, the gallery <span class="amp">paints again.</span></h1>
+        <p class="prose enter enter-3">STRATA holds exactly one painting. It was begun the moment you arrived — a few thousand particles walking a curl-noise field, laying pigment where the current carries them. No one has seen this edition before you. No one will see it after.</p>
+        <div class="actions enter enter-4">
+          <button class="btn btn-mint js-remint" type="button">
+            <span class="coin" aria-hidden="true"></span> Re-mint the edition
+          </button>
+          <a class="btn btn-ghost" href="#room-ii">Walk to Room II</a>
+        </div>
+
+        <aside class="label-card enter enter-4" aria-label="Museum label for the current edition">
+          <div class="lc-head">
+            <span class="eyebrow" id="lcEdition">Edition No. ····-·</span>
+            <span class="lc-status"><span class="dot" id="lcStatusDot" aria-hidden="true"></span><span id="lcStatus">Minting · 0%</span></span>
+          </div>
+          <dl class="lc-fields">
+            <dt>Title</dt><dd class="lc-title" id="lcTitle">—</dd>
+            <dt>Medium</dt><dd id="lcMedium">—</dd>
+            <dt>Palette</dt><dd><span id="lcPalette">—</span><span class="pal-chips" id="lcChips" aria-hidden="true"></span></dd>
+            <dt>Field</dt><dd id="lcField">—</dd>
+            <dt>Seed</dt><dd id="lcSeed">—</dd>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="easel enter enter-5">
+        <div class="frame" id="heroFrame">
+          <div class="canvas-mat">
+            <canvas id="painting" role="img" aria-label="The commissioned painting: a unique generative flow-field artwork minted for this visit"></canvas>
+            <div class="canvas-glaze" aria-hidden="true"></div>
+            <div class="canvas-dim" aria-hidden="true"></div>
+            <div class="canvas-flash" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="plaque" id="heroPlaque">
+          <div class="p-no" id="plaqueNo">Edition No. ····-·</div>
+          <div class="p-title" id="plaqueTitle">Minting…</div>
+          <div class="p-seed" id="plaqueSeed">flow-field advection · seeded</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="seam" aria-hidden="true"></div>
+
+    <!-- ============ ROOM II : THE STANDING COLLECTION ============ -->
+    <section class="room room-two" id="room-ii" aria-labelledby="h2-wall">
+      <div class="spot" aria-hidden="true"></div>
+      <div class="room-head">
+        <div class="room-head-inner">
+          <span class="eyebrow reveal">Room II · The Standing Collection</span>
+          <h2 class="display reveal" id="h2-wall" style="--d:.1s">Six editions the curators refused to destroy.</h2>
+          <p class="prose reveal" style="--d:.2s">Every re-mint erases a painting. These six were pardoned — seeds pinned under glass so the field repaints them, stroke for stroke, exactly as first shown. Walk the wall; each plaque names its palette.</p>
+        </div>
+      </div>
+      <div class="wall-nav reveal" style="--d:.25s">
+        <button id="wallPrev" type="button" aria-label="Scroll the wall left">←</button>
+        <button id="wallNext" type="button" aria-label="Scroll the wall right">→</button>
+      </div>
+      <div class="wall-shell">
+        <div class="wall" id="wall" tabindex="0" role="region" aria-label="The standing collection — six preserved editions, scrolls horizontally"></div>
+      </div>
+    </section>
+
+    <div class="seam" aria-hidden="true"></div>
+
+    <!-- ============ PROCESS : HOW THE FIELD PAINTS ============ -->
+    <section class="room process" id="process" aria-labelledby="h2-process">
+      <div class="spot" aria-hidden="true"></div>
+      <div class="room-head">
+        <span class="eyebrow reveal">Process · Wall Text</span>
+        <h2 class="display reveal" id="h2-process" style="--d:.1s">How the field paints.</h2>
+        <p class="prose reveal" style="--d:.2s">There is no brush and no image to copy. There is only a field of directions, a crowd of particles, and time.</p>
+      </div>
+      <div class="process-grid">
+        <div class="steps">
+          <div class="step reveal">
+            <h3>The field is laid down</h3>
+            <p>A seed — one integer — feeds <code>mulberry32</code>, and the numbers it breathes out build a lattice of fractal value noise. Sampled anywhere on the canvas, the noise returns an angle. The whole painting-to-be is already present here, invisible, like grain in uncut stone.</p>
+          </div>
+          <div class="step reveal" style="--d:.12s">
+            <h3>The particles walk</h3>
+            <p>A few thousand particles drop onto the canvas and do the only thing they know: ask the field which way, step, ask again. Each step leaves a stroke of near-transparent pigment. None of them knows about composition. The field knows.</p>
+          </div>
+          <div class="step reveal" style="--d:.24s">
+            <h3>The sediment settles</h3>
+            <p>Strokes accumulate like silt — thousands of layers a second at first, then slower, thinner, quieter. Color is geological: each particle is born into a stratum of its palette and carries that ink for life. When the surface reads as stone, the edition is on view.</p>
+          </div>
+        </div>
+        <figure class="field-diagram reveal" style="--d:.15s">
+          <svg id="fieldSvg" viewBox="0 0 640 440" role="img" aria-label="Animated diagram: a grid of small arrows showing the flow field reorienting, with two particles tracing paths through it"></svg>
+          <figcaption>Fig. 1 — the direction field, sampled live · two walkers shown</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="seam" aria-hidden="true"></div>
+
+    <!-- ============ COLOPHON ============ -->
+    <section class="room colophon">
+      <div class="mark reveal" aria-hidden="true"></div>
+      <blockquote class="display reveal" style="--d:.1s">A painting you can regenerate is not a copy of anything. It is a place the mathematics has agreed to hold still.</blockquote>
+      <cite class="reveal" style="--d:.2s">— from the founding deed of the gallery, 2026</cite>
+    </section>
+
+  </main>
+
+  <footer class="site-foot">
+    <p><b>03 / 25 · STRATA</b> — designed &amp; coded by Claude Fable 5</p>
+    <nav aria-label="Site">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </nav>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>

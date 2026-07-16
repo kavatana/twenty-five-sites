@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MERIDIAN — How it's made</title>
+<meta name="description" content="Technical supplement to MERIDIAN issue 04: the truthful grid overlay, the generated Brockmann arc plate, and the baseline arithmetic behind the spreads.">
+<meta property="og:title" content="MERIDIAN — How it's made">
+<meta property="og:description" content="Technical supplement: a truthful 12-column overlay, a generated arc plate after Müller-Brockmann, and 28-pixel baseline arithmetic.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23111111'/%3E%3Cg fill='none' stroke='%23F4F1EA'%3E%3Ccircle cx='20' cy='46' r='10' stroke-width='3' stroke-dasharray='47 16'/%3E%3Ccircle cx='20' cy='46' r='19' stroke-width='5' stroke-dasharray='89 31'/%3E%3Ccircle cx='20' cy='46' r='31' stroke-width='8' stroke-dasharray='146 49'/%3E%3C/g%3E%3Ccircle cx='20' cy='46' r='25' fill='none' stroke='%23E63329' stroke-width='3' stroke-dasharray='110 47'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Spectral:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap grid">
+    <a class="wordmark" href="../">MERIDIAN</a>
+    <p class="mast-mid">Technical supplement — issue 04</p>
+    <div class="mast-right"><a class="u" style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase" href="../">← Issue 04</a></div>
+  </div>
+  <div class="wrap"><div class="mast-rule"></div></div>
+</header>
+
+<main class="guide-main">
+  <div class="wrap guide-head">
+    <p class="guide-kicker"><span class="sq" aria-hidden="true"></span>How it's made</p>
+    <h1 class="guide-title">Everything on that page<br>can be audited.</h1>
+  </div>
+
+  <div class="wrap grid guide-grid">
+    <p class="guide-index" aria-hidden="true">01</p>
+    <section class="guide-sec">
+      <h2>Concept</h2>
+      <p>MERIDIAN is a love letter to the Swiss International Style — Müller-Brockmann, air, order — built on the wager that type alone can carry a whole site. One family, Inter Tight, does every job from the 300-weight cover statement to the 900-weight numeral cropped at the viewport edge; hierarchy is weight and scale, never ornament. Spectral appears exactly once, italic, for the pull quote — a single planned transgression, which is the most Swiss thing about it.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">02</p>
+    <section class="guide-sec">
+      <h2>The grid that tells the truth</h2>
+      <p>The GRID button (or the <code>G</code> key) is the signature. Most “grid overlays” are decorative approximations; this one cannot lie, because the overlay and the layout share the same construction — one <code>.wrap</code> container, one <code>display:grid</code> with <code>repeat(var(--cols),1fr)</code> and the same gutter token. Twelve JS-built cells get red hairline borders and tiny indices; a <code>repeating-linear-gradient</code> adds the 28-pixel baseline rows. If a paragraph misses a column, the overlay shows the crime. Below 760px the layout drops to six columns and the overlay drops with it, via the same <code>--cols</code> custom property.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">03</p>
+    <section class="guide-sec">
+      <h2>The arc plate</h2>
+      <p>Plate 04 rebuilds the logic of the 1955 <em>beethoven</em> poster in generated SVG: seven <code>&lt;circle&gt;</code> elements whose band widths roughly double (4, 7, 11, 18, 29, 47, 76), turned into arcs with <code>stroke-dasharray</code> computed from each circumference. A single <code>requestAnimationFrame</code> loop rotates each band at 0.2–0.9 degrees per second — slow enough to feel geological — while the whole system lerps toward a ±5° deflection driven by scroll position. The same loop runs the red progress rule, the right-edge ruler readout, and the cover numeral's counter-drift, so every moving part shares one clock. It pauses on <code>document.hidden</code> and never starts under <code>prefers-reduced-motion</code>, where the plate simply holds still, as ink would.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">04</p>
+    <section class="guide-sec">
+      <h2>Type as arithmetic</h2>
+      <p>Everything vertical is a multiple of <code>--bl: 28px</code>: body text sits at 17/28, rules and paddings are computed with <code>calc()</code>, and the drop cap is floated at exactly three baselines. Display sizes use <code>clamp()</code> with viewport terms so the spreads recompose rather than shrink. Texture is one inline SVG <code>feTurbulence</code> tile at 5% opacity — paper, not pixels.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">05</p>
+    <section class="guide-sec">
+      <h2>Passes</h2>
+      <p>Pass one built the six spreads and the instruments. Then screenshots at 1440×900 and 390×844 were audited like proofs off a press: crop of the numeral, rag of the dek, register of the toc rules, legibility of the colophon caps at 11px. What the overlay caught, the stylesheet corrected — which is, of course, the entire argument of the issue.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><div class="mast-rule"></div></div>
+  <div class="wrap grid foot-grid">
+    <p class="foot-id"><b class="red">08 / 25</b> · MERIDIAN — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a class="u" href="/">Index</a>
+      <a class="u" href="../">Issue 04</a>
+      <a class="u" href="./" aria-current="page">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

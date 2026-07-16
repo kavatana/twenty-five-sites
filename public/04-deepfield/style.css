@@ -1,0 +1,372 @@
+/* ── DEEPFIELD STATION · 04/25 · CRT console ─────────────────────────── */
+
+:root{
+  --bg:#050805;
+  --bg-lift:#081109;
+  --panel:#060d07;
+  --ink:#33ff66;
+  --ink-hi:#b8ffd0;
+  --ink-dim:#2fa259;
+  --ink-faint:#155a2e;
+  --line:#1c8a44;
+  --line-dim:#0e4423;
+  --amber:#ffb000;
+  --accent:#33ff66;
+  --glow:rgba(51,255,102,.45);
+  --glow-soft:rgba(51,255,102,.18);
+  --ft:'VT323',ui-monospace,monospace;      /* terminal voice */
+  --fd:'IBM Plex Mono',ui-monospace,monospace; /* dense data */
+  --ease-console:cubic-bezier(.19,1,.22,1);  /* slow power-on / big moves */
+  --ease-snap:cubic-bezier(.16,1,.3,1);      /* quick UI punches, hover, alarm */
+}
+
+body.alert{
+  --ink:#ffbe33;
+  --ink-hi:#ffe6ad;
+  --ink-dim:#c58f22;
+  --ink-faint:#6b4c0e;
+  --line:#b97e12;
+  --line-dim:#4f3608;
+  --accent:#ffb000;
+  --glow:rgba(255,176,0,.42);
+  --glow-soft:rgba(255,176,0,.16);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html{background:#020402}
+
+body{
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 42%, var(--bg-lift) 0%, var(--bg) 68%);
+  color:var(--ink);
+  font-family:var(--ft);
+  font-size:19px;
+  line-height:1.3;
+  letter-spacing:.02em;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  text-shadow:0 0 7px var(--glow), 0 0 1px var(--glow);
+}
+
+.panel, .panel *, header, header *, footer, footer *, .klaxon{
+  transition:color .55s var(--ease-snap), border-color .55s var(--ease-snap),
+             background-color .55s var(--ease-snap), text-shadow .55s var(--ease-snap);
+}
+
+::selection{background:var(--ink);color:var(--bg);text-shadow:none}
+
+/* visually hidden but present for assistive tech — used to announce
+   command-line responses without exposing the per-character typewriter */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+a:hover{background:var(--ink);color:var(--bg);text-shadow:none;border-bottom-color:var(--ink)}
+:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+
+/* ── CRT overlays ────────────────────────────────────────────────────── */
+
+.scanlines{
+  position:fixed;inset:0;z-index:70;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg, rgba(0,0,0,.26) 0px, rgba(0,0,0,.26) 1px, transparent 1px, transparent 3px);
+}
+.grille{
+  position:fixed;inset:0;z-index:71;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(
+    90deg, rgba(35,255,110,.028) 0 1px, transparent 1px 3px);
+}
+.vignette{
+  position:fixed;inset:0;z-index:72;pointer-events:none;border-radius:22px;
+  background:radial-gradient(ellipse 95% 92% at 50% 50%, transparent 58%, rgba(0,0,0,.62) 100%);
+  box-shadow:inset 0 0 140px rgba(0,0,0,.75);
+}
+.flicker{
+  position:fixed;inset:0;z-index:73;pointer-events:none;
+  background:var(--glow-soft);
+  mix-blend-mode:overlay;
+  animation:flick 4.7s steps(1) infinite;
+}
+@keyframes flick{
+  0%{opacity:.10} 7%{opacity:.16} 9%{opacity:.08} 31%{opacity:.13}
+  33%{opacity:.07} 58%{opacity:.14} 61%{opacity:.09} 83%{opacity:.15}
+  85%{opacity:.07} 100%{opacity:.10}
+}
+
+/* ── Boot overlay ────────────────────────────────────────────────────── */
+
+#boot{
+  position:fixed;inset:0;z-index:80;background:var(--bg);
+  padding:clamp(18px,5vh,64px) clamp(16px,6vw,90px);
+  font-size:clamp(17px,2.1vh,22px);
+  transition:opacity .38s var(--ease-snap), transform .38s var(--ease-console);
+  cursor:pointer;
+  transform-origin:50% 50%;
+}
+#boot.off{opacity:0;transform:scaleY(.004);pointer-events:none}
+#boot .bline{white-space:pre;min-height:1.3em}
+#boot .bhint{position:absolute;bottom:5vh;left:clamp(16px,6vw,90px);color:var(--ink-dim)}
+
+.cursor{
+  display:inline-block;width:.55em;height:1.05em;
+  vertical-align:-.14em;background:var(--ink);
+  animation:blink 1.06s steps(1) infinite;
+}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* ── Stage / layout ──────────────────────────────────────────────────── */
+
+#stage{display:flex;flex-direction:column;min-height:100vh;opacity:0}
+#stage.on{opacity:1;animation:crt-on .55s var(--ease-console)}
+@keyframes crt-on{
+  0%{transform:scaleY(.01) scaleX(1.12);filter:brightness(6)}
+  55%{transform:scaleY(1.03) scaleX(1);filter:brightness(1.6)}
+  100%{transform:scaleY(1);filter:brightness(1)}
+}
+
+/* panels power up in sequence after the tube snaps on, like subsystems
+   coming online one bus at a time rather than one flat flash */
+main.console > .col-left, main.console > #p-map, main.console > #p-log, main.console > #p-cmd{
+  opacity:0;transform:translateY(5px);
+}
+#stage.on main.console > *{animation:panel-in .5s var(--ease-console) forwards}
+#stage.on main.console > .col-left{animation-delay:.08s}
+#stage.on main.console > #p-map{animation-delay:.20s}
+#stage.on main.console > #p-log{animation-delay:.34s}
+#stage.on main.console > #p-cmd{animation-delay:.44s}
+@keyframes panel-in{to{opacity:1;transform:none}}
+
+header.mast{
+  display:flex;align-items:baseline;gap:26px;flex-wrap:wrap;
+  padding:10px 22px 8px;border-bottom:1px solid var(--line-dim);
+  font-size:21px;
+}
+.mast .brand{font-size:26px;color:var(--ink-hi);letter-spacing:.06em}
+.mast .brand::before{content:"▚▚ ";color:var(--ink)}
+.mast .sub{color:var(--ink-dim)}
+.mast .clock{margin-left:auto;display:flex;gap:26px;color:var(--ink)}
+.mast .clock b{color:var(--ink-dim);font-weight:400}
+
+main.console{
+  flex:1;display:grid;gap:14px;padding:16px 18px 6px;
+  grid-template-columns:minmax(280px,332px) 1fr minmax(280px,332px);
+  grid-template-rows:minmax(0,1fr) minmax(176px,204px);
+  grid-template-areas:"left map right" "cmd cmd cmd";
+  min-height:0;
+}
+.col-left{grid-area:left;display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0}
+#p-map{grid-area:map}
+#p-log{grid-area:right}
+#p-cmd{grid-area:cmd}
+/* grid/flex children default to a content-based min-width, which lets a few
+   long nowrap data cells force the whole console wider than the viewport
+   (classic "grid blowout"). Pin every level of the chain back to 0 so rows
+   shrink and wrap inside their track instead of pushing the page sideways. */
+main.console > *, .panel, .trow{min-width:0}
+
+/* ── Panels ──────────────────────────────────────────────────────────── */
+
+.panel{
+  position:relative;border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(20,90,46,.06), rgba(20,90,46,.015));
+  padding:18px 14px 14px;min-height:0;display:flex;flex-direction:column;
+  transition:border-color .4s var(--ease-snap), box-shadow .4s var(--ease-snap);
+}
+/* module under the cursor reads as "armed" — cheap but real console tactility.
+   gated to real pointers so a mobile tap doesn't leave a stuck hover state. */
+@media (hover:hover) and (pointer:fine){
+  .panel:hover{border-color:var(--ink);box-shadow:0 0 0 1px var(--line-dim),0 0 26px -6px var(--glow)}
+}
+.panel>h2.pt, .panel>.ptag{
+  position:absolute;background:var(--bg);padding:0 2px;
+  font-family:var(--ft);font-weight:400;font-size:19px;letter-spacing:.05em;
+  white-space:nowrap;
+}
+.panel>h2.pt{top:-.72em;left:10px;color:var(--ink-hi)}
+.panel>.ptag{bottom:-.68em;right:10px;color:var(--ink-dim);font-size:16px}
+
+/* the row list scrolls internally if a short viewport can't fit every line —
+   the panel's border-set title/tag stay put; only the data rolls, like a
+   printout feeding past a fixed bezel. Invisible at the two target viewports
+   (900px / 844px tall), it only engages on cramped browser chrome. */
+.panel-body{
+  flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--line-dim) transparent;
+}
+.panel-body::-webkit-scrollbar{width:6px}
+.panel-body::-webkit-scrollbar-track{background:transparent}
+.panel-body::-webkit-scrollbar-thumb{background:var(--line-dim)}
+.panel-body::-webkit-scrollbar-thumb:hover{background:var(--line)}
+
+/* telemetry rows */
+.trow{
+  display:flex;align-items:baseline;gap:8px;
+  font-family:var(--fd);font-size:12.5px;letter-spacing:.03em;
+  padding:3.5px 2px;
+}
+.trow .lbl{color:var(--ink-dim);flex-shrink:0}
+.trow .dots{flex:1;overflow:hidden;white-space:nowrap;color:var(--ink-faint);letter-spacing:3px}
+.trow .val{color:var(--ink-hi);white-space:nowrap;font-variant-numeric:tabular-nums}
+.trow .val.big{font-family:var(--ft);font-size:21px;line-height:1}
+.trow .unit{color:var(--ink-dim);font-size:11px}
+.spark{
+  font-family:var(--fd);font-size:13px;letter-spacing:1px;
+  color:var(--ink);padding:2px;white-space:pre;overflow:hidden;
+}
+.gauge{white-space:pre;font-family:var(--fd);font-size:12.5px;color:var(--ink)}
+
+/* subsystem status flags */
+.flag{font-family:var(--fd);font-size:11px;padding:0 5px;border:1px solid var(--line-dim);color:var(--ink)}
+.flag.warn{border-color:var(--amber);color:var(--amber);animation:blink 1.06s steps(1) infinite}
+
+/* map */
+#p-map{padding:16px 10px 10px}
+.maphold{flex:1;min-height:0;position:relative}
+#sky{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+.mapfoot{
+  display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;
+  font-family:var(--fd);font-size:12px;color:var(--ink-dim);
+  border-top:1px solid var(--line-dim);margin-top:8px;padding:7px 4px 0;
+  font-variant-numeric:tabular-nums;
+}
+.mapfoot .hot{color:var(--ink-hi)}
+.mapfoot .hint{color:var(--ink-dim)}
+
+/* event log */
+#log{
+  flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+  font-family:var(--fd);font-size:12px;line-height:1.62;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 18%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 18%);
+}
+#log .ll{display:flex;gap:8px;align-items:baseline}
+#log .met{color:var(--ink-faint);flex-shrink:0}
+#log .who{color:var(--ink-dim);width:6.5ch;flex-shrink:0}
+#log .msg{color:var(--ink)}
+#log .ll.hot .msg,#log .ll.hot .who{color:var(--amber)}
+
+/* command */
+#p-cmd{padding:18px 16px 12px}
+.cmdstatus{
+  display:flex;gap:22px;flex-wrap:wrap;
+  font-family:var(--fd);font-size:11px;letter-spacing:.04em;color:var(--ink-dim);
+  border-bottom:1px solid var(--line-dim);padding-bottom:8px;margin-bottom:2px;
+  font-variant-numeric:tabular-nums;
+}
+.cmdstatus span span{color:var(--ink-hi)}
+.cmdstatus .hot{color:var(--amber)}
+#cmdout{
+  flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+  font-size:19px;line-height:1.32;white-space:pre-wrap;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 14%);
+}
+#cmdout .echo{color:var(--ink-dim)}
+#cmdout .resp{color:var(--ink)}
+#cmdout .hot{color:var(--amber)}
+.cmdline{
+  display:flex;align-items:baseline;gap:10px;position:relative;
+  border-top:1px solid var(--line-dim);margin-top:8px;padding-top:9px;
+  font-size:21px;cursor:text;
+  transition:box-shadow .3s var(--ease-snap);
+}
+.cmdline .prompt{color:var(--ink-hi);transition:color .3s var(--ease-snap)}
+/* :focus-within reacts to the real (invisible) input, so keyboard-tab users
+   get a genuine focus-visible cue even though #cmdinput itself is opacity:0 */
+.cmdline:focus-within{box-shadow:0 -1px 0 var(--accent),0 6px 18px -8px var(--glow)}
+.cmdline:focus-within .prompt{color:var(--accent)}
+#cmdtext{white-space:pre}
+#cmdinput{
+  position:absolute;inset:0;opacity:0;border:0;background:none;
+  font-size:16px;color:transparent;caret-color:transparent;cursor:text;
+}
+.presets{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:baseline}
+.presets .plbl{color:var(--ink-dim);font-size:16px}
+.presets button{
+  font-family:var(--ft);font-size:17px;letter-spacing:.04em;
+  background:none;border:1px solid var(--line);color:var(--ink);
+  padding:1px 12px;cursor:pointer;text-shadow:inherit;
+}
+.presets button:hover{background:var(--ink);color:var(--bg);text-shadow:none}
+.presets button:active{transform:translateY(1px)}
+
+/* klaxon banner */
+.klaxon{
+  position:fixed;top:0;left:50%;transform:translate(-50%,-110%);
+  z-index:75;padding:6px 26px 7px;font-size:22px;letter-spacing:.08em;
+  background:var(--amber);color:#140b00;text-shadow:none;
+  border:1px solid #140b00;border-top:0;white-space:nowrap;max-width:96vw;overflow:hidden;
+  transition:transform .45s var(--ease-console);
+}
+.klaxon.on{transform:translate(-50%,0);animation:klax 1s steps(1) infinite}
+@keyframes klax{
+  0%,54%{background:var(--amber);color:#140b00}
+  55%,100%{background:#140b00;color:var(--amber)}
+}
+
+/* footer */
+footer.deck{
+  display:flex;gap:22px;flex-wrap:wrap;align-items:baseline;
+  padding:9px 22px 12px;border-top:1px solid var(--line-dim);
+  font-size:17px;color:var(--ink-dim);
+}
+footer.deck .lnk{margin-left:auto;display:flex;gap:20px}
+footer.deck a{color:var(--ink)}
+
+/* ── Guide page ──────────────────────────────────────────────────────── */
+.guide-wrap{max-width:76ch;margin:0 auto;padding:44px 22px 20px;flex:1;width:100%}
+.guide-wrap .panel{padding:26px 26px 22px;margin-bottom:26px}
+.guide-wrap h1{font-size:clamp(34px,5vw,48px);color:var(--ink-hi);letter-spacing:.05em;line-height:1.05;margin-bottom:6px}
+.guide-wrap .kicker{color:var(--ink-dim);font-size:19px;margin-bottom:30px}
+.guide-wrap p{margin:0 0 1em;font-size:20px;line-height:1.42}
+.guide-wrap p b{color:var(--ink-hi);font-weight:400}
+.guide-wrap .tech{font-family:var(--fd);font-size:12.5px;line-height:1.7;color:var(--ink);white-space:pre-wrap}
+.guide-wrap .tech .k{color:var(--ink-hi)}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (min-width:981px){
+  body{height:100vh;overflow:hidden}
+}
+@media (max-width:980px){
+  body{font-size:18px}
+  .vignette{border-radius:12px}
+  main.console{
+    grid-template-columns:1fr;
+    grid-template-rows:auto;
+    grid-template-areas:"map" "cmd" "left" "right";
+    padding:14px 12px 4px;
+  }
+  .maphold{height:min(46vh,340px);flex:none}
+  #p-cmd{min-height:250px}
+  #cmdout{min-height:118px}
+  #log{min-height:150px;max-height:230px;flex:none}
+  .mast{gap:12px;padding:9px 14px 7px}
+  .mast .clock{margin-left:0;width:100%;justify-content:space-between;gap:10px;font-size:17px}
+  .mast .brand{font-size:22px}
+  .mast-elev{display:none}
+  footer.deck{padding:9px 14px 12px}
+  footer.deck .lnk{margin-left:0}
+  .klaxon{font-size:17px;padding:5px 12px 6px;white-space:normal;text-align:center;width:100vw}
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion:reduce){
+  .flicker{animation:none;opacity:.08}
+  .cursor{animation:none}
+  .klaxon.on{animation:none}
+  .flag.warn{animation:none}
+  #stage.on{animation:none}
+  #boot{transition:opacity .3s var(--ease-snap);transform:none}
+  #boot.off{transform:none}
+  .klaxon{transition:none}
+  main.console > .col-left, main.console > #p-map, main.console > #p-log, main.console > #p-cmd{
+    opacity:1;transform:none;
+  }
+  #stage.on main.console > *{animation:none}
+}

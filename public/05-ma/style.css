@@ -1,0 +1,628 @@
+/* ═══════════════════════════════════════════════════════════
+   間 MA — paper & ink, kyoto
+   washi #F5F1E8 · sumi #1C1A17 · vermillion #C73E2E (once per view)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --washi: #F5F1E8;
+  --sumi: #1C1A17;
+  --ink-soft: #57514A;
+  --ink-faint: #6E675E;
+  --vermillion: #C73E2E;
+  /* same ink, darkened for the one place vermillion carries meaning as
+     small text (season toggle) rather than sitting on a seal — #C73E2E
+     reads 4.48:1 on washi, just under AA's 4.5:1 for sub-large text. */
+  --vermillion-text: #A9331F;
+  --ease-slow: cubic-bezier(.22, .08, .14, 1);
+  --ease-draw: cubic-bezier(.65, .01, .22, 1);
+  --ease-stamp: cubic-bezier(.3, 1.4, .45, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--washi);
+  color: var(--sumi);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 300;
+  line-height: 1.9;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.jp, [lang="ja"] { font-family: 'Noto Serif JP', serif; }
+
+::selection { background: rgba(199, 62, 46, .16); }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 1.5px solid var(--sumi);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+/* ── paper grain ─────────────────────────────────────────── */
+.grain {
+  position: fixed;
+  inset: -10%;
+  pointer-events: none;
+  z-index: 40;
+  opacity: .05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── self-drawing strokes (shared) ───────────────────────── */
+path[data-draw] {
+  transition: stroke-dashoffset var(--dur, 2200ms) var(--ease-draw) var(--delay, 0ms);
+}
+.drawn path[data-draw] { stroke-dashoffset: 0 !important; }
+
+/* ── hero ────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  justify-items: center;
+  align-items: center;
+  padding: 0 6vw;
+}
+
+.topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2.2rem clamp(1.4rem, 5vw, 4rem);
+}
+.wordmark {
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.topbar-right {
+  font-size: .68rem;
+  letter-spacing: .34em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.topbar-right .jp { font-size: .78rem; letter-spacing: .28em; }
+.dot-sep { margin: 0 .7em 0 .4em; }
+
+.hero-vertical {
+  position: absolute;
+  top: 50%;
+  right: clamp(1.3rem, 4.5vw, 3.6rem);
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-size: clamp(.78rem, 1vw, .92rem);
+  font-weight: 300;
+  letter-spacing: .52em;
+  color: var(--ink-soft);
+}
+.seal-dot {
+  display: inline-block;
+  inline-size: 8px;
+  block-size: 8px;
+  margin-block-start: 1.6em;
+  background: var(--vermillion);
+  border-radius: 1.5px;
+}
+
+.hero-art {
+  grid-row: 2;
+  position: relative;
+  width: min(760px, 86vw);
+  display: grid;
+  grid-template-rows: auto auto;
+  row-gap: clamp(1.2rem, 4.4vh, 2.7rem);
+  justify-items: center;
+  align-items: center;
+}
+.ink-wash {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 130%;
+  aspect-ratio: 1.5;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(28, 26, 23, .055), transparent 70%);
+  filter: blur(2px);
+  animation: wash-drift 42s var(--ease-slow) infinite alternate;
+  pointer-events: none;
+}
+@keyframes wash-drift {
+  from { transform: translate(-4%, -2%) scale(1); }
+  to   { transform: translate(4%, 3%) scale(1.12); }
+}
+.stroke-svg { grid-row: 2; width: 100%; height: auto; display: block; }
+.drawn .ink-bleed {
+  animation: ink-breathe 12.5s ease-in-out 5200ms infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes ink-breathe {
+  0%, 100% { opacity: .13; }
+  50% { opacity: .21; }
+}
+
+.hero-char {
+  grid-row: 1;
+  position: relative;
+  font-size: clamp(6.6rem, 17vw, 13.4rem);
+  font-weight: 300;
+  line-height: 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1800ms var(--ease-slow) 2300ms, transform 1800ms var(--ease-slow) 2300ms;
+}
+.drawn .hero-char {
+  opacity: 1;
+  transform: none;
+  animation: breath 9s ease-in-out 4600ms infinite;
+}
+@keyframes breath {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .86; }
+}
+
+.hero-copy {
+  grid-row: 3;
+  align-self: start;
+  text-align: center;
+  margin-top: clamp(1.4rem, 4vh, 3rem);
+}
+.hero-ma {
+  font-size: .82rem;
+  letter-spacing: .58em;
+  text-indent: .58em;
+  color: var(--sumi);
+  font-weight: 400;
+}
+.hero-reading {
+  display: block;
+  margin-top: .5rem;
+  font-size: .66rem;
+  letter-spacing: .3em;
+  color: var(--ink-faint);
+  font-style: normal;
+}
+.hero-line {
+  margin-top: 1.5rem;
+  font-size: clamp(.86rem, 1.05vw, .95rem);
+  color: var(--ink-soft);
+  letter-spacing: .06em;
+}
+
+.cue {
+  position: absolute;
+  bottom: 4.5vh;
+  left: 50%;
+  width: 1px;
+  height: 54px;
+  overflow: hidden;
+}
+.cue span {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(var(--sumi), rgba(28, 26, 23, .15));
+  transform: translateY(-100%);
+  animation: cue-fall 3.8s var(--ease-slow) infinite;
+}
+@keyframes cue-fall {
+  0%   { transform: translateY(-100%); }
+  55%  { transform: translateY(0); }
+  100% { transform: translateY(102%); }
+}
+
+/* ── sections: radical whitespace ────────────────────────── */
+.sec {
+  position: relative;
+  min-height: 150vh;
+  display: grid;
+  place-items: center;
+  padding: 26vh 8vw;
+}
+
+.piece {
+  position: relative;
+  max-width: 34rem;
+  text-align: center;
+}
+
+.sec-label {
+  position: absolute;
+  top: -8rem;
+  right: -16%;
+  writing-mode: vertical-rl;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  font-weight: 300;
+  letter-spacing: .5em;
+  color: var(--sumi);
+  white-space: nowrap;
+}
+.sec-num {
+  display: block;
+  font-size: .68rem;
+  letter-spacing: .4em;
+  color: var(--ink-faint);
+  margin-block-end: 1.6em;
+}
+
+/* scroll-linked parallax: the numeral heading drifts at its own pace
+   as the section passes through view — pure progressive enhancement,
+   composes with .reveal's `transform` since `translate` is a separate
+   CSS property. Falls back to static (no motion) where unsupported. */
+@supports (animation-timeline: view()) {
+  .sec-label {
+    animation: label-drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 55%;
+  }
+  @keyframes label-drift {
+    from { translate: 0 34px; }
+    to   { translate: 0 -14px; }
+  }
+}
+
+.koan {
+  font-size: clamp(1.02rem, 1.5vw, 1.22rem);
+  font-weight: 300;
+  letter-spacing: .14em;
+  line-height: 2.3;
+}
+.koan-en {
+  margin-top: 2.2rem;
+  font-size: clamp(.85rem, 1vw, .93rem);
+  color: var(--ink-soft);
+  letter-spacing: .05em;
+}
+.aside {
+  margin-top: 3.4rem;
+  font-size: .8rem;
+  color: var(--ink-faint);
+  letter-spacing: .05em;
+}
+.aside .jp { font-size: .85rem; letter-spacing: .12em; }
+
+/* reveals */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 1600ms var(--ease-slow) var(--d, 0ms),
+              transform 1600ms var(--ease-slow) var(--d, 0ms);
+}
+.inview .reveal, .reveal.inview {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── stone ───────────────────────────────────────────────── */
+.stone {
+  width: clamp(96px, 11vw, 138px);
+  aspect-ratio: 1 / .82;
+  margin: 0 auto 4.5rem;
+  background: radial-gradient(circle at 36% 28%, #4A443B, #26221D 72%);
+  border-radius: 46% 54% 52% 48% / 56% 48% 52% 44%;
+  position: relative;
+  animation: stone-morph 16s ease-in-out infinite alternate;
+  transition: transform 1100ms var(--ease-slow);
+}
+.stone:hover { transform: scale(1.045); }
+.stone::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  bottom: -16%;
+  width: 88%;
+  height: 22%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(28, 26, 23, .22), transparent 70%);
+  border-radius: 50%;
+}
+@keyframes stone-morph {
+  0%   { border-radius: 46% 54% 52% 48% / 56% 48% 52% 44%; }
+  50%  { border-radius: 52% 48% 46% 54% / 50% 54% 46% 50%; }
+  100% { border-radius: 48% 52% 56% 44% / 52% 46% 54% 48%; }
+}
+
+/* ── seasons ─────────────────────────────────────────────── */
+.sec-seasons { overflow: hidden; }
+.season-pool {
+  position: absolute;
+  inset: 0;
+  background: #EFDCD3;
+  -webkit-mask-image: radial-gradient(52% 42% at 50% 50%, #000, transparent 72%);
+  mask-image: radial-gradient(52% 42% at 50% 50%, #000, transparent 72%);
+  opacity: .55;
+  transition: background-color 2600ms var(--ease-slow);
+  pointer-events: none;
+}
+[data-season="haru"] .season-pool { background: #EFD9CE; }
+[data-season="natsu"] .season-pool { background: #DEE6CC; }
+[data-season="aki"]  .season-pool { background: #EDDDBE; }
+[data-season="fuyu"] .season-pool { background: #D9E0DE; }
+
+.haiku-stage {
+  position: relative;
+  height: clamp(15rem, 34vh, 19rem);
+  margin-bottom: 3rem;
+}
+.haiku {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2.4rem;
+  opacity: 0;
+  transition: opacity 2000ms var(--ease-slow);
+  pointer-events: none;
+}
+.haiku.on { opacity: 1; }
+.haiku blockquote {
+  writing-mode: vertical-rl;
+  font-size: clamp(1.28rem, 1.9vw, 1.55rem);
+  font-weight: 300;
+  letter-spacing: .34em;
+  line-height: 2.5;
+  height: clamp(11.5rem, 24vh, 14rem);
+}
+.haiku figcaption {
+  font-size: clamp(.82rem, 1vw, .9rem);
+  color: var(--ink-soft);
+  letter-spacing: .05em;
+  line-height: 1.9;
+}
+
+.season-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1.6rem, 3vw, 2.6rem);
+}
+.season-btn {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.05rem;
+  font-weight: 300;
+  background: none;
+  border: none;
+  padding: .3rem .2rem;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 1200ms var(--ease-slow), transform 1200ms var(--ease-slow),
+              font-weight 1200ms var(--ease-slow);
+}
+.season-btn:hover { color: var(--sumi); }
+.season-btn.on {
+  /* darker than the seal's vermillion — 5.9:1 on washi vs. 4.5:1 raw,
+     since this carries meaning as small interactive text, not a stamp.
+     Weight + lift carry the "selected" state too, so it never rests on
+     color alone. */
+  color: var(--vermillion-text);
+  font-weight: 400; /* matches a loaded weight — 300/400/600 only, no synthesis */
+  transform: translateY(-3px);
+}
+.season-btn:active {
+  transform: translateY(-1px) scale(.92);
+  transition-duration: 160ms;
+}
+
+/* ── ensō ────────────────────────────────────────────────── */
+.enso-wrap { width: clamp(190px, 24vw, 260px); margin: 0 auto 3.6rem; }
+.enso-svg { width: 100%; height: auto; display: block; transition: transform 1100ms var(--ease-slow); transform-origin: 50% 50%; }
+.drawn .enso-svg { animation: breath 11s ease-in-out 3s infinite; }
+.enso-wrap:hover .enso-svg { transform: scale(1.03); }
+
+/* ── visit ───────────────────────────────────────────────── */
+.visit-lines {
+  margin-top: 3.6rem;
+  font-style: normal;
+  display: grid;
+  gap: .55rem;
+  font-size: .8rem;
+  letter-spacing: .14em;
+  color: var(--ink-faint);
+}
+.visit-lines .jp { font-size: .88rem; letter-spacing: .3em; color: var(--ink-soft); }
+
+/* ── footer ──────────────────────────────────────────────── */
+.foot {
+  min-height: 88vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 14vh 8vw 9vh;
+  gap: 0;
+}
+
+.hanko {
+  position: relative;
+  width: clamp(64px, 7vw, 84px);
+  margin-bottom: 3rem;
+  opacity: 0;
+  transform: scale(2.4) rotate(-9deg);
+  transition: opacity 480ms var(--ease-slow), transform 720ms var(--ease-stamp);
+}
+.hanko.stamped {
+  opacity: 1;
+  transform: scale(1) rotate(-3deg);
+}
+.hanko-svg { width: 100%; height: auto; display: block; position: relative; z-index: 1; }
+
+/* the seal's ink bleeding outward on contact — the site's one
+   moment of real impact, kept to the same vermillion the hanko
+   already spends so the "once per view" accent isn't doubled. */
+.hanko-ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  background: radial-gradient(circle, rgba(199, 62, 46, .55), rgba(199, 62, 46, 0) 68%);
+  opacity: 0;
+  pointer-events: none;
+}
+.hanko.stamped .hanko-ring {
+  animation: ink-bloom 1200ms var(--ease-slow) 560ms both;
+}
+@keyframes ink-bloom {
+  0%   { opacity: 0;   transform: scale(.5); }
+  28%  { opacity: .4; }
+  100% { opacity: 0;   transform: scale(2.6); }
+}
+
+.foot-name {
+  font-size: .92rem;
+  letter-spacing: .22em;
+  font-weight: 400;
+}
+.foot-credit {
+  margin-top: 1.3rem;
+  font-size: .72rem;
+  letter-spacing: .12em;
+  color: var(--ink-faint);
+}
+.foot-links {
+  margin-top: 2.6rem;
+  display: flex;
+  gap: 3rem;
+}
+/* the whole page settles a hair under the stamp's weight */
+.hanko.stamped ~ .foot-name  { animation: foot-settle 640ms var(--ease-slow) 600ms both; }
+.hanko.stamped ~ .foot-credit { animation: foot-settle 640ms var(--ease-slow) 660ms both; }
+.hanko.stamped ~ .foot-links  { animation: foot-settle 640ms var(--ease-slow) 720ms both; }
+@keyframes foot-settle {
+  0%   { translate: 0 0; }
+  40%  { translate: 0 3px; }
+  100% { translate: 0 0; }
+}
+.foot-links a {
+  font-size: .72rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding-bottom: .35rem;
+  background-image: linear-gradient(var(--sumi), var(--sumi));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 1px;
+  transition: background-size 900ms var(--ease-slow), color 900ms var(--ease-slow);
+}
+.foot-links a:hover {
+  color: var(--sumi);
+  background-size: 100% 1px;
+}
+.foot-links a:active {
+  color: var(--ink-faint);
+  transition-duration: 140ms;
+}
+
+/* ── ink cursor ──────────────────────────────────────────── */
+.ink-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--sumi);
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0;
+  transition: opacity 600ms ease, width 700ms var(--ease-slow), height 700ms var(--ease-slow);
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+body.ink-cursor-live { cursor: none; }
+body.ink-cursor-live a,
+body.ink-cursor-live button { cursor: none; }
+.ink-dot.grow {
+  width: 26px;
+  height: 26px;
+  background: rgba(28, 26, 23, .14);
+}
+
+/* a drop of ink touching down wherever the page is pressed */
+.ink-ripple {
+  position: fixed;
+  top: 0; left: 0;
+  width: 15px;
+  height: 15px;
+  margin: -7.5px 0 0 -7.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(28, 26, 23, .32), rgba(28, 26, 23, 0) 70%);
+  pointer-events: none;
+  z-index: 59;
+  transform: scale(0);
+  opacity: .6;
+  animation: ink-ripple-out 900ms var(--ease-slow) forwards;
+}
+@keyframes ink-ripple-out {
+  0%   { transform: scale(0);   opacity: .6; }
+  100% { transform: scale(7.5); opacity: 0; }
+}
+
+/* ── mobile composition ──────────────────────────────────── */
+@media (max-width: 720px) {
+  .hero { padding: 0 5vw; }
+  .hero-vertical {
+    top: auto;
+    bottom: 16vh;
+    transform: none;
+    font-size: .7rem;
+    right: 1.35rem;
+  }
+  .hero-art { width: 92vw; }
+  .sec { min-height: 130vh; padding: 22vh 8vw; }
+  .sec-label {
+    position: static;
+    writing-mode: horizontal-tb;
+    margin-bottom: 3.2rem;
+    letter-spacing: .5em;
+    text-indent: .5em;
+  }
+  .sec-num {
+    display: inline;
+    margin-block-end: 0;
+    margin-right: 1.4em;
+  }
+  .koan { line-height: 2.15; }
+  .haiku { gap: 1.9rem; }
+  .foot-links { gap: 2.2rem; }
+}
+
+/* ── short viewports: the falling cue was landing on top of the
+   closing line. Tighten the hero's own rhythm rather than fight it. ── */
+@media (max-height: 720px) {
+  .hero-art { row-gap: clamp(.7rem, 3vh, 1.6rem); }
+  .hero-char { font-size: clamp(5rem, 15vw, 9.6rem); }
+  .hero-copy { margin-top: clamp(.8rem, 2.2vh, 1.5rem); }
+  .hero-line { margin-top: .9rem; }
+  .cue { bottom: 2vh; height: 34px; }
+}
+@media (max-height: 720px) and (max-width: 720px) {
+  .hero-vertical { bottom: 11vh; }
+}
+
+/* ── reduced motion: the garden is already still ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; }
+  path[data-draw] { transition: none; stroke-dashoffset: 0 !important; }
+  .hero-char { opacity: 1; transform: none; transition: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .haiku { transition: opacity 400ms ease; }
+  .season-pool { transition: none; }
+  .hanko { opacity: 1; transform: scale(1) rotate(-3deg); transition: none; }
+  .cue span { transform: translateY(0); opacity: .4; }
+  .ink-wash { display: none; }
+  .hanko-ring { display: none; }
+  .stone, .enso-svg { transition: none; }
+  .stone:hover, .enso-wrap:hover .enso-svg { transform: none; }
+}

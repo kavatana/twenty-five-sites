@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it's made — DEEPFIELD STATION</title>
+<meta name="description" content="Build notes for DEEPFIELD STATION: CSS scanline CRT, canvas glyph starfield, one-rAF console engine, and an amber master-alarm palette swap.">
+<meta property="og:title" content="How it's made — DEEPFIELD STATION">
+<meta property="og:description" content="The techniques behind the 1978 phosphor console: scanlines, glyph starfield, typewriter engine, alarm mode.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#050805">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050805'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%2333FF66' stroke-width='2.4'/%3E%3Cpath d='M16 1v8M16 23v8M1 16h8M23 16h8' stroke='%2333FF66' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<div class="scanlines" aria-hidden="true"></div>
+<div class="grille" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="flicker" aria-hidden="true"></div>
+
+<div id="stage" class="on" style="opacity:1">
+  <header class="mast">
+    <span class="brand">DEEPFIELD STATION</span>
+    <span class="sub">ENGINEERING NOTE 04-A · HOW IT'S MADE</span>
+    <span class="clock"><span><b>DOC</b> REV C</span></span>
+  </header>
+
+  <div class="guide-wrap">
+    <h1>┌─ THE CONSOLE IS THE STAR ─┐</h1>
+    <p class="kicker">Why a telescope site shows you no pictures of space.</p>
+
+    <section class="panel">
+      <h2 class="pt">┤ CONCEPT ├</h2>
+      <p>DEEPFIELD STATION is a 1978 mission console for a deep-space photon telescope, played straight. No hero image, no scroll story — you sit the operator's seat. The page boots, hands you a command line, and then the station simply <b>runs</b>: telemetry ticks, the survey map slews, Houston mumbles on the air-ground loop, and every so often the sky misbehaves and the whole room goes amber. The copy is NASA-transcript laconic on purpose; a console that says less feels more real.</p>
+      <span class="ptag">┤ 04 / 25 ├</span>
+    </section>
+
+    <section class="panel">
+      <h2 class="pt">┤ TECHNIQUES ├</h2>
+      <p>The CRT is pure CSS layered over the document: a <b>repeating-linear-gradient</b> for scanlines, a second 90° pass for the aperture grille, a radial-gradient vignette with a huge inset box-shadow for tube curvature, and a low-amplitude <b>steps() flicker animation</b> blended with <span class="tech k">mix-blend-mode: overlay</span>. Phosphor bloom is just doubled <span class="tech k">text-shadow</span>.</p>
+      <p>The starfield is a 2D <b>canvas drawing glyphs, not pixels</b> — VT323 characters (· + *) placed on a character grid by a seeded <span class="tech k">mulberry32</span> PRNG, twinkling on per-star sine phases while the whole field drifts sidereally. The reticle is box-drawing characters (┌ ┐ └ ┘) slewed between catalog targets with an ease-in-out cubic; the RA/DEC readout interpolates real coordinates along the same curve. Between slews it never sits dead still — a summed-sine dither nudges the whole crosshair by a couple of pixels, the same texture as the ticking GUIDE DRIFT figure, so the map reads as a live servo instead of a frozen graphic. Click the field and the dish points there for real: the cursor position converts to a synthetic RA/DEC, the gimbal slews, and the event log gets an operator line.</p>
+      <p>Everything shares <b>one requestAnimationFrame loop</b> with an accumulated console clock: typewriter jobs (a small queue that types boot lines, command responses, and a live SCAN progress bar), telemetry noise, ambient log chatter, the auto-demo operator, and the alarm scheduler. Hide the tab and the loop cancels — the station politely holds its breath.</p>
+      <p>MASTER ALARM is a single class on <span class="tech k">&lt;body&gt;</span> that rewrites the <b>CSS custom-property palette</b> green→amber; canvas colors chase the same value through a lerped mix factor, so DOM and starfield change key together. <span class="tech k">prefers-reduced-motion</span> skips the boot typewriter, stills the flicker and klaxon blink, and snaps slews.</p>
+      <span class="ptag">┤ NO LIBRARIES ├</span>
+    </section>
+
+    <section class="panel">
+      <h2 class="pt">┤ ITERATION PASSES ├</h2>
+      <p>Pass one built the boot sequence, panel grid, and starfield, then fixed a grid-blowout bug that had pushed the reticle off every phone screen. Pass two went after motion and interaction: every lazy <span class="tech k">ease</span> keyword was swapped for named cubic-beziers, panel entrances stayed but the reticle gained continuous idle dither, and the map became genuinely clickable — point-and-slew, not just watch. Pass three chased craft that only shows up under scrutiny: <b>MASTER ALARM</b> now writes its own banner text and lifts <span class="tech k">aria-hidden</span> on trigger, since a static live region that never mutates never gets announced; command responses get a once-per-line screen-reader summary instead of silence; and testing shorter windows found a real bug — telemetry rows spilling past their panel with no overflow containment, fixed with a scrolling <span class="tech k">.panel-body</span>. The rule stands: screenshot, believe the pixels — and test a size the harness doesn't.</p>
+      <span class="ptag">┤ CKSUM 4A7F OK ├</span>
+    </section>
+  </div>
+
+  <footer class="deck">
+    <span>04 / 25 · DEEPFIELD STATION — designed &amp; coded by Claude Fable 5</span>
+    <span class="lnk"><a href="/">Index</a><a href="../">Back to console</a></span>
+  </footer>
+</div>
+
+</body>
+</html>

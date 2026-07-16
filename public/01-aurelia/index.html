@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELIA — Parfums de Lumière</title>
+<meta name="description" content="AURELIA, maison de haute parfumerie in Grasse since 1947. Three compositions — Aube, Méridien, Minuit — each a single hour of light, held still.">
+<meta property="og:title" content="AURELIA — Parfums de Lumière">
+<meta property="og:description" content="Three compositions, three hours of light. A maison de haute parfumerie rendered in liquid silk — Aube, Méridien, Minuit.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#14121C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='38%25' cy='32%25' r='75%25'%3E%3Cstop offset='0' stop-color='%23F6F2EC'/%3E%3Cstop offset='.42' stop-color='%23C9A96A'/%3E%3Cstop offset='.75' stop-color='%23906FAE'/%3E%3Cstop offset='1' stop-color='%2314121C'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2314121C'/%3E%3Ccircle cx='32' cy='32' r='22' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="aurelia.css">
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<a class="skip" href="#compositions">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand magnetic" href="#top" aria-label="Aurelia — home">A<em>urelia</em></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a class="nav-link magnetic" href="#compositions">Compositions</a>
+    <a class="nav-link magnetic" href="#accords">Accords</a>
+    <a class="nav-link magnetic" href="#maison">Maison</a>
+  </nav>
+</header>
+
+<section class="hero" id="top">
+  <canvas id="silk" aria-hidden="true"></canvas>
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="hero-content" data-plx="0.22">
+    <p class="hero-eyebrow" lang="fr">Maison de haute parfumerie · <span class="nowrap">Grasse · depuis 1947</span></p>
+    <h1 class="wordmark" aria-label="Aurelia">
+      <span style="--i:0">A</span><span style="--i:1">U</span><span style="--i:2">R</span><span style="--i:3">E</span><span style="--i:4">L</span><span style="--i:5">I</span><span style="--i:6">A</span>
+    </h1>
+    <p class="hero-tagline" lang="fr">La lumière, distillée.</p>
+  </div>
+  <div class="hero-foot">
+    <a class="scroll-cue" href="#compositions">Découvrir<span class="cue-line" aria-hidden="true"></span></a>
+    <span class="hero-note" lang="fr">Trois compositions · une seule heure chacune</span>
+  </div>
+</section>
+
+<section class="compositions" id="compositions">
+  <header class="sec-head reveal">
+    <p class="eyebrow">Les Compositions</p>
+    <h2>Three hours of light,<br><em>held still</em></h2>
+    <p class="lede">Each Aurelia is a single hour of the day, caught at its point of turning — then suspended, indefinitely. We make three. There is no fourth hour worth keeping.</p>
+  </header>
+  <div class="cards">
+    <article class="card reveal" data-scent="aube" style="--d:.05s">
+      <div class="card-inner">
+        <div class="card-visual"><canvas width="300" height="380" aria-hidden="true"></canvas></div>
+        <div class="card-body">
+          <p class="card-no">N° I — 5h04</p>
+          <h3 class="card-name">Aube</h3>
+          <p class="card-fr" lang="fr">« La première lueur, encore froide. »</p>
+          <p class="card-en">Cold light on white stone. A garden not yet awake, and no intention of waking it.</p>
+          <p class="card-notes">Bergamote givrée · Poire nashi · Muguet · Musc de soie</p>
+          <div class="card-meta"><span>Eau de parfum · 75&nbsp;ml</span><span>240&nbsp;€</span></div>
+        </div>
+        <span class="card-sheen" aria-hidden="true"></span>
+      </div>
+    </article>
+    <article class="card reveal" data-scent="meridien" style="--d:.18s">
+      <div class="card-inner">
+        <div class="card-visual"><canvas width="300" height="380" aria-hidden="true"></canvas></div>
+        <div class="card-body">
+          <p class="card-no">N° II — 12h00</p>
+          <h3 class="card-name">Méridien</h3>
+          <p class="card-fr" lang="fr">« Le plein soleil, immobile. »</p>
+          <p class="card-en">Noon vertical over the orange grove. Shade you could pour into a glass.</p>
+          <p class="card-notes">Fleur d’oranger · Iris beurré · Miel blanc · Santal</p>
+          <div class="card-meta"><span>Eau de parfum · 75&nbsp;ml</span><span>260&nbsp;€</span></div>
+        </div>
+        <span class="card-sheen" aria-hidden="true"></span>
+      </div>
+    </article>
+    <article class="card card--dark reveal" data-scent="minuit" style="--d:.31s">
+      <div class="card-inner">
+        <div class="card-visual"><canvas width="300" height="380" aria-hidden="true"></canvas></div>
+        <div class="card-body">
+          <p class="card-no">N° III — 00h00</p>
+          <h3 class="card-name">Minuit</h3>
+          <p class="card-fr" lang="fr">« Ce qui luit quand tout s’éteint. »</p>
+          <p class="card-en">The last lit window on the street. Smoke settling, slowly, into velvet.</p>
+          <p class="card-notes">Encens · Prune noire · Rose sombre · Ambre gris</p>
+          <div class="card-meta"><span>Eau de parfum · 75&nbsp;ml</span><span>280&nbsp;€</span></div>
+        </div>
+        <span class="card-sheen" aria-hidden="true"></span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="accords" id="accords">
+  <div class="accords-grid">
+    <div class="accords-text">
+      <div class="accords-head reveal">
+        <p class="eyebrow">L’Architecture</p>
+        <h2>Anatomy of<br><em>an accord</em></h2>
+        <p class="lede">We compose in three registers, the way dawn arrives: an instant, an hour, a memory.</p>
+      </div>
+      <ul class="tiers">
+        <li class="tier reveal" data-tier="tete" style="--d:.08s">
+          <span class="tier-key">Tête</span>
+          <div class="tier-copy">
+            <span class="tier-name">The instant</span>
+            <p>Bergamote, aldéhydes, poire givrée. It vanishes in twenty minutes; we spend two years on it.</p>
+          </div>
+        </li>
+        <li class="tier reveal" data-tier="coeur" style="--d:.2s">
+          <span class="tier-key">Cœur</span>
+          <div class="tier-copy">
+            <span class="tier-name">The hour</span>
+            <p>Rose de mai, iris pallida, fleur d’oranger. The temperature of skin, the exact middle of the day.</p>
+          </div>
+        </li>
+        <li class="tier reveal" data-tier="fond" style="--d:.32s">
+          <span class="tier-key">Fond</span>
+          <div class="tier-copy">
+            <span class="tier-name">The memory</span>
+            <p>Santal, musc blanc, ambre gris. What the room remembers after you have gone.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="pyramid" id="pyramid" data-plx="0.07" aria-hidden="true">
+      <span class="orb orb-tete o1"></span>
+      <span class="orb orb-tete o2"></span>
+      <span class="orb orb-tete o3"></span>
+      <span class="orb orb-coeur o4"></span>
+      <span class="orb orb-coeur o5"></span>
+      <span class="orb orb-coeur o6"></span>
+      <span class="orb orb-fond o7"></span>
+      <span class="orb orb-fond o8"></span>
+      <span class="p-label l-tete">tête</span>
+      <span class="p-label l-coeur">cœur</span>
+      <span class="p-label l-fond">fond</span>
+    </div>
+  </div>
+</section>
+
+<section class="maison" id="maison">
+  <p class="eyebrow reveal">La Maison</p>
+  <div class="quote-wrap" data-plx="-0.05">
+    <blockquote class="manifesto">
+      <p class="reveal" style="--d:.05s">We do not bottle flowers.</p>
+      <p class="reveal" style="--d:.34s">We bottle <em>the hour they opened.</em></p>
+    </blockquote>
+  </div>
+  <div class="maison-body reveal" style="--d:.22s">
+    <p>Aurelia was founded in Grasse in 1947, in a house with seventeen windows and no electric light. Élise Aurel composed only between five and seven in the morning, when the air was still cold enough to hold one scent apart from another.</p>
+    <p>We keep her hours. Three compositions, never more; each touched only when its hour changes — which is to say, never quickly. The rest is patience, silk, and weather.</p>
+    <p class="signature">É. Aurel</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="foot-brand">
+    <span class="foot-mark" aria-hidden="true">A</span>
+    <span class="foot-word">Aurelia — parfums de lumière</span>
+  </div>
+  <p class="foot-line">01 / 25 · AURELIA — designed &amp; coded by Claude Fable 5</p>
+  <nav class="foot-links" aria-label="Meta">
+    <a href="/">Index</a><span aria-hidden="true">·</span><a href="guide/">How it’s made</a>
+  </nav>
+</footer>
+
+<script type="module" src="aurelia.js"></script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+/* ============================================================
+   GROTESK™ — brutalist type foundry specimen
+   #0A0A0A / #FAFAFA / #FF2D2D. Zero radius. Nothing eases
+   unless it slams first.
+   ============================================================ */
+
+:root {
+  --ink: #0A0A0A;
+  --paper: #FAFAFA;
+  --red: #FF2D2D;
+  --b8: 8px solid var(--ink);
+  --b4: 4px solid var(--ink);
+  --slam: cubic-bezier(.05, .92, .1, 1);
+  --pad: clamp(16px, 3.4vw, 48px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+html { scroll-behavior: auto; } /* jumps snap. brutalism. */
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--red); color: var(--paper); }
+
+h1, h2, h3, .price, .line, .mark, .g, .strip-in, .wtxt {
+  font-family: "Archivo Black", Arial, sans-serif;
+  font-weight: 400;
+}
+
+.mono {
+  font-family: "Space Grotesk", monospace;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+a:focus-visible, button:focus-visible {
+  outline: 4px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---- raw grid lines on light sections ---- */
+.ruled {
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(10,10,10,.07) 0 1px,
+      transparent 1px calc(100% / 12));
+}
+
+/* ============ LOAD WIPE ============ */
+#wipe {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--red);
+  transform-origin: top;
+  animation: wipeout .5s steps(4, end) .15s forwards;
+  pointer-events: none;
+}
+@keyframes wipeout {
+  to { transform: scaleY(0); visibility: hidden; }
+}
+
+/* ============ HEADER ============ */
+.bar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+  height: 72px;
+  padding: 0 var(--pad);
+  background: var(--paper);
+  border-bottom: var(--b8);
+}
+.logo {
+  font-family: "Archivo Black", Arial, sans-serif;
+  font-size: 24px;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.logo sup { font-size: .45em; color: var(--red); }
+.nav { display: flex; gap: clamp(14px, 2.5vw, 36px); }
+.nav a, .foot-bar a {
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: inherit;
+  text-decoration: none;
+  padding-bottom: 4px;
+  background: linear-gradient(var(--ink), var(--ink)) left bottom / 0 8px no-repeat;
+}
+.nav a:hover, .foot-bar a:hover {
+  background: linear-gradient(var(--red), var(--red)) left bottom / 100% 8px no-repeat;
+}
+.live {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700; font-size: 12px; letter-spacing: .12em;
+}
+.blink {
+  width: 12px; height: 12px; background: var(--red);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ============ HERO ============ */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(16px, 2.5vh, 32px) var(--pad);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+@media (pointer: fine) {
+  .hero, .grid, .wfall { cursor: none; }
+}
+.hero-meta {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+.axes { color: var(--ink); text-align: right; white-space: nowrap; }
+.axes::before { content: "\25A0  "; color: var(--red); }
+
+.word {
+  align-self: center;
+  white-space: nowrap;
+  letter-spacing: -.03em;
+  line-height: .96;
+  font-size: 200px; /* JS refits to viewport */
+  touch-action: none;
+}
+.lw { display: inline-block; overflow: hidden; vertical-align: top; }
+.brk { display: none; }
+.lt {
+  display: inline-block;
+  font-family: "Anybody", "Archivo Black", Arial, sans-serif;
+  font-variation-settings: "wght" 800, "wdth" 100;
+  transform: translateY(115%);
+  animation: slam .5s var(--slam) forwards;
+  animation-delay: calc(.42s + var(--i) * .065s);
+  will-change: transform, font-variation-settings;
+}
+@keyframes slam { to { transform: translateY(0); } }
+
+.word-measure {
+  position: absolute; left: -9999px; top: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-family: "Anybody", Arial, sans-serif;
+  font-variation-settings: "wght" 800, "wdth" 100;
+  letter-spacing: -.03em;
+  font-size: 100px;
+}
+
+.hero-foot {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 16px;
+}
+.tag {
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700; font-size: 13px; letter-spacing: .1em; line-height: 1.6;
+  text-transform: uppercase;
+}
+.hint {
+  background: var(--red);
+  color: var(--ink);
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700; font-size: 13px; letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+/* custom cursor */
+#cur {
+  position: fixed; left: 0; top: 0; z-index: 150;
+  display: none;
+  pointer-events: none;
+  width: 0; height: 0;
+}
+#cur.on { display: block; }
+#cur::before, #cur::after {
+  content: ""; position: absolute; background: var(--red);
+}
+#cur::before { left: -14px; top: -1px; width: 28px; height: 3px; }
+#cur::after  { left: -1px; top: -14px; width: 3px; height: 28px; }
+#cur.grab::before, #cur.grab::after { transform: rotate(45deg); }
+#curlab {
+  position: absolute; left: 14px; top: 12px;
+  background: var(--ink); color: var(--paper);
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700; font-size: 10px; letter-spacing: .14em;
+  padding: 4px 7px;
+  white-space: nowrap;
+}
+#cur.grab #curlab { background: var(--red); color: var(--ink); }
+
+/* ============ MARQUEE ============ */
+.strip {
+  border-top: var(--b8);
+  border-bottom: var(--b8);
+  background: var(--ink);
+  overflow: hidden;
+}
+.strip:hover { background: var(--paper); }
+.strip:hover .strip-in { color: var(--ink); }
+.strip-in {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  color: var(--paper);
+  font-size: clamp(56px, 8.5vw, 120px);
+  line-height: 1.15;
+  padding: .06em 0;
+  will-change: transform;
+}
+.strip-in b { font-weight: 400; padding: 0 .14em; }
+.strip-in i {
+  display: inline-block;
+  width: .32em; height: .68em;
+  background: var(--red);
+  margin: 0 .18em;
+}
+
+/* ============ SECTIONS ============ */
+.sec {
+  border-top: var(--b8);
+  padding: clamp(40px, 7vh, 88px) var(--pad) clamp(48px, 8vh, 104px);
+}
+.sec:first-of-type { border-top: none; }
+.shead {
+  display: flex; align-items: baseline; gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(28px, 4.5vh, 56px);
+}
+.sno { color: var(--red); font-size: 21px; font-weight: 700; letter-spacing: .01em; }
+.shead h2 {
+  font-size: clamp(28px, 3.6vw, 48px);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.skick { margin-left: auto; opacity: .74; }
+
+/* reveals: slam in, tiny stagger, no lingering ease */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: transform .34s var(--slam), opacity .18s linear;
+}
+[data-reveal].in { opacity: 1; transform: none; }
+
+/* ---- doctrine ---- */
+.creed { display: grid; gap: clamp(20px, 3.5vh, 40px); margin-bottom: clamp(36px, 6vh, 72px); min-width: 0; }
+.line {
+  font-size: clamp(40px, 6.8vw, 96px);
+  line-height: .95;
+  letter-spacing: -.015em;
+  min-width: 0; /* grid items default to min-width:auto; without this,
+    an unbreakable word like "INFRASTRUCTURE." refuses to shrink below
+    its own content width and blows out the whole page's scroll box */
+}
+.line.red { color: var(--red); }
+.body-copy {
+  max-width: 62ch;
+  display: grid; gap: 1.2em;
+  font-size: clamp(16px, 1.35vw, 19px);
+  font-weight: 500;
+}
+
+/* ---- specimen grid: HARD SNAP, no transitions ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  background: var(--ink);
+  border: var(--b8);
+}
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.g {
+  font-size: clamp(64px, 12.5vw, 188px);
+  line-height: 1;
+  transform: translateY(.02em);
+}
+.cell .m {
+  position: absolute; left: 8px; bottom: 6px;
+  font-size: 10px; letter-spacing: .06em;
+  opacity: .62;
+}
+.cell:hover { background: var(--ink); }
+.cell:hover .g { color: var(--paper); }
+.cell:hover .m { color: var(--red); opacity: 1; }
+/* explicitly none — brutalism means abrupt */
+.cell, .cell .g, .cell .m { transition: none; }
+
+/* ---- waterfall ---- */
+.wfall { border: var(--b4); }
+.wrow {
+  display: flex; align-items: baseline; gap: 18px;
+  padding: .1em 14px .14em;
+  border-bottom: 2px solid var(--ink);
+  overflow: hidden;
+  white-space: nowrap;
+}
+.wrow:last-child { border-bottom: none; }
+.wlab {
+  flex: 0 0 58px;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  color: var(--ink);
+}
+.wlab::before { content: "\25A0  "; color: var(--red); }
+.wtxt { line-height: 1.06; letter-spacing: -.01em; }
+.wrow:hover { background: var(--ink); }
+.wrow:hover .wtxt { color: var(--paper); }
+.wrow:hover .wlab { color: var(--paper); }
+.wrow, .wrow .wtxt { transition: none; }
+
+/* ---- license ---- */
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: var(--b4);
+}
+.plan {
+  position: relative;
+  padding: clamp(24px, 3vw, 44px);
+  border-right: var(--b4);
+  display: flex; flex-direction: column; gap: 20px;
+  transition: none; /* snap, not ease */
+}
+.plan:last-child { border-right: none; }
+.plan:hover { background: var(--ink); color: var(--paper); }
+.plan:hover .btn { background: var(--red); color: var(--ink); border-color: var(--red); }
+.plan--hot:hover { background: var(--paper); color: var(--ink); }
+.plan--hot:hover .btn { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.plan h3 { font-size: clamp(20px, 1.8vw, 26px); }
+.price {
+  font-size: clamp(56px, 6vw, 96px);
+  line-height: .9;
+  letter-spacing: -.02em;
+}
+.feat { list-style: none; display: grid; gap: 10px; font-size: 12.5px; }
+.feat li { padding-left: 20px; position: relative; }
+.feat li::before {
+  content: ""; position: absolute; left: 0; top: 4px;
+  width: 10px; height: 10px; background: var(--red);
+}
+.plan--hot { background: var(--ink); color: var(--paper); }
+.plan--hot .price { color: var(--red); }
+.hot-tag {
+  position: absolute; top: 0; right: 0;
+  background: var(--red); color: var(--ink);
+  font-weight: 700; padding: 8px 12px;
+}
+.btn {
+  margin-top: auto;
+  font-family: "Archivo Black", Arial, sans-serif;
+  font-size: 15px;
+  letter-spacing: .04em;
+  background: var(--ink); color: var(--paper);
+  border: 4px solid var(--ink);
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: none; /* snap */
+}
+.btn:hover { background: var(--red); color: var(--ink); border-color: var(--ink); }
+.plan--hot .btn { background: var(--red); color: var(--ink); border-color: var(--red); }
+.plan--hot .btn:hover { background: var(--paper); border-color: var(--paper); }
+.fine { margin-top: 22px; opacity: .74; }
+
+/* ============ FOOTER ============ */
+.foot {
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 8px solid var(--red);
+}
+.crop {
+  overflow: hidden;
+  height: clamp(84px, 12vw, 180px);
+  display: flex; align-items: center; justify-content: center;
+}
+.mark {
+  font-family: "Anybody", "Archivo Black", Arial, sans-serif;
+  font-variation-settings: "wght" 900, "wdth" 100;
+  font-size: clamp(190px, 28vw, 420px);
+  line-height: .78;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+  color: var(--paper);
+}
+.foot-bar {
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+  padding: 20px var(--pad) 24px;
+  border-top: 2px solid rgba(250,250,250,.25);
+}
+.foot-bar .mono { font-size: 12px; }
+.foot-bar nav { display: flex; gap: 26px; }
+.foot-bar a {
+  color: var(--paper);
+  background: linear-gradient(var(--red), var(--red)) left bottom / 100% 8px no-repeat;
+  padding-bottom: 3px;
+}
+.foot-bar a:hover { color: var(--ink); background: var(--red); padding: 3px 6px; }
+
+/* ============ MOBILE ============ */
+@media (max-width: 720px) {
+  .bar { height: 58px; }
+  .logo { font-size: 19px; }
+  .nav { gap: 12px; }
+  .nav a { font-size: 11px; }
+  .live { display: none; }
+  .hero { min-height: calc(100svh - 58px); padding-top: clamp(10px, 2vh, 20px); padding-bottom: clamp(10px, 2vh, 20px); }
+  .hero-meta .mono { font-size: 10px; }
+  /* word stays nowrap — an explicit <br> still forces the GRO/TESK
+     break under nowrap, but nowrap also means the live wght/wdth
+     warp animation can never trigger a *second*, unplanned wrap;
+     any momentary overflow at animation extremes just clips via
+     .hero's overflow:hidden, same safety net desktop already has. */
+  .brk { display: block; }
+  .hero-foot { flex-direction: column; align-items: stretch; gap: 14px; }
+  .hint { text-align: center; }
+  .tag { font-size: 11px; }
+  /* 40px floor above was sized for tablets; on a 390px phone the
+     unbreakable word "INFRASTRUCTURE." doesn't fit under it (measured
+     ~417px at 40px vs. ~358px available) and got silently clipped by
+     body's overflow-x:hidden — the final glyph just vanished off-
+     screen. An 8vw-scaled floor keeps every doctrine line inside the
+     viewport down to ~320px wide phones. */
+  .line { font-size: clamp(26px, 8vw, 40px); }
+  .grid { grid-template-columns: repeat(4, 1fr); }
+  .g { font-size: clamp(40px, 16vw, 84px); }
+  .cell .m { font-size: 8px; left: 5px; bottom: 4px; }
+  .plans { grid-template-columns: 1fr; }
+  .plan { border-right: none; border-bottom: var(--b4); }
+  .plan:last-child { border-bottom: none; }
+  .skick { margin-left: 0; }
+  .wlab { flex-basis: 34px; }
+  .crop { height: clamp(60px, 16vw, 100px); }
+  .mark { font-size: clamp(100px, 30vw, 175px); }
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) {
+  #wipe { display: none; }
+  .lt { animation: none; transform: none; }
+  .blink { animation: none; }
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .strip-in { will-change: auto; }
+}

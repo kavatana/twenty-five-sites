@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How CORPUS is made — 45,000 particles, one body</title>
+<meta name="description" content="The making of CORPUS: THREE.Points with a custom ShaderMaterial, four formations stored as vertex attributes, staggered GPU morphs, canvas-sampled typography, and an inverse-square gravity well.">
+<meta property="og:title" content="How CORPUS is made">
+<meta property="og:description" content="Four formations in vertex attributes, one quintic-eased GPU morph, and a gravity well on the pointer ray. The full technique breakdown.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060614'/%3E%3Ccircle cx='23' cy='27' r='10' fill='%237DF9FF' opacity='.85'/%3E%3Ccircle cx='40' cy='25' r='8' fill='%23B39DFF' opacity='.8'/%3E%3Ccircle cx='33' cy='41' r='9' fill='%23FF6EC7' opacity='.75'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --void: #060614; --ice: #7DF9FF; --violet: #B39DFF; --pink: #FF6EC7;
+    --text: #EDEFFF; --dim: #9CA2C8; --faint: #4A5078;
+    --ease: cubic-bezier(.22, .61, .16, 1);
+  }
+  body {
+    background:
+      radial-gradient(110vmax 70vmax at 82% -10%, rgba(179,157,255,.08), transparent 55%),
+      radial-gradient(90vmax 70vmax at 8% 110%, rgba(125,249,255,.06), transparent 55%),
+      var(--void);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: rgba(125,249,255,.25); }
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: clamp(3rem, 8vh, 5.5rem) 24px 4rem; }
+  .crumb {
+    display: inline-block;
+    font-size: .72rem; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--dim); text-decoration: none; margin-bottom: 2.6rem;
+    border-bottom: 1px solid rgba(125,249,255,.3); padding-bottom: 2px;
+    transition: color .3s, border-color .3s;
+  }
+  .crumb:hover { color: var(--ice); border-color: var(--ice); }
+  .kicker { font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ice); margin-bottom: 1rem; }
+  h1 {
+    font-family: "Syne", sans-serif; font-weight: 800;
+    font-size: clamp(2rem, 5.5vw, 3.2rem); line-height: 1.04; letter-spacing: -.015em;
+    text-shadow: 0 0 40px rgba(125,249,255,.18);
+    margin-bottom: 1.2rem;
+  }
+  .lede { color: var(--dim); font-size: 1.02rem; line-height: 1.65; max-width: 56ch; margin-bottom: 3rem; }
+  h2 {
+    font-family: "Syne", sans-serif; font-weight: 700;
+    font-size: 1.05rem; letter-spacing: .06em;
+    margin: 2.6rem 0 .8rem;
+  }
+  h2::before { content: "◦ "; color: var(--pink); }
+  p { line-height: 1.7; color: var(--dim); font-size: .95rem; margin-bottom: 1rem; max-width: 62ch; }
+  strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .84em; color: var(--ice);
+    background: rgba(125,249,255,.07);
+    border: 1px solid rgba(125,249,255,.14);
+    border-radius: 4px; padding: .08em .38em;
+    white-space: nowrap;
+  }
+  .rule { border: none; height: 1px; margin: 3rem 0 0; background: linear-gradient(90deg, rgba(125,249,255,.3), rgba(179,157,255,.2), transparent); }
+  .dots { display: flex; gap: .6rem; margin: 2.8rem 0 0; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; }
+  .dots i:nth-child(1) { background: var(--ice); box-shadow: 0 0 12px var(--ice); }
+  .dots i:nth-child(2) { background: var(--violet); box-shadow: 0 0 12px var(--violet); }
+  .dots i:nth-child(3) { background: var(--pink); box-shadow: 0 0 12px var(--pink); }
+  footer {
+    margin-top: 2rem; padding-top: 1.2rem;
+    border-top: 1px solid rgba(138,144,184,.14);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 1.5rem;
+    font-size: .74rem; color: var(--dim); letter-spacing: .05em;
+  }
+  footer a {
+    color: var(--text); text-decoration: none;
+    border-bottom: 1px solid rgba(125,249,255,.35); padding-bottom: 1px;
+    transition: color .3s, border-color .3s;
+  }
+  footer a:hover { color: var(--ice); border-color: var(--ice); }
+  .foot-links { display: flex; gap: 1.4rem; }
+  .fade { opacity: 0; transform: translateY(14px); animation: fade .9s var(--ease) forwards; animation-delay: var(--d, 0s); }
+  @keyframes fade { to { opacity: 1; transform: none; } }
+  :focus-visible { outline: 1.5px solid var(--ice); outline-offset: 4px; border-radius: 3px; }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb fade" href="../">← Back to CORPUS</a>
+
+  <p class="kicker fade" style="--d:.05s">How it's made</p>
+  <h1 class="fade" style="--d:.1s">One geometry,<br>four destinies.</h1>
+  <p class="lede fade" style="--d:.18s">CORPUS is a single <code>THREE.Points</code> mesh — 45,000 vertices, one draw call — that believes it is four different objects. Nothing is ever rebuilt. The body just changes its mind.</p>
+
+  <div class="fade" style="--d:.26s">
+    <h2>Formations live in attributes</h2>
+    <p>Every particle carries all four destinations at once: <code>aT0…aT3</code> vertex attributes holding its seat in a (2,3) torus knot, a three-armed spiral galaxy, a 36³ lattice, and the word itself. A morph is just two uniforms — <code>uFrom</code>, <code>uTo</code> — and a progress float. The vertex shader does <code>mix(pick(uFrom), pick(uTo), e)</code> per particle, per frame. The CPU sleeps.</p>
+
+    <h2>The ripple</h2>
+    <p>Each particle also stores <code>aDelay</code>, derived from a golden-ratio sequence (<code>fract(i·φ)</code>) that doubles as the structural coordinate of every formation — position along the knot, radius in the galaxy, letter order in the word. So one attribute makes every morph travel: down the thread, out from the core, left to right through the type. The delay window is quintic-eased in GLSL, with a sine-arc detour so particles curl mid-flight instead of tracing straight lines.</p>
+
+    <h2>Typography as geometry</h2>
+    <p>The SIGIL formation waits for <code>document.fonts.load('800 240px Syne')</code>, rasterises CORPUS on an offscreen 2D canvas, then harvests every opaque pixel from <code>getImageData</code> and lifts them into world space with a little z-thickness. On phones it re-samples as two stacked lines so the word fills the portrait frame.</p>
+
+    <h2>The well</h2>
+    <p>The pointer is a gravity well: the closest point on the camera ray to the origin becomes <code>uWellPos</code>, and the shader shoves particles along an inverse-square falloff. Press and hold, and the power uniform eases from a whisper to a shout. Sprites are round because the fragment shader <em>discards</em> outside <code>gl_PointCoord</code> radius — squared-smoothstep alpha, additive blending, no textures anywhere.</p>
+
+    <h2>Staying at 60</h2>
+    <p><code>devicePixelRatio</code> is capped at 2, the loop halts on <code>visibilitychange</code>, and an FPS watchdog steps <code>setDrawRange</code> down (never below 30k on desktop) if the average dips — safe to truncate, because the golden-ratio ordering means any prefix of the buffer still covers the whole shape uniformly. Depth-test is off; additive light doesn't need sorting. Fog is a hand-rolled <code>exp(-d²)</code> in the vertex stage. With <code>prefers-reduced-motion</code>, the orbit freezes, the auto-cycle stops, and drift amplitude drops to zero — the universe holds still but stays lit.</p>
+
+    <h2>Passes</h2>
+    <p>Pass one built the engine and the four generators. The screenshot passes tuned what the code couldn't know: brightness of the additive core, camera fit at 390px, headline scale against the knot, and the mobile two-line sigil. Judgement by eye, every time.</p>
+  </div>
+
+  <div class="dots fade" style="--d:.34s"><i></i><i></i><i></i></div>
+
+  <footer class="fade" style="--d:.4s">
+    <span>09 / 25 · CORPUS — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="./">How it's made</a>
+    </span>
+  </footer>
+</div>
+</body>
+</html>

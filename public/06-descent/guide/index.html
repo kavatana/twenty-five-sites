@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DESCENT — How it's made</title>
+<meta name="description" content="Behind the build of DESCENT: piecewise scroll-to-depth mapping, canvas marine snow, conic-gradient light rays, and hand-drawn SVG deep-sea fauna.">
+<meta property="og:title" content="DESCENT — How it's made">
+<meta property="og:description" content="The techniques behind a ten-kilometre scroll: depth-anchored interpolation, layered parallax particles, and creatures drawn entirely in SVG.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2302030F'/%3E%3Cpath d='M20 27a12 12 0 0 1 24 0c0 4.5-24 4.5-24 0Z' fill='%237FFFD4'/%3E%3Cpath d='M25 32v9M32 32v13M39 32v9' stroke='%23FF7EB6' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --hadal:#02030F;--midnight:#0A1428;--twilight:#1B3A5C;
+  --bio-a:#7FFFD4;--bio-p:#FF7EB6;
+  --ink:#EAF4F6;--ink-dim:rgba(214,232,236,.78);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Source Sans 3",sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,var(--midnight) 0%,var(--hadal) 46%,var(--hadal) 100%) fixed,var(--hadal);
+  min-height:100vh;overflow-x:hidden;
+}
+::selection{background:rgba(127,255,212,.28);color:#fff}
+.grain{
+  position:fixed;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay;z-index:5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.motes{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%,rgba(207,233,242,.5),transparent 100%),
+    radial-gradient(1px 1px at 78% 32%,rgba(207,233,242,.4),transparent 100%),
+    radial-gradient(2px 2px at 62% 74%,rgba(127,255,212,.35),transparent 100%),
+    radial-gradient(1px 1px at 30% 62%,rgba(207,233,242,.38),transparent 100%),
+    radial-gradient(1.5px 1.5px at 88% 82%,rgba(255,126,182,.3),transparent 100%),
+    radial-gradient(1px 1px at 45% 40%,rgba(207,233,242,.32),transparent 100%);
+}
+main{position:relative;z-index:1;max-width:62ch;margin:0 auto;padding:clamp(4rem,10vh,7rem) 1.6rem 3rem}
+.kicker{
+  font-size:.64rem;font-weight:600;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--bio-a);margin-bottom:1.4rem;
+}
+h1{
+  font-family:"Playfair Display",serif;font-weight:500;
+  font-size:clamp(2.1rem,6vw,3.2rem);line-height:1.12;letter-spacing:.01em;
+  margin-bottom:1rem;
+}
+.lede{
+  font-family:"Playfair Display",serif;font-style:italic;
+  font-size:clamp(1.05rem,2vw,1.25rem);line-height:1.6;color:var(--ink-dim);
+  margin-bottom:3rem;
+}
+h2{
+  font-family:"Playfair Display",serif;font-style:italic;font-weight:500;
+  font-size:clamp(1.3rem,2.6vw,1.6rem);margin:2.8rem 0 .9rem;
+}
+h2::before{content:"— ";color:var(--bio-a)}
+p{font-weight:300;font-size:1.02rem;line-height:1.85;color:var(--ink-dim);margin-bottom:1.1rem}
+code{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.85em;
+  color:var(--bio-a);background:rgba(127,255,212,.07);
+  padding:.12em .4em;border-radius:3px;
+}
+em{color:var(--ink)}
+.divider{
+  display:flex;justify-content:center;gap:.6rem;margin:3.4rem 0 0;
+  color:rgba(127,255,212,.4);font-size:.8rem;letter-spacing:.6em;
+}
+footer{
+  max-width:62ch;margin:0 auto;display:flex;align-items:center;
+  justify-content:space-between;gap:1.2rem;flex-wrap:wrap;
+  padding:2rem 1.6rem 3rem;border-top:1px solid rgba(127,255,212,.12);
+  font-size:.72rem;letter-spacing:.14em;color:rgba(206,231,240,.55);
+}
+footer nav{display:flex;gap:1.8rem}
+footer a{
+  color:rgba(127,255,212,.75);text-decoration:none;text-transform:uppercase;
+  letter-spacing:.2em;font-weight:600;font-size:.66rem;padding-bottom:.15em;
+  border-bottom:1px solid transparent;transition:color .3s,border-color .3s;
+}
+footer a:hover{color:var(--bio-a);border-bottom-color:rgba(127,255,212,.6)}
+.back{
+  display:inline-block;margin-bottom:3rem;color:var(--bio-a);text-decoration:none;
+  font-size:.68rem;font-weight:600;letter-spacing:.32em;text-transform:uppercase;
+  border:1px solid rgba(127,255,212,.35);border-radius:999px;padding:.7rem 1.4rem;
+  transition:background .4s,box-shadow .4s;
+}
+.back:hover{background:rgba(127,255,212,.08);box-shadow:0 0 24px rgba(127,255,212,.18)}
+:focus-visible{outline:2px solid var(--bio-a);outline-offset:4px;border-radius:2px}
+@media (max-width:760px){footer{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="motes" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<main>
+  <p class="kicker">06 / 25 · field notes</p>
+  <h1>How DESCENT is made</h1>
+  <p class="lede">One page, ten kilometres tall. The whole site is a single continuous fall from daylight to the Challenger Deep, and every system on it answers to the scrollbar.</p>
+
+  <h2>One scroll, 10,935 metres</h2>
+  <p>The page is roughly nine viewport-heights of ocean. Scroll position becomes <em>depth</em> through a piecewise-linear map whose anchor points are read from the DOM itself: every encounter carries a <code>data-depth</code> attribute, and at layout time the script measures each section's centre and pairs it with its depth. The meter therefore always reads exactly 400&nbsp;m when the jellyfish is centred, no matter the viewport. Scroll input is smoothed with an exponential-decay lerp inside one <code>requestAnimationFrame</code> loop, so the HUD needle and water colour settle like something moving through liquid, not a spreadsheet.</p>
+
+  <h2>Making water out of nothing</h2>
+  <p>There are no images anywhere. The water is a single fixed layer whose colour is interpolated per-frame between four palette stops — surface, twilight, midnight, hadal. Sunbeams are CSS <code>conic-gradient</code> wedges swaying on offset <code>alternate</code> timelines, squared-off with an opacity curve so they die inside the first two viewports, exactly where photosynthesis does. Marine snow is one <code>&lt;canvas&gt;</code>: ~150 particles, each with a parallax factor <code>z</code>, drifting upward past a sinking camera while wobbling on its own sine. <code>devicePixelRatio</code> is capped at 2, and the loop stops cold on <code>document.hidden</code>.</p>
+
+  <h2>The fauna</h2>
+  <p>All five encounters — Atolla, anglerfish, gulper eel, dumbo octopus, and the bathyscaphe <em>Trieste</em> — are hand-drawn inline SVG. Idle life comes from CSS keyframes on sub-groups using <code>transform-box:&nbsp;fill-box</code>: the jelly's bell squashes against its own bounding box, tentacles sway on staggered negative delays, the angler's lure flickers on deliberately uneven keyframe percentages so it never reads as a loop. Glow is <code>filter:&nbsp;drop-shadow</code> in bioluminescent aqua and pink. Fact cards slide in through an <code>IntersectionObserver</code>, children staggered with transition delays.</p>
+
+  <h2>Iteration passes</h2>
+  <p>Pass one built the depth engine and typography; screenshots then drove the fixes: rail labels that clipped in the tape's overflow, HUD contrast at the bright surface (a <code>.is-deep</code> class flips the chrome from ink to pale once you pass ~600&nbsp;m), and mobile spacing so the meter never collides with the cards. <code>prefers-reduced-motion</code> collapses every animation and lets the page update directly on scroll — still, dark, and legible all the way down.</p>
+
+  <div class="divider" aria-hidden="true">· · ·</div>
+</main>
+<footer>
+  <p>06 / 25 · DESCENT — designed &amp; coded by Claude Fable 5</p>
+  <nav>
+    <a href="../">Descend</a>
+    <a href="/">Index</a>
+    <a href="./">How it's made</a>
+  </nav>
+</footer>
+</body>
+</html>
