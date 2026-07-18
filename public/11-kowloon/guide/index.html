@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it's made — KOWLOON NIGHTS · 九龍夜市</title>
+<meta name="description" content="How the Kowloon Nights neon street was built: pure CSS 3D cuboids, canvas rain, steps() neon flicker, and a billboarded sign trick.">
+<meta property="og:title" content="How it's made — KOWLOON NIGHTS">
+<meta property="og:description" content="Pure CSS 3D isometric street, canvas rain, and neon signs that flicker like they mean it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307070F'/%3E%3Crect x='14' y='10' width='36' height='44' rx='6' fill='none' stroke='%23FF2E88' stroke-width='4'/%3E%3Ctext x='32' y='44' font-size='30' text-anchor='middle' fill='%2300E5FF' font-family='sans-serif'%3E麺%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07070F; --pink:#FF2E88; --cyan:#00E5FF; --yellow:#FFE33D;
+  --paper:#E8E9F2; --dim:#9A9DB8;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+  background:
+    radial-gradient(80% 50% at 15% 0%, rgba(255,46,136,.07), transparent 60%),
+    radial-gradient(70% 40% at 90% 20%, rgba(0,229,255,.06), transparent 60%),
+    var(--ink);
+  color:var(--paper);
+  font-family:'Chakra Petch','Noto Sans JP',sans-serif;
+  line-height:1.75;
+  padding:clamp(3rem,8vh,6rem) clamp(1.25rem,6vw,4rem) 3rem;
+}
+a:focus-visible{ outline:2px solid var(--cyan); outline-offset:4px; }
+.wrap{ max-width:46rem; margin:0 auto; }
+.kicker{
+  font-size:.66rem; letter-spacing:.5em; color:var(--cyan);
+  text-shadow:0 0 10px rgba(0,229,255,.6); margin-bottom:1.1rem;
+}
+h1{
+  font-size:clamp(1.9rem,4.5vw,3rem); font-weight:700; line-height:1.05;
+  color:var(--pink);
+  text-shadow:0 0 12px rgba(255,46,136,.8), 0 0 48px rgba(255,46,136,.35);
+}
+h1 .zh{ font-family:'Noto Sans JP',sans-serif; font-weight:900; color:var(--yellow);
+  font-size:.5em; display:block; letter-spacing:.9em; margin-top:.7rem;
+  text-shadow:0 0 10px rgba(255,227,61,.6); }
+h2{
+  margin:2.8rem 0 .9rem;
+  font-size:.82rem; font-weight:700; letter-spacing:.4em;
+  color:var(--cyan); text-shadow:0 0 9px rgba(0,229,255,.55);
+  border-left:3px solid var(--pink); padding-left:.9rem;
+}
+p{ color:var(--dim); font-size:.94rem; margin-bottom:1rem; }
+strong{ color:var(--paper); font-weight:600; }
+code{
+  font-family:'Chakra Petch',monospace; font-size:.85em;
+  color:var(--yellow); background:rgba(255,227,61,.07);
+  padding:.1em .4em; border-radius:4px; border:1px solid rgba(255,227,61,.18);
+}
+.back{
+  display:inline-block; margin-bottom:2.6rem;
+  font-size:.68rem; letter-spacing:.32em; text-decoration:none;
+  color:var(--yellow); border:1.5px solid rgba(255,227,61,.5);
+  border-radius:4px; padding:.6em 1.2em;
+  text-shadow:0 0 8px rgba(255,227,61,.5);
+  transition:all .3s ease;
+}
+.back:hover{ background:var(--yellow); color:var(--ink); text-shadow:none; }
+footer{
+  margin-top:4rem; padding-top:1.6rem;
+  border-top:1px solid rgba(255,46,136,.2);
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem;
+  font-size:.66rem; letter-spacing:.24em; color:var(--dim);
+}
+footer a{ color:var(--cyan); text-decoration:none; text-shadow:0 0 8px rgba(0,229,255,.4); }
+footer a:hover{ color:var(--pink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← BACK TO THE STREET</a>
+  <p class="kicker">HOW IT'S MADE · 製作筆記</p>
+  <h1>Wiring a street<br>out of divs<span class="zh">九龍夜市</span></h1>
+
+  <h2>THE CONCEPT</h2>
+  <p>Kowloon Nights is a love letter to the wet-neon alley — Wong Kar-wai glow, humming transformers, broth that outlived the lease. The brief to myself: build an entire isometric night-market street with <strong>zero images and zero WebGL</strong>. Every building, window, sign and puddle is a transformed <code>&lt;div&gt;</code>; the only pixels pushed by script are the rain.</p>
+
+  <h2>THE STREET · CSS 3D</h2>
+  <p>The ground is a 1600×1600 plane under <code>rotateX(60deg) rotateZ(-45deg)</code> — the classic 2:1 isometric camera — with <code>transform-style: preserve-3d</code> the whole way down. Each building is three faces: a roof at <code>translateZ(h)</code>, and two walls stood up with <code>rotateX(90deg)</code> and <code>rotateZ(90deg) rotateX(90deg)</code> around a <code>transform-origin</code> on their ground edge. JavaScript generates the block from a seeded PRNG, so the street is random but identical on every load — useful when you're screen-recording.</p>
+  <p>The lit windows are CSS Grid cells inside each wall; roughly one in seven gets a <code>steps(1,end)</code> opacity animation with a negative random delay, so the block never blinks in unison. The neon signs use the inverse-camera trick: <code>rotateZ(45deg) rotateX(-60deg)</code> cancels the world rotation, billboarding each sign toward the viewer while it still sits — and parallaxes — at a true 3D coordinate above the street.</p>
+
+  <h2>THE WEATHER · CANVAS + BLENDS</h2>
+  <p>Rain is a single 2D canvas: 150 slanted strokes with depth-graded speed, length and alpha. Each drop carries its own <code>floor</code> — a random landing line in the lower third — and dies into an expanding elliptical splash, which fakes ground depth for free. Puddles are translucent radial gradients lying flat on the ground plane, and each sign drips a blurred gradient streak onto the asphalt as its reflection. They were <code>mix-blend-mode: screen</code> once — until we learned that a single blending child inside a <code>preserve-3d</code> context makes Chromium flatten the entire scene. The whole street collapsed into the asphalt. Alpha only, now. Steam is five blurred blobs on a staggered rise loop. DPR is capped at 2, and the whole loop idles when the tab hides or the hero scrolls away.</p>
+
+  <h2>THE DYING LETTER</h2>
+  <p>Authentic neon never fails politely. The buzzing letters (the masthead's final N, Blue Orchid's R) run a hand-tuned <code>steps(1,end)</code> keyframe track with irregular gaps — three bursts of stutter inside a 3.7s loop reads as electrical fault, not animation. Under <code>prefers-reduced-motion</code>, every flicker locks on, the camera parks, and the rain renders one static frame.</p>
+
+  <h2>THE PASSES</h2>
+  <p>Pass one raised the block and got the face math honest. Pass two was set dressing: reflections under every sign, cables with lantern dots, the noodle-stall glow pool. The last pass was composition against real screenshots — reseating the camera origin, rebalancing sign heights, and scaling the whole world to 0.52 so the street still reads on a phone held in one hand under an awning, which is the only correct way to browse it.</p>
+
+  <footer>
+    <span>11 / 25 · KOWLOON NIGHTS — designed &amp; coded by Claude Fable 5</span>
+    <span><a href="/">Index</a> · <a href="../">The street</a></span>
+  </footer>
+</div>
+</body>
+</html>

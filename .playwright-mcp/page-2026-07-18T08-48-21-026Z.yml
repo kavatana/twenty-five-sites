@@ -1,0 +1,242 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - link "Verdant, back to top" [ref=f4e3] [cursor=pointer]:
+      - /url: "#top"
+      - text: VERDANT
+    - navigation "Sections" [ref=f4e7]:
+      - link "Catalog" [ref=f4e8] [cursor=pointer]:
+        - /url: "#catalog"
+      - link "Calendar" [ref=f4e9] [cursor=pointer]:
+        - /url: "#calendar"
+      - link "Herbarium" [ref=f4e10] [cursor=pointer]:
+        - /url: "#herbarium"
+  - main [ref=f4e11]:
+    - generic [ref=f4e12]:
+      - generic [ref=f4e13]:
+        - paragraph [ref=f4e14]: Botanical atelier · Seed archive · Glasshouse No. 3
+        - heading "Grown slowly, kept carefully." [level=1] [ref=f4e15]:
+          - generic [ref=f4e16]: Grown slowly,
+          - generic [ref=f4e17]: kept carefully.
+        - paragraph [ref=f4e18]: A seed is a letter one season writes to another. VERDANT is the post office — a working archive of open-pollinated varieties collected by hand, dried on blotting paper, and catalogued the long way, in ink.
+        - generic [ref=f4e19]:
+          - link "Open the catalog" [ref=f4e20] [cursor=pointer]:
+            - /url: "#catalog"
+          - link "Visit the presses" [ref=f4e21] [cursor=pointer]:
+            - /url: "#herbarium"
+        - paragraph [ref=f4e22]: Est. MMXXI·214 varieties·all open-pollinated·zero secrets
+      - figure "Hand-drawn botanical plate of Digitalis purpurea, the common foxglove" [ref=f4e23]:
+        - generic [ref=f4e24]:
+          - generic [ref=f4e25]: PLATE IV
+          - img "Line drawing of a foxglove in bloom" [ref=f4e26]
+          - generic [ref=f4e157]:
+            - emphasis [ref=f4e158]: Digitalis purpurea
+            - text: L. — common foxglove · drawn from the June bed
+      - link "Scroll to continue" [ref=f4e159] [cursor=pointer]:
+        - /url: "#manifesto"
+    - blockquote [ref=f4e168]:
+      - paragraph [ref=f4e169]: “Nothing here is forced. The glasshouse keeps the frost out and the patience in — everything else is the plant’s own idea.”
+      - generic [ref=f4e170]: — the field journal, first page, every year
+    - generic [ref=f4e171]:
+      - generic [ref=f4e172]:
+        - paragraph [ref=f4e173]: The catalog · spring list
+        - heading "Seed, weighed by eye, sealed by hand." [level=2] [ref=f4e174]: Seed, weighed by eye,sealed by hand.
+        - paragraph [ref=f4e175]: Germination figures come from our own beds, not the back of someone else’s envelope. Turn a packet over for the sowing notes.
+      - generic [ref=f4e176]:
+        - 'article "Seed packet: Foxglove, Digitalis purpurea. Activate to flip for sowing notes." [ref=f4e177] [cursor=pointer]':
+          - generic [ref=f4e178]:
+            - generic [ref=f4e179]:
+              - generic [ref=f4e180]:
+                - generic [ref=f4e181]: VERDANT SEED Co.
+                - generic [ref=f4e182]: № 04
+              - heading "Foxglove" [level=3] [ref=f4e192]
+              - paragraph [ref=f4e193]: Digitalis purpurea
+              - paragraph [ref=f4e194]: Biennial. Towers in its second summer — bees disappear inside it entirely.
+              - generic [ref=f4e198]:
+                - generic [ref=f4e199]: germ. 91%
+                - generic [ref=f4e200]: ≈ 400 seeds
+              - generic:
+                - img:
+                  - generic: TESTED 2026 · GLASSHOUSE Nº3 ·
+            - generic [ref=f4e201]:
+              - heading "Sowing notes" [level=4] [ref=f4e202]
+              - generic [ref=f4e203]:
+                - generic [ref=f4e204]:
+                  - term [ref=f4e205]: Sow
+                  - definition [ref=f4e206]: Surface — light germinator, do not cover
+                - generic [ref=f4e207]:
+                  - term [ref=f4e208]: When
+                  - definition [ref=f4e209]: May–July, for flowers next June
+                - generic [ref=f4e210]:
+                  - term [ref=f4e211]: Space
+                  - definition [ref=f4e212]: 45 cm · dappled shade
+                - generic [ref=f4e213]:
+                  - term [ref=f4e214]: Days
+                  - definition [ref=f4e215]: 14–21 to germinate
+              - paragraph [ref=f4e216]: "Field note: let one spire self-sow and it will never leave you. This is a feature."
+        - 'article "Seed packet: Nasturtium, Tropaeolum majus. Activate to flip for sowing notes." [ref=f4e217] [cursor=pointer]':
+          - generic [ref=f4e218]:
+            - generic [ref=f4e219]:
+              - generic [ref=f4e220]:
+                - generic [ref=f4e221]: VERDANT SEED Co.
+                - generic [ref=f4e222]: № 11
+              - heading "Nasturtium" [level=3] [ref=f4e230]
+              - paragraph [ref=f4e231]: Tropaeolum majus
+              - paragraph [ref=f4e232]: The whole plant is edible and slightly indignant about it. Peppery, generous, unstoppable.
+              - generic [ref=f4e236]:
+                - generic [ref=f4e237]: germ. 96%
+                - generic [ref=f4e238]: ≈ 25 seeds
+              - generic:
+                - img:
+                  - generic: TESTED 2026 · GLASSHOUSE Nº3 ·
+            - generic [ref=f4e239]:
+              - heading "Sowing notes" [level=4] [ref=f4e240]
+              - generic [ref=f4e241]:
+                - generic [ref=f4e242]:
+                  - term [ref=f4e243]: Sow
+                  - definition [ref=f4e244]: 2 cm deep, direct — resents transplanting
+                - generic [ref=f4e245]:
+                  - term [ref=f4e246]: When
+                  - definition [ref=f4e247]: After the last frost has apologised
+                - generic [ref=f4e248]:
+                  - term [ref=f4e249]: Space
+                  - definition [ref=f4e250]: 30 cm · poor soil, please
+                - generic [ref=f4e251]:
+                  - term [ref=f4e252]: Days
+                  - definition [ref=f4e253]: 7–12 to germinate
+              - paragraph [ref=f4e254]: "Field note: rich soil gives you leaves the size of saucers and no flowers. Starve it kindly."
+        - 'article "Seed packet: Borage, Borago officinalis. Activate to flip for sowing notes." [ref=f4e255] [cursor=pointer]':
+          - generic [ref=f4e256]:
+            - generic [ref=f4e257]:
+              - generic [ref=f4e258]:
+                - generic [ref=f4e259]: VERDANT SEED Co.
+                - generic [ref=f4e260]: № 19
+              - heading "Borage" [level=3] [ref=f4e268]
+              - paragraph [ref=f4e269]: Borago officinalis
+              - paragraph [ref=f4e270]: Star-blue flowers that taste of cucumber. Self-sows with tremendous confidence.
+              - generic [ref=f4e274]:
+                - generic [ref=f4e275]: germ. 88%
+                - generic [ref=f4e276]: ≈ 60 seeds
+              - generic:
+                - img:
+                  - generic: TESTED 2026 · GLASSHOUSE Nº3 ·
+            - generic [ref=f4e277]:
+              - heading "Sowing notes" [level=4] [ref=f4e278]
+              - generic [ref=f4e279]:
+                - generic [ref=f4e280]:
+                  - term [ref=f4e281]: Sow
+                  - definition [ref=f4e282]: 1 cm deep, direct in drifts
+                - generic [ref=f4e283]:
+                  - term [ref=f4e284]: When
+                  - definition [ref=f4e285]: April–June, then never again — it handles it
+                - generic [ref=f4e286]:
+                  - term [ref=f4e287]: Space
+                  - definition [ref=f4e288]: 35 cm · full sun
+                - generic [ref=f4e289]:
+                  - term [ref=f4e290]: Days
+                  - definition [ref=f4e291]: 5–10 to germinate
+              - paragraph [ref=f4e292]: "Field note: plant once, own forever. The bees will hold you to it."
+        - 'article "Seed packet: Love-in-a-mist, Nigella damascena. Activate to flip for sowing notes." [ref=f4e293] [cursor=pointer]':
+          - generic [ref=f4e294]:
+            - generic [ref=f4e295]:
+              - generic [ref=f4e296]:
+                - generic [ref=f4e297]: VERDANT SEED Co.
+                - generic [ref=f4e298]: № 27
+              - heading "Love-in-a-mist" [level=3] [ref=f4e305]
+              - paragraph [ref=f4e306]: Nigella damascena
+              - paragraph [ref=f4e307]: Blooms inside a haze of green thread, then leaves you the handsomest seed pods in the trade.
+              - generic [ref=f4e311]:
+                - generic [ref=f4e312]: germ. 90%
+                - generic [ref=f4e313]: ≈ 150 seeds
+              - generic:
+                - img:
+                  - generic: TESTED 2026 · GLASSHOUSE Nº3 ·
+            - generic [ref=f4e314]:
+              - heading "Sowing notes" [level=4] [ref=f4e315]
+              - generic [ref=f4e316]:
+                - generic [ref=f4e317]:
+                  - term [ref=f4e318]: Sow
+                  - definition [ref=f4e319]: 3 mm deep, direct — dislikes moving house
+                - generic [ref=f4e320]:
+                  - term [ref=f4e321]: When
+                  - definition [ref=f4e322]: September for early bloom, March for late
+                - generic [ref=f4e323]:
+                  - term [ref=f4e324]: Space
+                  - definition [ref=f4e325]: 20 cm · any decent soil
+                - generic [ref=f4e326]:
+                  - term [ref=f4e327]: Days
+                  - definition [ref=f4e328]: 10–14 to germinate
+              - paragraph [ref=f4e329]: "Field note: leave the pods standing. They rattle in October like tiny paper lanterns."
+    - generic [ref=f4e331]:
+      - generic [ref=f4e332]:
+        - paragraph [ref=f4e333]: The growth calendar
+        - heading "The year, read as a circle." [level=2] [ref=f4e334]: The year, readas a circle.
+        - paragraph [ref=f4e335]: "Nothing in a garden happens in a line. We plan on a wheel: sow into the pale months, harvest against the dark ones, and let the hand sweep at its own unhurried speed. It is pointing at now."
+        - list "Calendar key" [ref=f4e336]:
+          - listitem [ref=f4e337]: Sowing window
+          - listitem [ref=f4e339]: Harvest & seed collection
+          - listitem [ref=f4e341]: Rest, notes & repairs
+      - img "Radial season wheel showing sowing and harvest windows through the year, with a hand pointing at mid-July" [ref=f4e344]:
+        - generic [ref=f4e348]: SPRING
+        - generic [ref=f4e350]: SUMMER
+        - generic [ref=f4e352]: AUTUMN
+        - generic [ref=f4e354]: WINTER
+        - generic [ref=f4e355]: JAN
+        - generic [ref=f4e357]: FEB
+        - generic [ref=f4e359]: MAR
+        - generic [ref=f4e360]: APR
+        - generic [ref=f4e362]: MAY
+        - generic [ref=f4e364]: JUN
+        - generic [ref=f4e365]: JUL
+        - generic [ref=f4e367]: AUG
+        - generic [ref=f4e369]: SEP
+        - generic [ref=f4e370]: OCT
+        - generic [ref=f4e372]: NOV
+        - generic [ref=f4e374]: DEC
+        - generic [ref=f4e376]: SOW UNDER GLASS → DIRECT
+        - generic [ref=f4e378]: AUTUMN SOW
+        - generic [ref=f4e380]: HARVEST · COLLECT · DRY SEED
+        - generic [ref=f4e382]: REST · NOTES · REPAIRS
+        - generic [ref=f4e385]: VERDANT
+        - generic [ref=f4e386]: MMXXVI
+        - generic [ref=f4e387]: the year, read as a circle
+    - generic [ref=f4e394]:
+      - generic [ref=f4e395]:
+        - paragraph [ref=f4e396]: The herbarium · pressed & kept
+        - heading "Six weeks under blotting paper and brick." [level=2] [ref=f4e397]: Six weeks underblotting paper and brick.
+        - paragraph [ref=f4e398]: Specimens from the atelier presses. Label everything; trust nothing to memory. A pressed plant is the closest thing we have to pausing a season.
+      - generic [ref=f4e399]:
+        - article [ref=f4e400]:
+          - img "Pressed specimen drawing of yarrow with feathery leaves and a flat flower head" [ref=f4e403]
+          - paragraph [ref=f4e772]:
+            - text: meadow edge, 12 June —
+            - emphasis [ref=f4e773]: a thousand leaves, as promised.
+          - generic [ref=f4e774]:
+            - generic [ref=f4e775]: Achillea millefolium
+            - generic [ref=f4e776]: yarrow · VERDANT HERBARIUM № 132
+        - article [ref=f4e777]:
+          - img "Pressed specimen drawing of a field poppy with one open flower and a nodding bud" [ref=f4e780]
+          - paragraph [ref=f4e819]:
+            - text: petals like crêpe paper —
+            - emphasis [ref=f4e820]: press before noon, or not at all.
+          - generic [ref=f4e821]:
+            - generic [ref=f4e822]: Papaver rhoeas
+            - generic [ref=f4e823]: field poppy · VERDANT HERBARIUM № 147
+        - article [ref=f4e824]:
+          - img "Pressed specimen drawing of a fern frond with paired pinnae" [ref=f4e827]
+          - paragraph [ref=f4e940]:
+            - text: north wall of the glasshouse —
+            - emphasis [ref=f4e941]: prefers being ignored.
+          - generic [ref=f4e942]:
+            - generic [ref=f4e943]: Asplenium scolopendrium × trichomanes
+            - generic [ref=f4e944]: spleenwort · VERDANT HERBARIUM № 090
+    - generic [ref=f4e945]:
+      - paragraph [ref=f4e952]: The archive opens at first light.Bring paper. The garden will provide the rest.
+      - paragraph [ref=f4e953]: Glasshouse No. 3 · seeds by post · notes by hand
+  - contentinfo [ref=f4e954]:
+    - paragraph [ref=f4e955]: 10 / 25 · VERDANT — designed & coded by Claude Fable 5
+    - navigation "Site meta" [ref=f4e956]:
+      - link "Index" [ref=f4e957] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f4e958]: ·
+      - link "How it’s made" [ref=f4e959] [cursor=pointer]:
+        - /url: guide/

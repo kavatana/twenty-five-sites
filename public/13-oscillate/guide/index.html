@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it's made — OSCILLATE OSC-13</title>
+<meta name="description" content="Service manual for OSC-13: how a playable polysynth was built from raw Web Audio nodes, two canvases and one lookahead scheduler.">
+<meta property="og:title" content="How it's made — OSCILLATE OSC-13">
+<meta property="og:description" content="Service manual: the Web Audio graph, the lookahead arpeggiator, and the sunset grid behind the faceplate.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%230D0221'/%3E%3Cpath d='M8 32h11l6-17 12 34 6-17h13' stroke='%2300F0B5' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0D0221;--ink:#EDE9FA;--ink-dim:rgba(237,233,250,.74);
+    --mint:#00F0B5;--pink:#FF3CAC;--violet:#784BA0;--blue:#2B86C5;
+    --grad:linear-gradient(100deg,#FF3CAC,#784BA0 52%,#2B86C5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    min-height:100svh;
+    background:
+      linear-gradient(180deg,rgba(13,2,33,0) 55%,rgba(255,60,172,.06)),
+      var(--void);
+    color:var(--ink);
+    font-family:"Space Mono",ui-monospace,monospace;
+    display:flex;flex-direction:column;align-items:center;
+    padding:clamp(1.4rem,5vh,3.5rem) 1.2rem 1.4rem;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::after{ /* grid floor */
+    content:"";position:fixed;left:-20%;right:-20%;bottom:-12vh;height:34vh;
+    background:
+      repeating-linear-gradient(90deg,rgba(255,60,172,.16) 0 1px,transparent 1px 72px),
+      repeating-linear-gradient(0deg,rgba(255,60,172,.16) 0 1px,transparent 1px 34px);
+    transform:perspective(340px) rotateX(58deg);
+    transform-origin:top center;
+    pointer-events:none;
+    mask-image:linear-gradient(180deg,transparent,black 22%);
+    -webkit-mask-image:linear-gradient(180deg,transparent,black 22%);
+    z-index:-1;
+  }
+  ::selection{background:var(--pink);color:var(--void)}
+  a:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:3px}
+  .manual{
+    width:min(720px,100%);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:16px;
+    background:
+      repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
+      linear-gradient(180deg,#1c1434,#110a24 70%,#0e081f);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 22px 60px rgba(0,0,0,.55),0 0 80px rgba(120,75,160,.14);
+    padding:clamp(1.4rem,4vw,2.6rem);
+    position:relative;
+  }
+  .stamp{
+    font-size:.55rem;letter-spacing:.26em;color:rgba(237,233,250,.58);
+    display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    padding-bottom:1.1rem;border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  h1{
+    font-family:"Michroma",sans-serif;
+    font-size:clamp(1.15rem,3.4vw,1.7rem);
+    letter-spacing:.2em;
+    margin:1.4rem 0 .4rem;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(255,60,172,.4));
+  }
+  .sub{font-size:.62rem;letter-spacing:.22em;color:var(--mint);margin-bottom:1.6rem}
+  h2{
+    font-family:"Michroma",sans-serif;font-size:.72rem;letter-spacing:.24em;
+    color:var(--mint);margin:1.9rem 0 .7rem;text-transform:uppercase;
+  }
+  p{font-size:.8rem;line-height:1.85;color:var(--ink-dim);margin-bottom:.9rem}
+  code{
+    font-family:inherit;font-size:.72rem;color:var(--mint);
+    background:rgba(0,240,181,.07);border:1px solid rgba(0,240,181,.18);
+    border-radius:4px;padding:.08em .38em;white-space:nowrap;
+  }
+  .foot{
+    width:min(720px,100%);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+    padding:1.2rem .2rem 0;
+    font-size:.6rem;letter-spacing:.14em;color:var(--ink-dim);
+  }
+  .foot nav{display:flex;gap:.7rem}
+  .foot a,a.back{
+    color:var(--mint);text-decoration:none;
+    border-bottom:1px solid rgba(0,240,181,.35);padding-bottom:1px;
+    transition:border-color .2s,text-shadow .2s;
+  }
+  .foot a:hover,a.back:hover{border-color:var(--mint);text-shadow:0 0 10px rgba(0,240,181,.7)}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<article class="manual">
+  <div class="stamp">
+    <span>SERVICE MANUAL · DOC 13-SM-01</span>
+    <span>REV A · <a class="back" href="../">RETURN TO UNIT</a></span>
+  </div>
+  <h1>OSC-13 — HOW IT'S MADE</h1>
+  <p class="sub">CONCEPT / SIGNAL PATH / DRAWN INSTRUMENTATION / PASSES</p>
+
+  <h2>Concept</h2>
+  <p>OSCILLATE is a synthesizer you can actually play, not a picture of one. The reference point is a 1984 polysynth parked somewhere with a Miami dusk behind it: brushed faceplate, silkscreen type, and a horizon that never stops scrolling. Every sound is computed live in the browser; every pixel — sun, grid, scope trace, knurled knobs — is drawn by hand. No samples, no images, no libraries.</p>
+
+  <h2>Signal path</h2>
+  <p>Each voice is two <code>OscillatorNode</code>s detuned in opposite directions (±0–45 cents, the classic ensemble thickener) through a per-voice <code>GainNode</code> envelope built from <code>linearRampToValueAtTime</code> and <code>setTargetAtTime</code> — exponential approach curves, so releases decay like hardware, not like a fader. Voices sum into one resonant <code>BiquadFilterNode</code> lowpass, then split dry/wet into a <code>DelayNode</code> with a feedback loop that passes through a second lowpass — that darkening regeneration is what makes it read as a bucket-brigade delay rather than a digital echo. A <code>DynamicsCompressorNode</code> keeps thirteen enthusiastic keys from clipping.</p>
+
+  <h2>The panel demos itself</h2>
+  <p>The arpeggiator is a lookahead scheduler: a 25&nbsp;ms <code>setInterval</code> books notes ~120&nbsp;ms ahead against <code>AudioContext.currentTime</code>, so timing stays sample-accurate even when the main thread hiccups. Key lights are synced back to the UI with matching timeouts. Power-on resumes the context inside the click gesture, fires a synthesized thunk, and boots the LED ladder — which then repurposes itself as a VU meter driven by the RMS of the analyser's time-domain buffer.</p>
+
+  <h2>Drawn instrumentation</h2>
+  <p>One <code>AnalyserNode</code> feeds two displays. The hero oscilloscope pulls <code>getByteTimeDomainData</code> and hunts a rising zero-crossing before plotting, so the trace holds still like a triggered scope instead of swimming. The spectrum field maps <code>getByteFrequencyData</code> through a power curve for a log-ish frequency axis. The sunset is a canvas: the slatted sun is composited once per resize with <code>destination-out</code> stripes, and the grid floor is straight perspective math — verticals to a vanishing point, horizontals eased by <code>z<sup>2.6</sup></code> as they scroll toward you. Knobs are generated SVG with a rotating indicator group and a value arc animated by <code>stroke-dasharray</code>; dragging is vertical pixels mapped to parameter fractions, logarithmic where ears expect it.</p>
+
+  <h2>Passes</h2>
+  <p>Pass one scaffolded faceplate, voice architecture and keyboard, then re-balanced module density and gave the dead space below the panel a job: an etched signal-path strip. Pass two added choreography — a staggered entrance, a six-beat power-on self-test that lights every module and key in sequence, and ambient life (sheen, meteors) so a screen recording never sits still. Pass three was a service pass: silkscreen and spec-scale type pushed past 4.5:1 contrast, knobs gained <code>aria-orientation</code>, and the oscilloscope now swells and glows with the analyser's own RMS level, so the trace visibly performs what you play instead of just tracing it. <code>prefers-reduced-motion</code> freezes the horizon and star twinkle into a still composition while the instrument stays fully playable — motion becomes something you request with your hands.</p>
+</article>
+
+<footer class="foot">
+  <span>13 / 25 · OSCILLATE — designed &amp; coded by Claude Fable 5</span>
+  <nav>
+    <a href="/">Index</a>
+    <a href="../">Back to the unit</a>
+  </nav>
+</footer>
+
+</body>
+</html>

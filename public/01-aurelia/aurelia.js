@@ -124,8 +124,10 @@ varying vec2  vUv;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 void main(){
   vec3 N = normalize(vNormal);
-  /* silk thread micro-grain: faint anisotropic ripple in the weave */
-  N.x += 0.018 * sin(vUv.y * 780.0 + vH * 24.0);
+  /* silk thread micro-grain: faint anisotropic ripple in the weave —
+     kept far below the amplitude/frequency that aliases into visible
+     scanline moiré at 1x DPR */
+  N.x += 0.006 * sin(vUv.y * 260.0 + vH * 24.0);
   N = normalize(N);
   vec3 V = normalize(vView);
   float cosT = clamp(dot(N, V), 0.0, 1.0);
@@ -135,8 +137,13 @@ void main(){
   vec3 lambda = vec3(650.0, 545.0, 450.0);
   vec3 phase = 6.2831853 * (2.0 * 1.38 * thickness * cosT) / lambda;
   vec3 film = 0.5 + 0.5 * cos(phase);
-  vec3 duo = mix(uTeal, uRose, film.r);
-  vec3 irid = mix(duo, film, 0.4);
+  /* rose-biased duotone: unlit teal over the warm base was reading as an
+     off-palette olive, and dawn should lean rose first, teal as the cool
+     counter-note */
+  vec3 duo = mix(uTeal, uRose, 0.24 + 0.76 * film.r);
+  /* keep the shimmer inside the brand's rose–teal register: only a whisper
+     of the raw rainbow (whose green band sat nowhere in the palette) */
+  vec3 irid = mix(duo, film, 0.2);
 
   /* silk base: troughs pool into ink, raised folds catch pearl/champagne
      light — real tonal range instead of a flat dark mid-grey */
@@ -201,7 +208,7 @@ function initSilk(canvas) {
     uGold:     { value: new THREE.Color('#C9A96A') },
     uRose:     { value: new THREE.Color('#E8A0B4') },
     uTeal:     { value: new THREE.Color('#7FD4C1') },
-    uIrid:     { value: 0.85 },
+    uIrid:     { value: 0.94 },
   };
   const mesh = new THREE.Mesh(geo, new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, uniforms
@@ -444,6 +451,10 @@ function measurePlx() {
   }
 }
 measurePlx();
+/* section tops shift when Cormorant/Outfit swap in — re-measure once the
+   fonts land (and again on full load) so parallax anchors aren't stale */
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measurePlx);
+addEventListener('load', measurePlx);
 function updateParallax() {
   plxScroll = lerp(plxScroll, scrollY, 0.09);
   const mid = plxScroll + innerHeight / 2;
@@ -477,16 +488,24 @@ const pyramid = document.getElementById('pyramid');
 document.querySelectorAll('.tier').forEach((tier) => {
   tier.addEventListener('mouseenter', () => { pyramid.dataset.active = tier.dataset.tier; });
   tier.addEventListener('mouseleave', () => { delete pyramid.dataset.active; });
+  /* keyboard parity: tabbing to a register highlights its orbs the same
+     way hovering does, and Enter/Space drops the same stone */
+  tier.addEventListener('focus', () => { pyramid.dataset.active = tier.dataset.tier; });
+  tier.addEventListener('blur', () => { delete pyramid.dataset.active; });
   /* touch the register and its orbs answer — the same "stone in liquid
      light" idea as the hero ripple, carried into the accords section */
   if (!RM) {
-    tier.addEventListener('click', () => {
+    const pulse = () => {
       pyramid.querySelectorAll(`.orb-${tier.dataset.tier}`).forEach((orb) => {
         orb.classList.remove('pulse');
         void orb.offsetWidth;
         orb.classList.add('pulse');
         setTimeout(() => orb.classList.remove('pulse'), 1200);
       });
+    };
+    tier.addEventListener('click', pulse);
+    tier.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pulse(); }
     });
   }
 });

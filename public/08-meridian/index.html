@@ -8,13 +8,23 @@
 <meta property="og:title" content="MERIDIAN — Issue 04: On Precision">
 <meta property="og:description" content="A Swiss International-Style editorial magazine. Twelve columns, one promise: nothing on this page is an accident.">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="MERIDIAN">
+<meta name="theme-color" content="#F4F1EA">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23111111'/%3E%3Cg fill='none' stroke='%23F4F1EA'%3E%3Ccircle cx='20' cy='46' r='10' stroke-width='3' stroke-dasharray='47 16'/%3E%3Ccircle cx='20' cy='46' r='19' stroke-width='5' stroke-dasharray='89 31'/%3E%3Ccircle cx='20' cy='46' r='31' stroke-width='8' stroke-dasharray='146 49'/%3E%3C/g%3E%3Ccircle cx='20' cy='46' r='25' fill='none' stroke='%23E63329' stroke-width='3' stroke-dasharray='110 47'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Spectral:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<noscript><style>
+  .rv,.rise,.toc li,.colo-item,.essay-notes .note,.essay-copy p,.pull cite{opacity:1!important;transform:none!important;animation:none!important}
+  .quote-rule,.airmark i{transform:none!important}
+  .airmark b{opacity:1!important}
+  .clock,.gridbtn{display:none}
+</style></noscript>
 </head>
 <body>
+
+<a class="skip" href="#top">Skip to content</a>
 
 <!-- precision instruments -->
 <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
@@ -31,7 +41,7 @@
     <p class="mast-mid rise" style="--d:1">A journal of exact graphic design — Zürich</p>
     <div class="mast-right rise" style="--d:2">
       <span class="clock" id="clock" aria-label="Local time, Zürich">00:00:00</span>
-      <button class="gridbtn" id="gridbtn" aria-pressed="false" title="Toggle the 12-column grid (G)">
+      <button class="gridbtn" id="gridbtn" aria-pressed="false" aria-keyshortcuts="g" title="Toggle the 12-column grid (G)">
         <svg viewBox="0 0 24 14" aria-hidden="true"><g fill="currentColor"><rect x="0" width="1.4" height="14"/><rect x="4.5" width="1.4" height="14"/><rect x="9" width="1.4" height="14"/><rect x="13.5" width="1.4" height="14"/><rect x="18" width="1.4" height="14"/><rect x="22.6" width="1.4" height="14"/></g></svg>
         Grid
       </button>
@@ -51,7 +61,7 @@
     </svg>
     <div class="wrap grid cover-grid">
       <p class="kicker rise" style="--d:3"><span class="sq" aria-hidden="true"></span>Issue 04 · On Precision</p>
-      <h1 class="statement rise" style="--d:4">Nothing on<br>this page is<br>an accident.</h1>
+      <h1 class="statement rise" style="--d:4">Nothing on<br>this page is<br>an accident<span class="dot">.</span></h1>
       <p class="dek rise" style="--d:5">Issue 04 examines precision — the grid as contract, the hairline as argument, and the geometry Josef Müller-Brockmann drew for the Tonhalle.</p>
       <ul class="cover-meta rise" style="--d:6">
         <li>Issue 04 — On Precision</li>
@@ -72,23 +82,23 @@
       <ol class="toc">
         <li><a class="toc-row" href="#quote">
           <span class="toc-i">01</span>
-          <span class="toc-body"><span class="toc-t"><i class="u">The Grid as Contract</i></span><span class="toc-d">Twelve columns, one promise: the reader always knows where to look.</span></span>
+          <span class="toc-body"><span class="toc-t"><span class="u">The Grid as Contract</span></span><span class="toc-d">Twelve columns, one promise: the reader always knows where to look.</span></span>
           <span class="toc-p">08</span></a></li>
         <li><a class="toc-row" href="#essay">
           <span class="toc-i">02</span>
-          <span class="toc-body"><span class="toc-t"><i class="u">On Precision</i></span><span class="toc-d">An editorial on removal, rhythm, and the morality of the hairline.</span></span>
+          <span class="toc-body"><span class="toc-t"><span class="u">On Precision</span></span><span class="toc-d">An editorial on removal, rhythm, and the morality of the hairline.</span></span>
           <span class="toc-p">16</span></a></li>
         <li><a class="toc-row" href="#plate">
           <span class="toc-i">03</span>
-          <span class="toc-body"><span class="toc-t"><i class="u">Arc Study Nº 4</i></span><span class="toc-d">Redrawing the Beethoven poster: seven bands, one rule of doubling.</span></span>
+          <span class="toc-body"><span class="toc-t"><span class="u">Arc Study Nº 4</span></span><span class="toc-d">Redrawing the Beethoven poster: seven bands, one rule of doubling.</span></span>
           <span class="toc-p">24</span></a></li>
         <li><a class="toc-row" href="#plate">
           <span class="toc-i">04</span>
-          <span class="toc-body"><span class="toc-t"><i class="u">Negative Space, Measured</i></span><span class="toc-d">White is not empty; it is set in twenty-eight-point increments.</span></span>
+          <span class="toc-body"><span class="toc-t"><span class="u">Negative Space, Measured</span></span><span class="toc-d">White is not empty; it is set in twenty-eight-point increments.</span></span>
           <span class="toc-p">32</span></a></li>
         <li><a class="toc-row" href="#colophon">
           <span class="toc-i">05</span>
-          <span class="toc-body"><span class="toc-t"><i class="u">Colophon</i></span><span class="toc-d">Papers, inks, and the numbers behind this issue.</span></span>
+          <span class="toc-body"><span class="toc-t"><span class="u">Colophon</span></span><span class="toc-d">Papers, inks, and the numbers behind this issue.</span></span>
           <span class="toc-p">48</span></a></li>
       </ol>
     </div>
@@ -125,6 +135,7 @@
   <!-- ——— PULL QUOTE ——— -->
   <section class="spread quote rv" id="quote" aria-label="Pull quote">
     <div class="wrap grid">
+      <div class="airmark" aria-hidden="true"><i></i><b><span class="am-d">4 × 28 px</span><span class="am-m">3 × 26 px</span> — air, measured</b></div>
       <div class="quote-rule" aria-hidden="true"></div>
       <blockquote class="pull">
         <p>A grid is a promise made in advance: this is where things will go, and therefore this is where the reader will find them.</p>
@@ -144,7 +155,7 @@
         <h2 class="plate-title">Arc<br>Study<br>Nº 4</h2>
         <div class="brule"></div>
         <p class="plate-cap"><b class="fig">fig. 04.1</b> After Müller-Brockmann's <em>beethoven</em>, Tonhalle Zürich, 1955. Seven concentric bands; each roughly doubles the width of the last, as a crescendo doubles pressure. The system rotates at well under one degree per second and deflects ±5° as you scroll — geometry keeping time.</p>
-        <p class="plate-cap dim">Ink on paper would hold still. Ink on screen is under no such obligation.</p>
+        <p class="plate-cap dim">Ink on paper would hold still. Ink on screen is under no such obligation. Rest a pointer on the plate and it becomes an instrument: crosshairs, with the position read out in millimetres of the printed page.</p>
       </div>
       <figure class="plate-fig">
         <svg id="arcsvg" viewBox="0 0 720 720" role="img" aria-label="Concentric arc study after Müller-Brockmann's Beethoven poster">
@@ -153,6 +164,12 @@
           <text class="plate-t1" x="46" y="76">meridian</text>
           <text class="plate-t2" x="46" y="102">arc study nº 4 — after j. m-b, tonhalle, 1955</text>
           <text class="plate-t3" x="674" y="682" text-anchor="end">04</text>
+          <g id="xhair" opacity="0" aria-hidden="true">
+            <line id="xhV" x1="360" y1="0" x2="360" y2="720" stroke="#E63329" stroke-width="1"/>
+            <line id="xhH" x1="0" y1="360" x2="720" y2="360" stroke="#E63329" stroke-width="1"/>
+            <circle id="xhRing" cx="360" cy="360" r="12" fill="none" stroke="#E63329" stroke-width="1"/>
+            <text id="xhOut" class="plate-t4" x="46" y="682">x 000.0 · y 000.0 mm</text>
+          </g>
         </svg>
       </figure>
     </div>

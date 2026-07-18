@@ -1,0 +1,1116 @@
+/* ============================================================
+   FOLD · The Smallest Mountain — paper-craft pop-up storybook
+   Every shape is cut from code: clip-paths, masks, gradients.
+   ============================================================ */
+
+:root{
+  --kraft:#D9C7A7;
+  --kraft-deep:#C4AC85;
+  --kraft-dark:#B0956C;
+  --cream:#FBF6EA;
+  --paper:#FFFDF4;
+  --coral:#F2695C;
+  --coral-deep:#D9503F;
+  --coral-ink:#C34632; /* darkened for small text on paper — meets AA contrast */
+  --teal:#2E8C83;
+  --teal-deep:#20655F;
+  --sun:#F2B33D;
+  --sun-deep:#DE9B1F;
+  --ink:#463322;
+  --ink-soft:#6E5B44;
+  --night:#2C3A5A;
+  --night-deep:#202C46;
+  --night-lift:#3D4E75;
+
+  /* hard, stacked paper-lift shadows */
+  --lift-1: 0 1px 0 rgba(70,51,34,.10), 3px 4px 0 rgba(70,51,34,.13);
+  --lift-2: 0 1px 0 rgba(70,51,34,.08), 4px 5px 0 rgba(70,51,34,.15), 9px 11px 0 rgba(70,51,34,.07);
+  --lift-3: 0 1px 0 rgba(70,51,34,.10), 5px 6px 0 rgba(70,51,34,.16), 11px 13px 0 rgba(70,51,34,.08);
+
+  --pop-out: cubic-bezier(.30,1.52,.42,1);   /* overshoot, like card stock springing up */
+  --pop-in:  cubic-bezier(.55,0,.80,.44);
+  --swing-e: cubic-bezier(.36,.07,.19,.97);
+
+  --foldY: 62%;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+body{
+  font-family:"Nunito", ui-rounded, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  overflow-x: hidden;
+}
+
+::selection{ background: var(--sun); color: var(--ink); }
+
+a, button{ font-family: inherit; }
+:focus-visible{
+  outline: 3px dashed var(--coral);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skiplink{
+  position: fixed; top: -4rem; left: 1rem; z-index: 200;
+  background: var(--ink); color: var(--cream);
+  padding: .6rem 1rem; border-radius: 0 0 10px 10px;
+  font-weight: 700; text-decoration: none;
+  transition: top .25s ease;
+}
+.skiplink:focus-visible{ top: 0; }
+
+/* ============ atmosphere overlays ============ */
+.lamplight{
+  position: fixed; inset: 0; z-index: 90; pointer-events: none;
+  background:
+    radial-gradient(120% 85% at 50% 6%, rgba(255,208,124,.14), transparent 58%),
+    radial-gradient(140% 120% at 50% 55%, transparent 58%, rgba(70,51,34,.17) 100%);
+}
+.grain{
+  position: fixed; inset: 0; z-index: 91; pointer-events: none;
+  opacity: .055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+/* motes: slow lamplit dust, fixed to the viewport so every spread — including
+   the quiet kraft page below the fold — has continuous, gentle motion, the
+   way real dust turns in a reading lamp. Pure decoration, never blocks input. */
+.motes{ position: fixed; inset: 0; z-index: 92; pointer-events: none; overflow: hidden; }
+.motes i{
+  position: absolute; left: var(--mx); bottom: -4%;
+  width: 5.5px; height: 5.5px; border-radius: 50%;
+  background: radial-gradient(circle, #FFF3D6 0%, rgba(255,222,150,.75) 45%, rgba(255,222,150,0) 72%);
+  box-shadow: 0 0 7px 1px rgba(242,179,61,.45);
+  opacity: 0;
+  animation: mote-rise var(--md, 18s) linear infinite;
+  animation-delay: var(--mdelay, 0s);
+}
+@keyframes mote-rise{
+  0%{ transform: translate(0, 0) scale(var(--ms, .7)); opacity: 0; }
+  12%{ opacity: .8; }
+  50%{ transform: translate(1.4vw, -46vh) scale(var(--ms, .7)); }
+  88%{ opacity: .5; }
+  100%{ transform: translate(-1vw, -100vh) scale(var(--ms, .7)); opacity: 0; }
+}
+
+/* the page-corner curl's turn: a paper-catching-light sweep from the corner,
+   fired once per click, so the "turn" reads as a felt gesture, not just a scroll */
+.pageflip{ position: fixed; inset: 0; z-index: 150; pointer-events: none; overflow: hidden; }
+.pageflip::before{
+  content: "";
+  position: absolute; right: -15%; bottom: -20%;
+  width: 130vmax; height: 130vmax;
+  background: linear-gradient(135deg,
+    rgba(255,253,244,.92) 0%, rgba(255,253,244,.55) 30%,
+    rgba(233,223,200,.28) 48%, transparent 68%);
+  transform-origin: 100% 100%;
+  transform: scale(0) rotate(10deg);
+  opacity: 0;
+}
+body.flipping .pageflip::before{ animation: page-sweep .75s var(--pop-out); }
+@keyframes page-sweep{
+  0%{ transform: scale(0) rotate(10deg); opacity: 0; }
+  30%{ opacity: .9; }
+  100%{ transform: scale(1) rotate(-6deg); opacity: 0; }
+}
+
+/* ============ bookplate (fixed wordmark) ============ */
+.bookplate{
+  position: fixed; top: 1.1rem; left: 1.2rem; z-index: 100;
+  background: var(--paper);
+  padding: .5rem .95rem .55rem;
+  border-radius: 6px;
+  box-shadow: var(--lift-1);
+  display: flex; flex-direction: column; line-height: 1.05;
+  transform: rotate(-1.5deg);
+  animation: plate-drop .8s var(--pop-out) both .2s;
+}
+@keyframes plate-drop{
+  from{ transform: translateY(-140%) rotate(-8deg); }
+  to{ transform: translateY(0) rotate(-1.5deg); }
+}
+.bp-word{
+  font-family:"Baloo 2", cursive;
+  font-weight: 800; font-size: 1.25rem; letter-spacing: .14em;
+  color: var(--coral);
+}
+.bp-sub{
+  font-size: .62rem; font-weight: 700; letter-spacing: .08em;
+  color: var(--ink-soft);
+}
+
+/* ============ side page tabs ============ */
+.tabs{
+  position: fixed; right: 0; top: 50%; z-index: 100;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: .45rem;
+}
+.tab{
+  width: 3.4rem; height: 2.3rem;
+  border: 2px solid rgba(251,246,234,.92); border-right: none;
+  cursor: pointer;
+  border-radius: 10px 0 0 10px;
+  transform: translateX(1.15rem);
+  transition: transform .3s var(--pop-out), filter .2s;
+  font-family:"Baloo 2", cursive; font-weight: 700; font-size: .85rem;
+  color: var(--cream);
+  box-shadow: var(--lift-1);
+  text-align: left; padding-left: .7rem;
+}
+.tab:hover{ transform: translateX(.55rem); }
+.tab:active{ transform: translateX(.55rem) scale(.92); transition-duration: .1s; }
+.tab[aria-current="true"]{ transform: translateX(.15rem); }
+.t1{ background: var(--teal); }
+.t2{ background: var(--coral); }
+.t3{ background: var(--night); }
+.t4{ background: var(--sun); color: var(--ink); }
+.t5{ background: var(--kraft-dark); }
+
+/* ============ spreads & the pop-up mechanic ============ */
+.spread{
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+.stage{
+  position: absolute; inset: 0;
+  perspective: 1250px;
+  perspective-origin: 50% 22%;
+}
+
+/* fold crease across each spread */
+.crease{
+  position: absolute; left: 0; right: 0; top: var(--foldY);
+  height: 16px; transform: translateY(-50%);
+  z-index: 6; pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(70,51,34,.10) 42%,
+    rgba(70,51,34,.20) 50%,
+    rgba(255,255,255,.38) 58%,
+    transparent 100%);
+}
+
+.ground{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: calc(100% - var(--foldY));
+  z-index: 5;
+  background:
+    linear-gradient(180deg, rgba(70,51,34,.16), rgba(70,51,34,0) 22%),
+    repeating-linear-gradient(94deg, rgba(70,51,34,.028) 0 2px, transparent 2px 56px),
+    var(--kraft);
+}
+
+/* the signature move: card stock rotating up from the fold */
+.pop{
+  transform-origin: 50% 100%;
+  transform: rotateX(-91deg);
+  opacity: 0;
+  transition: transform .5s var(--pop-in), opacity .3s ease;
+  transition-delay: 0s, .15s;
+  will-change: transform, opacity;
+}
+.in .pop{
+  transform: rotateX(0deg);
+  opacity: 1;
+  transition: transform .95s var(--pop-out), opacity .45s ease;
+  transition-delay: calc(var(--i,0) * 115ms), calc(var(--i,0) * 115ms);
+}
+
+/* dangling pieces swing on hover — the grab cursor invites the nudge */
+.dangle{ transform-origin: 50% 100%; cursor: grab; }
+.dangle.hang-down{ transform-origin: 50% 0%; }
+.dangle:hover{ animation: swing 1.3s var(--swing-e) 1; }
+.dangle:active{ cursor: grabbing; }
+@keyframes swing{
+  0%{ transform: rotate(0); }
+  18%{ transform: rotate(8deg); }
+  42%{ transform: rotate(-6deg); }
+  66%{ transform: rotate(3.5deg); }
+  84%{ transform: rotate(-1.5deg); }
+  100%{ transform: rotate(0); }
+}
+
+/* ============ story cards ============ */
+.card{
+  position: absolute; z-index: 20;
+  max-width: 30rem;
+  background: var(--paper);
+  padding: 1.35rem 1.6rem 1.45rem;
+  border-radius: 8px;
+  box-shadow: var(--lift-2);
+}
+.card::before{ /* kraft tape */
+  content:"";
+  position: absolute; top: -.75rem; left: 50%;
+  width: 6.5rem; height: 1.5rem;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(217,199,167,.85);
+  clip-path: polygon(3% 0, 97% 6%, 100% 88%, 0 100%);
+  box-shadow: 1px 2px 0 rgba(70,51,34,.10);
+}
+.card p{
+  font-size: clamp(.95rem, 1.05vw + .5rem, 1.08rem);
+  line-height: 1.62;
+  font-weight: 600;
+}
+.spread-no{
+  display: inline-block;
+  font-family:"Baloo 2", cursive;
+  font-weight: 700; font-size: .72rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--coral-ink);
+  margin-bottom: .45rem;
+}
+
+/* ============ Pip, the smallest mountain ============ */
+.piprig{ position: absolute; z-index: 8; }
+.pip{
+  position: absolute; inset: 0;
+  animation: breathe 4.2s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+@keyframes breathe{ from{ transform: scale(1); } to{ transform: scale(1.022); } }
+.pip-body{
+  position: absolute; inset: 0;
+  clip-path: polygon(50% 0, 58% 8%, 67% 24%, 79% 50%, 89% 74%, 100% 100%, 0 100%, 11% 74%, 22% 49%, 35% 20%, 44% 5%);
+  background: linear-gradient(92deg, var(--kraft) 0 49.4%, var(--kraft-deep) 50.6% 100%);
+  filter: drop-shadow(4px 5px 0 rgba(70,51,34,.14));
+}
+.pip-face{ position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.eye{
+  position: absolute; width: 7%; height: 5.5%;
+  min-width: 6px; min-height: 6px;
+  border-radius: 50%; background: var(--ink);
+  top: 52%;
+  animation: blink 4.6s ease-in-out infinite;
+}
+.eye.l{ left: 39%; } .eye.r{ left: 54%; }
+.eye.up{ top: 47%; }
+@keyframes blink{
+  0%, 90%, 100%{ transform: scaleY(1); }
+  95%{ transform: scaleY(.08); }
+}
+.smile{
+  position: absolute; left: 46%; top: 60%;
+  width: 9%; height: 6%; min-width: 9px; min-height: 6px;
+  border: 3px solid transparent;
+  border-bottom-color: var(--ink);
+  border-radius: 50%;
+}
+.smile.big{ width: 13%; height: 9%; left: 44%; }
+.blush{
+  position: absolute; width: 9%; height: 4.5%;
+  border-radius: 50%; background: var(--coral); opacity: .45;
+  top: 58%;
+}
+.blush.bl{ left: 30%; } .blush.br{ left: 62%; }
+
+.dandelion{ position: absolute; left: 55%; top: -30%; width: 30%; height: 44%; }
+.dandelion .stem{
+  position: absolute; left: 40%; bottom: -6%;
+  width: 4px; height: 82%;
+  background: var(--teal);
+  border-radius: 3px;
+  transform: rotate(7deg);
+  box-shadow: 1.5px 1.5px 0 rgba(70,51,34,.14);
+}
+.dandelion .leaf{
+  position: absolute; left: 8%; bottom: 18%;
+  width: 34%; height: 16%;
+  background: var(--teal);
+  border-radius: 100% 0 100% 0;
+  transform: rotate(-24deg);
+}
+.dandelion .puff{
+  position: absolute; left: 22%; top: -10%;
+  width: 52%; height: 44%;
+  min-width: 20px; min-height: 20px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle 2.5px at 32% 30%, var(--cream) 97%, transparent),
+    radial-gradient(circle 2.5px at 66% 38%, var(--cream) 97%, transparent),
+    radial-gradient(circle 2.5px at 46% 66%, var(--cream) 97%, transparent),
+    var(--sun);
+  box-shadow: 2px 2.5px 0 rgba(70,51,34,.16);
+  animation: puff-nod 3.6s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+@keyframes puff-nod{ from{ transform: rotate(-4deg);} to{ transform: rotate(5deg);} }
+
+/* ============ SPREAD I ============ */
+.s1{ background: linear-gradient(180deg, #FDF9EF 0%, var(--cream) 55%, #F2E7CF 100%); }
+
+.titleblock{
+  position: absolute; z-index: 12;
+  top: 7%; left: 50%; margin-left: max(-24rem, -44vw);
+  width: min(48rem, 88vw);
+  text-align: center;
+}
+.site-title{
+  font-family:"Baloo 2", cursive;
+  font-weight: 800;
+  font-size: clamp(4.2rem, 11vw, 8rem);
+  line-height: .9;
+  letter-spacing: .06em;
+  color: var(--coral);
+  text-shadow:
+    0 1px 0 rgba(70,51,34,.12),
+    5px 6px 0 rgba(70,51,34,.16),
+    11px 12px 0 rgba(70,51,34,.07);
+}
+.site-sub{
+  display: inline-block;
+  font-family:"Baloo 2", cursive;
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  color: var(--cream);
+  background: var(--teal);
+  padding: .18em 1.4em .28em;
+  margin-top: .75rem;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .7em) 50%, 100% 100%, 0 100%, .7em 50%);
+  filter: drop-shadow(3px 4px 0 rgba(70,51,34,.16));
+  rotate: -1.4deg;
+}
+.site-note{
+  margin-top: .85rem;
+  font-size: .8rem; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hill{ position: absolute; left: -4%; right: -4%; bottom: calc(100% - var(--foldY)); }
+.hill-a{
+  z-index: 2; height: 30vh;
+  background: var(--teal-deep);
+  clip-path: polygon(0% 100%, 0% 21.8%, 6.5% 23.1%, 13% 15.1%, 19.5% 17.4%, 26% 21%, 32.5% 22.1%, 39% 14.4%, 45.5% 28.8%, 52% 23.6%, 58.5% 20.4%, 65% 18.1%, 71.5% 27.1%, 78% 24.8%, 84.5% 14.4%, 91% 22%, 97.5% 17.2%, 100% 25.1%, 100% 100%);
+}
+.hill-b{
+  z-index: 3; height: 22vh;
+  background: var(--teal);
+  --r: 24px;
+  -webkit-mask-image: radial-gradient(circle var(--r) at 50% var(--r), #000 98%, transparent), linear-gradient(#000, #000);
+  -webkit-mask-size: calc(var(--r) * 2.1) calc(var(--r) * 2), 100% calc(100% - var(--r));
+  -webkit-mask-position: 0 0, 0 var(--r);
+  -webkit-mask-repeat: repeat-x, no-repeat;
+  mask-image: radial-gradient(circle var(--r) at 50% var(--r), #000 98%, transparent), linear-gradient(#000, #000);
+  mask-size: calc(var(--r) * 2.1) calc(var(--r) * 2), 100% calc(100% - var(--r));
+  mask-position: 0 0, 0 var(--r);
+  mask-repeat: repeat-x, no-repeat;
+  filter: drop-shadow(0 -3px 0 rgba(70,51,34,.12));
+}
+.hill-c{
+  z-index: 9; height: 14vh;
+  background: var(--kraft-deep);
+  clip-path: polygon(0% 100%, 0% 9.1%, 5.5% 28.4%, 11% 26.3%, 16.5% 22.4%, 22% 20%, 27.5% 18.5%, 33% 19%, 38.5% 22.2%, 44% 16.6%, 49.5% 8.9%, 55% 20.9%, 60.5% 6.7%, 66% 26.1%, 71.5% 26.3%, 77% 22.7%, 82.5% 8.6%, 88% 24.3%, 93.5% 26.7%, 99% 14.3%, 100% 24.9%, 100% 100%);
+}
+
+.pip-s1{ left: 61%; bottom: calc(100% - var(--foldY) + 4vh); width: 200px; height: 158px; }
+
+/* printed base-sheet details: pebbles & daisy dots on the kraft ground */
+.s1 .ground{ background:
+  linear-gradient(180deg, rgba(70,51,34,.16), rgba(70,51,34,0) 22%),
+  radial-gradient(ellipse 26px 11px at 11% 36%, var(--kraft-deep) 97%, transparent),
+  radial-gradient(ellipse 15px 7px at 15% 41%, var(--kraft-dark) 97%, transparent),
+  radial-gradient(ellipse 30px 12px at 33% 66%, var(--kraft-deep) 97%, transparent),
+  radial-gradient(ellipse 17px 8px at 38% 71%, var(--kraft-dark) 97%, transparent),
+  radial-gradient(ellipse 20px 9px at 56% 44%, var(--kraft-deep) 97%, transparent),
+  radial-gradient(circle 4px at 24% 52%, var(--paper) 97%, transparent),
+  radial-gradient(circle 3px at 47% 82%, var(--paper) 97%, transparent),
+  radial-gradient(circle 4px at 64% 68%, var(--paper) 97%, transparent),
+  repeating-linear-gradient(94deg, rgba(70,51,34,.028) 0 2px, transparent 2px 56px),
+  var(--kraft); }
+
+.trail{
+  position: absolute; left: 7%; top: calc(var(--foldY) + 3%);
+  width: 42%; height: 30%;
+  z-index: 6; pointer-events: none;
+}
+
+/* scalloped grass fringe printed along the fold */
+.fringe{
+  position: absolute; left: 0; right: 0; top: var(--foldY);
+  height: 17px; z-index: 6; pointer-events: none;
+  background: var(--teal-deep);
+  opacity: .9;
+  -webkit-mask-image: radial-gradient(circle 13px at 50% 0, #000 97%, transparent);
+  -webkit-mask-size: 24px 17px;
+  -webkit-mask-repeat: repeat-x;
+  mask-image: radial-gradient(circle 13px at 50% 0, #000 97%, transparent);
+  mask-size: 24px 17px;
+  mask-repeat: repeat-x;
+}
+.night-fringe{ background: #171F36; opacity: 1; }
+.spring-fringe{ background: var(--teal-deep); opacity: .75; }
+
+/* small paper clouds drifting across the sky (ambient life) */
+.driftcloud{
+  position: absolute; left: 0; z-index: 1; pointer-events: none;
+  width: 118px; height: 32px; border-radius: 40px;
+  background: var(--paper);
+  box-shadow: 2px 3px 0 rgba(70,51,34,.08);
+  animation: drift linear infinite;
+}
+.driftcloud::before, .driftcloud::after{
+  content:""; position: absolute; border-radius: 50%;
+  background: var(--paper);
+}
+.driftcloud::before{ width: 44px; height: 44px; left: 22px; top: -20px; }
+.driftcloud::after{ width: 30px; height: 30px; right: 22px; top: -13px; }
+.dc1{ top: 13%; animation-duration: 85s; }
+.dc2{ top: 26%; opacity: .55; transform-origin: 50% 50%; scale: .62; animation-duration: 130s; animation-delay: -58s; }
+.dc3{ top: 7%; opacity: .8; scale: .85; animation-duration: 105s; animation-delay: -30s; }
+.dc4{ top: 33%; opacity: .4; scale: .48; animation-duration: 150s; animation-delay: -95s; }
+@keyframes drift{
+  from{ translate: -170px 0; }
+  to{ translate: calc(100vw + 170px) 0; }
+}
+
+/* a thin flock of paper birds, giving the upper sky some life */
+.flock{ position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.bird{
+  position: absolute; left: 0; top: 0;
+  width: 22px; height: 11px;
+  background: var(--ink-soft);
+  clip-path: polygon(0% 62%, 24% 0%, 50% 42%, 76% 0%, 100% 62%, 50% 32%);
+  animation: bird-fly linear infinite;
+}
+.b1{ top: 15%; opacity: .48; animation-duration: 32s; animation-delay: -6s; }
+.b2{ top: 20%; opacity: .34; scale: .74; animation-duration: 32s; animation-delay: -1s; }
+.b3{ top: 10%; opacity: .3; scale: .58; animation-duration: 44s; animation-delay: -24s; }
+@keyframes bird-fly{
+  from{ translate: -40px 0; }
+  to{ translate: calc(100vw + 40px) 0; }
+}
+
+.sunrig{ position: absolute; left: 6.5%; bottom: calc(100% - var(--foldY)); width: 180px; height: 46vh; z-index: 4; }
+.sunrig .dangle{
+  position: absolute; inset: 0;
+  animation: stick-sway 5.4s ease-in-out infinite alternate;
+}
+@keyframes stick-sway{ from{ transform: rotate(-2deg);} to{ transform: rotate(2.4deg);} }
+.stick{
+  position: absolute; left: 50%; bottom: 0;
+  width: 12px; height: calc(100% - 120px);
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, var(--kraft-dark) 0 48%, #9A8158 52% 100%);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(70,51,34,.15);
+}
+.sun{
+  position: absolute; top: 0; left: 50%;
+  width: 168px; height: 168px;
+  transform: translateX(-50%);
+}
+.sun-rays{
+  position: absolute; inset: 0;
+  background: var(--sun);
+  clip-path: polygon(50% 0%, 58.5% 18.1%, 75% 6.7%, 73.3% 26.7%, 93.3% 25%, 81.9% 41.5%, 100% 50%, 81.9% 58.5%, 93.3% 75%, 73.3% 73.3%, 75% 93.3%, 58.5% 81.9%, 50% 100%, 41.5% 81.9%, 25% 93.3%, 26.7% 73.3%, 6.7% 75%, 18.1% 58.5%, 0% 50%, 18.1% 41.5%, 6.7% 25%, 26.7% 26.7%, 25% 6.7%, 41.5% 18.1%);
+  animation: spin 70s linear infinite;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.sun-core{
+  position: absolute; inset: 19%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #F8CA6B, var(--sun-deep));
+  box-shadow: inset -4px -5px 0 rgba(70,51,34,.12), 3px 4px 0 rgba(70,51,34,.16);
+}
+.sun-core .eye{ width: 9px; height: 9px; top: 42%; }
+.sun-core .eye.l{ left: 32%; } .sun-core .eye.r{ left: 58%; }
+.sun-core .smile{ left: 41%; top: 52%; width: 18px; height: 12px; }
+
+.card-s1{ right: 5%; bottom: 6%; }
+
+/* ============ SPREAD II ============ */
+.s2{ background: linear-gradient(180deg, #EFF3E9 0%, var(--cream) 62%, #F0E5CD 100%); }
+.s2 .ground{ background:
+  linear-gradient(180deg, rgba(70,51,34,.16), rgba(70,51,34,0) 22%),
+  radial-gradient(ellipse 24px 10px at 46% 38%, var(--kraft-deep) 97%, transparent),
+  radial-gradient(ellipse 14px 7px at 51% 43%, var(--kraft-dark) 97%, transparent),
+  radial-gradient(ellipse 26px 11px at 12% 70%, var(--kraft-deep) 97%, transparent),
+  radial-gradient(circle 4px at 30% 56%, var(--paper) 97%, transparent),
+  radial-gradient(circle 3px at 60% 74%, var(--paper) 97%, transparent),
+  repeating-linear-gradient(94deg, rgba(70,51,34,.028) 0 2px, transparent 2px 56px),
+  var(--kraft); }
+
+.hill-far{
+  z-index: 1; height: 18vh;
+  background: #BFD6CB;
+  clip-path: polygon(0% 100%, 0% 35.5%, 7.5% 37.7%, 15% 24.6%, 22.5% 30.9%, 30% 31.9%, 37.5% 32.5%, 45% 23.1%, 52.5% 25.1%, 60% 36.4%, 67.5% 34.8%, 75% 24%, 82.5% 26.9%, 90% 24.7%, 97.5% 35.4%, 100% 26.7%, 100% 100%);
+}
+
+.pip-s2{ left: 14%; bottom: calc(100% - var(--foldY)); width: 260px; height: 208px; z-index: 8; }
+
+.cloudrig{
+  position: absolute; top: 3%; right: 48%;
+  width: 220px; height: calc(var(--foldY) - 17%);
+  z-index: 7;
+  transform: translateY(-105%);
+  transition: transform .6s var(--pop-in);
+}
+.in .cloudrig{
+  transform: translateY(0);
+  transition: transform 1.1s var(--pop-out);
+  transition-delay: calc(var(--i,0) * 115ms + 200ms);
+}
+.cloudrig .dangle{ position: absolute; inset: 0; }
+.tab-strip{
+  position: absolute; top: 18px; left: 50%;
+  width: 26px; height: calc(62% - 18px);
+  transform: translateX(-50%);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 14px, rgba(70,51,34,.16) 14px 20px) 50% 0 / 3px 100% no-repeat,
+    linear-gradient(90deg, var(--kraft-deep) 0 46%, var(--kraft-dark) 54% 100%);
+  box-shadow: 3px 3px 0 rgba(70,51,34,.13);
+}
+.tab-strip i{ /* paper brad */
+  position: absolute; bottom: -7px; left: 50%;
+  width: 15px; height: 15px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #46B0A6, var(--teal-deep));
+  box-shadow: 1.5px 2px 0 rgba(70,51,34,.22);
+}
+/* anchor bracket: reads as the mechanism stapled to the top of the page,
+   so the strip no longer looks like a pole sliced off by the screen edge */
+.tab-strip::before{
+  content:"";
+  position: absolute; top: -18px; left: 50%;
+  width: 52px; height: 22px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--kraft-dark) 0 55%, var(--kraft-deep) 55% 100%);
+  border-radius: 3px 3px 12px 12px;
+  box-shadow: 0 3px 0 rgba(70,51,34,.14), 0 7px 8px -4px rgba(70,51,34,.28);
+}
+.tab-strip::after{ /* two little stitch rivets pinning the bracket up */
+  content:"";
+  position: absolute; top: -9px; left: 50%;
+  width: 5px; height: 5px; border-radius: 50%;
+  transform: translateX(-50%);
+  background: rgba(70,51,34,.32);
+  box-shadow: -16px 0 0 rgba(70,51,34,.32), 16px 0 0 rgba(70,51,34,.32);
+}
+.bobber{
+  position: absolute; top: 58%; left: 50%;
+  transform: translateX(-50%);
+  animation: bob 5.6s ease-in-out infinite;
+}
+@keyframes bob{ 0%,100%{ translate: 0 0; } 50%{ translate: 0 -13px; } }
+.cloud{
+  position: relative;
+  width: 200px; height: 78px;
+  background: var(--paper);
+  border-radius: 60px;
+  box-shadow: var(--lift-2);
+}
+.cloud::before, .cloud::after{
+  content:""; position: absolute; border-radius: 50%;
+  background: var(--paper);
+}
+.cloud::before{ width: 88px; height: 88px; left: 26px; top: -40px; }
+.cloud::after{ width: 62px; height: 62px; right: 32px; top: -26px; }
+.cloud .cface{ z-index: 2; }
+.cloud .eye{ width: 8px; height: 8px; top: 34%; animation-delay: 1.2s; }
+.cloud .eye.l{ left: 38%; } .cloud .eye.r{ left: 52%; }
+.cloud .smile{ left: 42%; top: 46%; width: 16px; height: 10px; }
+
+.card-s2{ right: 5%; bottom: 7%; }
+
+/* ============ SPREAD III · NIGHT ============ */
+.s3{ background: var(--cream); }
+.nightsheet{
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(110% 70% at 72% 18%, rgba(120,146,205,.20), transparent 55%),
+    linear-gradient(180deg, var(--night-lift) 0%, var(--night) 46%, var(--night-deep) 100%);
+  clip-path: polygon(0% 100%, 0% 1.6%, 4.5% 3%, 9% 2.3%, 13.5% .9%, 18% 3.2%, 22.5% 2.4%, 27% 4.4%, 31.5% 1.7%, 36% 3.1%, 40.5% 4.4%, 45% 5.5%, 49.5% 1.8%, 54% 3%, 58.5% 2%, 63% 5%, 67.5% 2%, 72% 2.9%, 76.5% 5.4%, 81% 3.6%, 85.5% 5.4%, 90% 4.8%, 94.5% 4.9%, 99% 1.9%, 100% 5.2%, 100% 100%);
+}
+.s3 .ground{ background:
+  linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,0) 24%),
+  radial-gradient(circle 4px at 20% 44%, rgba(170,190,232,.34) 97%, transparent),
+  radial-gradient(circle 3px at 37% 70%, rgba(170,190,232,.24) 97%, transparent),
+  radial-gradient(circle 5px at 55% 52%, rgba(242,179,61,.30) 97%, transparent),
+  radial-gradient(circle 3px at 70% 78%, rgba(170,190,232,.22) 97%, transparent),
+  radial-gradient(circle 4px at 86% 40%, rgba(170,190,232,.28) 97%, transparent),
+  repeating-linear-gradient(94deg, rgba(0,0,0,.05) 0 2px, transparent 2px 56px),
+  #26314D; }
+.s3 .crease{ background: linear-gradient(180deg,
+  transparent 0%, rgba(0,0,0,.24) 44%, rgba(0,0,0,.34) 50%, rgba(160,180,225,.20) 58%, transparent 100%); }
+
+.stars{ position: absolute; inset: 4% 0 42% 0; z-index: 2; }
+.star{
+  position: absolute; left: var(--sx); top: var(--sy);
+  width: 11px; height: 11px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #FFF6DC, var(--sun));
+  box-shadow:
+    inset 0 2px 2px rgba(0,0,0,.42),
+    0 0 10px rgba(242,179,61,.55),
+    0 0 22px rgba(242,179,61,.22);
+  animation: twinkle 2.8s ease-in-out infinite alternate;
+  animation-delay: var(--tw, 0s);
+}
+.star.big{ width: 16px; height: 16px; }
+@keyframes twinkle{
+  from{ opacity: .38; transform: scale(.82); }
+  to{ opacity: 1; transform: scale(1); }
+}
+
+.moonrig{ position: absolute; top: 9%; right: 11%; width: 110px; height: 110px; z-index: 3; }
+.moonrig .dangle{ position: absolute; inset: 0; animation: moon-rock 8s ease-in-out infinite alternate; }
+@keyframes moon-rock{ from{ transform: rotate(-5deg);} to{ transform: rotate(5deg);} }
+.moon{
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 40% 36%, #F8CF79, var(--sun));
+  -webkit-mask-image: radial-gradient(circle 58% at 74% 26%, transparent 44%, #000 45.5%);
+  mask-image: radial-gradient(circle at 74% 26%, transparent 44%, #000 45.5%);
+  filter: drop-shadow(0 0 18px rgba(242,179,61,.35)) drop-shadow(3px 4px 0 rgba(0,0,0,.28));
+}
+
+.pip-s3{ left: 50%; margin-left: -170px; bottom: calc(100% - var(--foldY)); width: 340px; height: 170px; z-index: 8; }
+.pip-s3 .pip{ position: absolute; left: 0; bottom: 0; width: 210px; height: 168px; }
+.night-pip .pip-body{
+  background: linear-gradient(92deg, #6B6A80 0 49.4%, #57566B 50.6% 100%);
+}
+.night-pip .eye{ background: var(--cream); }
+.night-pip .smile{ border-bottom-color: var(--cream); }
+.night-pip .dandelion .stem{ background: #4E6B67; }
+.night-pip .dandelion .puff{
+  background:
+    radial-gradient(circle 2.5px at 32% 30%, var(--night) 97%, transparent),
+    radial-gradient(circle 2.5px at 66% 38%, var(--night) 97%, transparent),
+    #C9A94F;
+  box-shadow: 2px 2.5px 0 rgba(0,0,0,.3);
+}
+.cloud.small-night{
+  position: absolute; right: 0; bottom: 34px;
+  width: 130px; height: 52px;
+  background: #B9C2D8;
+  box-shadow: 3px 4px 0 rgba(0,0,0,.28);
+  animation: bob 6.5s ease-in-out infinite;
+}
+.cloud.small-night::before{ width: 58px; height: 58px; left: 17px; top: -26px; background: #B9C2D8; }
+.cloud.small-night::after{ width: 40px; height: 40px; right: 22px; top: -17px; background: #B9C2D8; }
+.cloud.small-night .eye{ background: var(--night-deep); width: 6px; height: 6px; }
+.cloud.small-night .smile{ border-bottom-color: var(--night-deep); width: 12px; height: 8px; }
+
+.card-s3{ right: 5%; bottom: 7%; background: var(--night-lift); }
+.card-s3::before{
+  top: -.62rem; height: 1.7rem;
+  background: linear-gradient(180deg, #EFE4C9, var(--kraft-deep));
+  box-shadow: 1px 3px 0 rgba(0,0,0,.28);
+}
+.card-s3 p{ color: #F3EFE2; }
+.card-s3 .spread-no{ color: #FBCE72; }
+
+/* ============ SPREAD IV · SPRING ============ */
+.s4{ background: linear-gradient(180deg, #FDF6E4 0%, #FAF2DC 48%, #EFE6CB 100%); }
+.s4 .ground{ background:
+  linear-gradient(180deg, rgba(32,101,95,.30), rgba(32,101,95,0) 26%),
+  radial-gradient(ellipse 11px 5px at 14% 40%, rgba(242,105,92,.8) 97%, transparent),
+  radial-gradient(ellipse 9px 5px at 27% 64%, rgba(242,179,61,.85) 97%, transparent),
+  radial-gradient(ellipse 10px 5px at 45% 34%, rgba(255,253,244,.9) 97%, transparent),
+  radial-gradient(ellipse 9px 4px at 60% 58%, rgba(242,105,92,.75) 97%, transparent),
+  radial-gradient(ellipse 10px 5px at 79% 42%, rgba(242,179,61,.85) 97%, transparent),
+  radial-gradient(ellipse 8px 4px at 90% 70%, rgba(255,253,244,.85) 97%, transparent),
+  radial-gradient(ellipse 9px 4px at 34% 84%, rgba(255,253,244,.7) 97%, transparent),
+  repeating-linear-gradient(94deg, rgba(32,101,95,.05) 0 2px, transparent 2px 56px),
+  #8FBCA4; }
+
+.hill-spring{
+  z-index: 1; height: 15vh;
+  background: #CFE6D6;
+  clip-path: polygon(0% 100%, 0% 30%, 8% 34%, 16% 22%, 24% 28%, 32% 30%, 40% 20%, 48% 26%, 56% 33%, 64% 24%, 72% 30%, 80% 21%, 88% 29%, 96% 24%, 100% 32%, 100% 100%);
+}
+
+/* pollen / dandelion seed motes drifting up through the spring sky */
+.pollen{ position: absolute; inset: 0 0 38% 0; z-index: 6; pointer-events: none; }
+.pollen i{
+  position: absolute; left: var(--px); bottom: 0;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF6DC, var(--sun));
+  opacity: 0;
+  animation: pollen-rise var(--pd, 9s) ease-in infinite;
+  animation-delay: var(--pdelay, 0s);
+}
+@keyframes pollen-rise{
+  0%{ transform: translate(0, 0) scale(.6); opacity: 0; }
+  12%{ opacity: .8; }
+  82%{ opacity: .45; }
+  100%{ transform: translate(14px, -58vh) scale(1); opacity: 0; }
+}
+
+.pip-s4{ left: 50%; margin-left: -125px; bottom: calc(100% - var(--foldY)); width: 250px; height: 198px; z-index: 8; }
+
+.flower{ position: absolute; bottom: calc(100% - var(--foldY)); width: 96px; z-index: 7; }
+.f1{ left: 5%;  height: 24vh; --pc: var(--coral); --cc: var(--sun);  --sd: 5.2s; }
+.f2{ left: 17%; height: 33vh; --pc: var(--sun);  --cc: var(--coral); --sd: 6.1s; }
+.f3{ left: 66%; height: 21vh; --pc: var(--teal); --cc: var(--sun);  --sd: 4.6s; }
+.f4{ left: 78%; height: 36vh; --pc: var(--coral);--cc: var(--paper);--sd: 6.8s; }
+.f5{ left: 89%; height: 27vh; --pc: var(--sun);  --cc: var(--teal); --sd: 5.6s; }
+.flower .sway{
+  position: absolute; inset: 0;
+  transform-origin: 50% 100%;
+  animation: flower-sway var(--sd) ease-in-out infinite alternate;
+}
+@keyframes flower-sway{ from{ transform: rotate(-3deg);} to{ transform: rotate(3.4deg);} }
+.fstem{
+  position: absolute; left: 50%; bottom: 0;
+  width: 8px; height: calc(100% - 42px);
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, var(--teal) 0 48%, var(--teal-deep) 52% 100%);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(70,51,34,.14);
+}
+.flower .head{
+  position: absolute; top: 0; left: 50%;
+  width: 88px; height: 88px;
+  transform: translateX(-50%);
+}
+.flower .head i{
+  position: absolute; left: 50%; top: 50%;
+  width: 30px; height: 44px;
+  margin: -22px 0 0 -15px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: var(--pc);
+  box-shadow: 2px 2px 0 rgba(70,51,34,.15);
+  transform: rotate(var(--a)) translateY(0) scale(0);
+  transition: transform .55s var(--pop-out);
+}
+.flower .head i:nth-child(1){ --a: 0deg;   --p: 0; }
+.flower .head i:nth-child(2){ --a: 60deg;  --p: 1; }
+.flower .head i:nth-child(3){ --a: 120deg; --p: 2; }
+.flower .head i:nth-child(4){ --a: 180deg; --p: 3; }
+.flower .head i:nth-child(5){ --a: 240deg; --p: 4; }
+.flower .head i:nth-child(6){ --a: 300deg; --p: 5; }
+.in .flower .head i{
+  transform: rotate(var(--a)) translateY(-27px) scale(1);
+  transition-delay: calc(var(--i,0) * 115ms + var(--p) * 75ms + 420ms);
+}
+.flower .head b{
+  position: absolute; left: 50%; top: 50%;
+  width: 32px; height: 32px; margin: -16px 0 0 -16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, rgba(255,255,255,.5), transparent 55%), var(--cc);
+  box-shadow: 2px 2.5px 0 rgba(70,51,34,.18);
+  transform: scale(0);
+  transition: transform .5s var(--pop-out);
+}
+.in .flower .head b{
+  transform: scale(1);
+  transition-delay: calc(var(--i,0) * 115ms + 320ms);
+}
+
+.butterfly{
+  position: absolute; top: 24%; left: 6%;
+  width: 44px; height: 30px; z-index: 9;
+  animation: flit 17s ease-in-out infinite alternate;
+}
+@keyframes flit{
+  0%{ transform: translate(0, 0) rotate(6deg); }
+  25%{ transform: translate(24vw, -7vh) rotate(-7deg); }
+  50%{ transform: translate(44vw, 3vh) rotate(5deg); }
+  75%{ transform: translate(64vw, -9vh) rotate(-6deg); }
+  100%{ transform: translate(80vw, -2vh) rotate(4deg); }
+}
+.butterfly .wing{
+  position: absolute; top: 0; width: 19px; height: 28px;
+  background: var(--coral);
+  border-radius: 70% 70% 40% 40%;
+  box-shadow: 1.5px 2px 0 rgba(70,51,34,.16);
+  animation: flap .34s ease-in-out infinite alternate;
+}
+.butterfly .wl{ left: 1px; transform-origin: 100% 50%; rotate: -14deg; }
+.butterfly .wr{ right: 1px; transform-origin: 0% 50%; rotate: 14deg; }
+@keyframes flap{ from{ transform: scaleX(1); } to{ transform: scaleX(.42); } }
+.butterfly b{
+  position: absolute; left: 50%; top: 3px;
+  width: 7px; height: 24px; margin-left: -3.5px;
+  border-radius: 4px; background: var(--ink);
+}
+
+.card-s4{ left: 5%; bottom: 7%; }
+
+/* ============ SPREAD V · THE END ============ */
+.s5{
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255,220,150,.22), transparent 55%),
+    radial-gradient(ellipse 9px 5px at 8% 24%, rgba(242,105,92,.55) 97%, transparent),
+    radial-gradient(ellipse 8px 4px at 16% 66%, rgba(46,140,131,.5) 97%, transparent),
+    radial-gradient(ellipse 9px 5px at 27% 42%, rgba(242,179,61,.6) 97%, transparent),
+    radial-gradient(ellipse 8px 4px at 38% 78%, rgba(242,105,92,.45) 97%, transparent),
+    radial-gradient(ellipse 9px 5px at 57% 68%, rgba(46,140,131,.5) 97%, transparent),
+    radial-gradient(ellipse 8px 4px at 68% 30%, rgba(242,179,61,.55) 97%, transparent),
+    radial-gradient(ellipse 9px 5px at 79% 74%, rgba(242,105,92,.5) 97%, transparent),
+    radial-gradient(ellipse 8px 4px at 88% 46%, rgba(46,140,131,.45) 97%, transparent),
+    radial-gradient(ellipse 8px 4px at 47% 20%, rgba(242,179,61,.45) 97%, transparent),
+    repeating-linear-gradient(94deg, rgba(70,51,34,.03) 0 2px, transparent 2px 64px),
+    var(--kraft);
+  display: flex; flex-direction: column;
+}
+.s5 .stage{ position: relative; inset: auto; flex: 1; min-height: 0; }
+
+.bannerrig{
+  position: absolute; top: 7%; left: 50%;
+  width: min(620px, 92vw); height: 150px;
+  margin-left: max(-310px, -46vw);
+  z-index: 10;
+  transform-origin: 50% 0%;
+  transform: rotateX(88deg);
+}
+.in .bannerrig{ transform: rotateX(0); }
+.bannerrig .dangle{ position: absolute; inset: 0; }
+.banner-sway{
+  position: absolute; inset: 0;
+  transform-origin: 50% 0%;
+  animation: pennant-sway 6.4s ease-in-out infinite alternate;
+}
+@keyframes pennant-sway{ from{ transform: rotate(-1.8deg);} to{ transform: rotate(1.8deg);} }
+.string{ position: absolute; top: 0; left: 0; width: 100%; height: 60px; overflow: visible; }
+.pennants{
+  position: absolute; top: 9px; left: 2%; right: 2%;
+  display: flex; justify-content: space-between;
+}
+.pn{
+  width: 11.5%; height: 66px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  display: flex; justify-content: center;
+  padding-top: 7px;
+  font-family:"Baloo 2", cursive;
+  font-weight: 800; font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  color: var(--cream);
+  filter: drop-shadow(2.5px 3px 0 rgba(70,51,34,.18));
+}
+.pn.gap{ visibility: hidden; }
+.p1{ background: var(--coral); rotate: -2deg; translate: 0 13px; }
+.p2{ background: var(--teal); rotate: 1.5deg; translate: 0 22px; }
+.p3{ background: var(--sun); color: var(--ink); rotate: -1deg; translate: 0 27px; }
+.p4{ background: var(--teal); rotate: 2deg; translate: 0 27px; }
+.p5{ background: var(--sun); color: var(--ink); rotate: -2deg; translate: 0 22px; }
+.p6{ background: var(--coral); rotate: 1deg; translate: 0 13px; }
+
+.endplate{
+  position: absolute; top: 34%; left: 50%;
+  width: min(34rem, 88vw);
+  margin-left: max(-17rem, -44vw);
+  z-index: 11;
+  background: var(--paper);
+  padding: 2.1rem 2.3rem 2.2rem;
+  border-radius: 10px;
+  box-shadow: var(--lift-3);
+  text-align: center;
+}
+.endplate p{
+  font-size: clamp(1rem, 1.2vw + .5rem, 1.16rem);
+  line-height: 1.66; font-weight: 600;
+}
+.again{
+  margin-top: 1.3rem;
+  border: none; cursor: pointer;
+  background: var(--coral);
+  color: var(--cream);
+  font-family:"Baloo 2", cursive;
+  font-weight: 700; font-size: 1.02rem;
+  letter-spacing: .04em;
+  padding: .68rem 1.5rem .74rem;
+  border-radius: 999px;
+  box-shadow: var(--lift-1);
+  transition: transform .25s var(--pop-out), box-shadow .25s, background .2s;
+}
+.again:hover{
+  transform: translateY(-3px) rotate(-1.2deg);
+  box-shadow: var(--lift-2);
+  background: var(--coral-deep);
+}
+.again:active{
+  transform: translateY(0) rotate(0deg) scale(.96);
+  box-shadow: var(--lift-1);
+  transition-duration: .1s;
+}
+
+.pip-cameo{
+  position: absolute; left: 50%; bottom: 8%;
+  width: 270px; height: 118px; margin-left: -135px;
+  z-index: 9;
+}
+.pip-cameo .pip{ position: absolute; left: 0; bottom: 0; width: 140px; height: 112px; }
+/* Pip's kraft body vanishes on the kraft end sheet — recut him lighter */
+.pip-cameo .pip-body{
+  background: linear-gradient(92deg, #F3E8CE 0 49.4%, var(--kraft-deep) 50.6% 100%);
+}
+.cloud.endcloud{
+  position: absolute; right: 0; bottom: 10px;
+  width: 118px; height: 48px;
+  animation: bob 6s ease-in-out infinite;
+}
+.cloud.endcloud::before{ width: 52px; height: 52px; left: 15px; top: -24px; }
+.cloud.endcloud::after{ width: 36px; height: 36px; right: 20px; top: -15px; }
+.cloud.endcloud .eye{ width: 6px; height: 6px; }
+.cloud.endcloud .smile{ width: 12px; height: 8px; }
+
+.colophon{
+  position: relative; z-index: 12;
+  padding: 1.1rem 1.5rem 1.35rem;
+  text-align: center;
+  border-top: 3px dashed rgba(70,51,34,.25);
+  background: rgba(251,246,234,.55);
+}
+.colo-line{ font-size: .85rem; font-weight: 700; color: var(--ink); }
+.colo-links{
+  margin-top: .3rem;
+  display: flex; gap: .7rem; justify-content: center; align-items: center;
+  font-size: .85rem; font-weight: 700;
+  color: var(--ink-soft);
+}
+.colo-links a{
+  color: var(--teal-deep);
+  text-decoration: underline wavy rgba(46,140,131,.6) 1.5px;
+  text-underline-offset: 4px;
+  transition: color .2s;
+}
+.colo-links a:hover{ color: var(--coral); }
+
+/* ============ page corner curl ============ */
+.curl{
+  position: fixed; right: 0; bottom: 0; z-index: 110;
+  width: 96px; height: 96px;
+  border: none; background: transparent;
+  cursor: grab;
+  transition: width .3s var(--pop-out), height .3s var(--pop-out);
+}
+.curl:hover{ width: 118px; height: 118px; }
+.curl:active{ width: 106px; height: 106px; cursor: grabbing; transition-duration: .1s; }
+.curl-under{
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(315deg,
+    #E9DFC8 0%, var(--paper) 30%, #EFE7D2 44%,
+    #CBBB99 49.5%, transparent 50%);
+  filter: drop-shadow(-4px -4px 5px rgba(70,51,34,.22));
+  animation: curl-flutter 3.4s ease-in-out infinite alternate;
+  transform-origin: 100% 100%;
+}
+@keyframes curl-flutter{ from{ transform: scale(1);} to{ transform: scale(1.06);} }
+.curl-hint{
+  position: absolute; right: 13px; bottom: 24px;
+  transform: rotate(-45deg);
+  font-family:"Baloo 2", cursive;
+  font-weight: 700; font-size: .7rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+
+/* ============ paused (tab hidden) ============ */
+body.paused *{ animation-play-state: paused !important; }
+
+/* ============ mobile ============ */
+@media (max-width: 740px){
+  .tabs{ display: none; }
+  :root{ --foldY: 58%; }
+
+  .bookplate{ top: .8rem; left: .8rem; padding: .4rem .75rem .45rem; }
+  .bp-word{ font-size: 1.05rem; }
+
+  .card{
+    left: 1rem !important; right: 1rem !important;
+    bottom: 4.9rem !important;
+    max-width: none;
+    padding: 1.05rem 1.15rem 1.1rem;
+  }
+  .card p{ font-size: .92rem; line-height: 1.55; }
+
+  .titleblock{ top: 9%; }
+  .sunrig{ left: 2%; width: 120px; height: 38vh; }
+  .sun{ width: 116px; height: 116px; }
+  .stick{ height: calc(100% - 86px); width: 9px; }
+  .sun-core .smile{ width: 14px; height: 9px; }
+  .pip-s1{ left: 56%; width: 116px; height: 92px; }
+
+  .pip-s2{ left: 6%; width: 190px; height: 152px; }
+  .cloudrig{ right: 16%; width: 160px; }
+  .cloud{ width: 148px; height: 60px; }
+  .cloud::before{ width: 64px; height: 64px; left: 20px; top: -30px; }
+  .cloud::after{ width: 46px; height: 46px; right: 24px; top: -20px; }
+
+  .pip-s3{ margin-left: 0; left: 4%; width: 100%; }
+  .pip-s3 .pip{ width: 170px; height: 136px; }
+  .cloud.small-night{ right: 18%; bottom: 20px; width: 104px; height: 44px; }
+  .cloud.small-night::before{ width: 46px; height: 46px; left: 13px; top: -20px; }
+  .cloud.small-night::after{ width: 32px; height: 32px; right: 18px; top: -13px; }
+  .moonrig{ width: 84px; height: 84px; right: 7%; top: 8%; }
+
+  .pip-s4{ margin-left: -92px; width: 184px; height: 146px; }
+  .flower{ width: 74px; }
+  .flower .head{ width: 68px; height: 68px; }
+  .flower .head i{ width: 24px; height: 35px; margin: -17.5px 0 0 -12px; }
+  .in .flower .head i{ transform: rotate(var(--a)) translateY(-21px) scale(1); }
+  .flower .head b{ width: 25px; height: 25px; margin: -12.5px 0 0 -12.5px; }
+  .f2{ left: 13%; height: 30vh; }
+  .f3{ display: none; }
+  .f4{ left: 72%; height: 32vh; }
+  .f5{ left: 86%; height: 24vh; }
+
+  .bannerrig{ height: 120px; top: 9%; }
+  .pn{ height: 52px; padding-top: 5px; }
+  .endplate{ top: 30%; padding: 1.5rem 1.3rem 1.6rem; }
+  .pip-cameo{ left: 5%; bottom: 22%; width: 88px; height: 70px; }
+  .s5 .stage{ min-height: 78svh; }
+
+  .curl{ width: 76px; height: 76px; }
+  .curl:hover{ width: 76px; height: 76px; }
+  .curl-hint{ right: 8px; bottom: 18px; font-size: .62rem; }
+}
+
+/* ============ mobile: pass-1 additions ============ */
+@media (max-width: 740px){
+  .site-sub{ padding: .16em 1.15em .24em; }
+  .site-note{ letter-spacing: .14em; }
+
+  .sunrig{ height: 30vh; }
+  .stick{ height: calc(100% - 78px); }
+  .sun{ width: 104px; height: 104px; }
+
+  .pip-s1{ left: 56%; bottom: calc(100% - var(--foldY) + 7vh); width: 140px; height: 112px; }
+
+  .fringe{ height: 12px; -webkit-mask-size: 18px 12px; mask-size: 18px 12px;
+    -webkit-mask-image: radial-gradient(circle 9px at 50% 0, #000 97%, transparent);
+    mask-image: radial-gradient(circle 9px at 50% 0, #000 97%, transparent); }
+  .trail{ left: 4%; width: 60%; height: 16%; }
+
+  .dc2{ display: none; }
+  .dc1{ scale: .7; top: 25%; } /* clear of the fixed bookplate badge's footprint */
+  .dc4{ display: none; }
+  .b3{ display: none; }
+  .pollen i:nth-child(n+5){ display: none; }
+  .hill-spring{ height: 11vh; }
+
+  .pip-cameo{
+    left: 50%; bottom: 21%;
+    width: 216px; height: 96px; margin-left: -108px;
+  }
+  .pip-cameo .pip{ width: 112px; height: 90px; }
+  .cloud.endcloud{ width: 92px; height: 38px; bottom: 8px; }
+  .cloud.endcloud::before{ width: 40px; height: 40px; left: 12px; top: -18px; }
+  .cloud.endcloud::after{ width: 28px; height: 28px; right: 15px; top: -12px; }
+}
+
+/* ============ reduced motion ============ */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{
+    animation: none !important;
+    transition: none !important;
+  }
+  .pop, .in .pop{ transform: none; opacity: 1; }
+  .cloudrig, .in .cloudrig{ transform: none; }
+  .bannerrig, .in .bannerrig{ transform: none; }
+  .flower .head i, .in .flower .head i{ transform: rotate(var(--a)) translateY(-27px) scale(1); }
+  .flower .head b, .in .flower .head b{ transform: scale(1); }
+}

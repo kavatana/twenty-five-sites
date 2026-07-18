@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How it’s made — FOLD</title>
+<meta name="description" content="How FOLD was built: rotateX pop-up choreography from a paper fold, torn clip-path edges, punched-hole stars, and stacked hard shadows — all hand-coded.">
+<meta property="og:title" content="How it’s made — FOLD">
+<meta property="og:description" content="The paper-engineering behind a hand-coded pop-up storybook: transform-origin hinges, overshoot beziers, clip-path tears and mask scallops.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23FBF6EA'/%3E%3Cpath d='M12 50L32 16l20 34z' fill='%23F2695C'/%3E%3Ccircle cx='47' cy='15' r='7' fill='%23F2B33D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --kraft:#D9C7A7; --cream:#FBF6EA; --paper:#FFFDF4;
+  --coral:#F2695C; --teal:#2E8C83; --teal-deep:#20655F;
+  --sun:#F2B33D; --ink:#463322; --ink-soft:#6E5B44;
+  --lift-1: 0 1px 0 rgba(70,51,34,.10), 3px 4px 0 rgba(70,51,34,.13);
+  --lift-2: 0 1px 0 rgba(70,51,34,.08), 4px 5px 0 rgba(70,51,34,.15), 9px 11px 0 rgba(70,51,34,.07);
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+  font-family:"Nunito", ui-rounded, system-ui, sans-serif;
+  color: var(--ink);
+  background:
+    repeating-linear-gradient(94deg, rgba(70,51,34,.03) 0 2px, transparent 2px 64px),
+    var(--kraft);
+  min-height:100svh;
+  padding: clamp(1.2rem, 4vw, 3rem) 1.2rem 3rem;
+}
+::selection{ background: var(--sun); color: var(--ink); }
+:focus-visible{ outline:3px dashed var(--coral); outline-offset:3px; border-radius:2px; }
+.sheet{
+  max-width: 46rem; margin: 0 auto;
+  background: var(--paper);
+  border-radius: 10px;
+  box-shadow: var(--lift-2);
+  padding: clamp(1.6rem, 4vw, 3rem) clamp(1.3rem, 4.5vw, 3.2rem) 2.4rem;
+  position: relative;
+}
+.sheet::before{
+  content:""; position:absolute; top:-.8rem; left:50%;
+  width:7rem; height:1.6rem; transform:translateX(-50%) rotate(-2deg);
+  background: rgba(217,199,167,.85);
+  clip-path: polygon(3% 0, 97% 6%, 100% 88%, 0 100%);
+  box-shadow: 1px 2px 0 rgba(70,51,34,.10);
+}
+.kicker{
+  font-family:"Baloo 2", cursive; font-weight:700;
+  font-size:.75rem; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--coral);
+}
+h1{
+  font-family:"Baloo 2", cursive; font-weight:800;
+  font-size: clamp(2rem, 5.5vw, 3.1rem);
+  line-height:1.02; margin:.3rem 0 .4rem;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 rgba(70,51,34,.10);
+}
+.lede{ font-weight:600; font-size:1.05rem; line-height:1.6; color:var(--ink-soft); }
+h2{
+  font-family:"Baloo 2", cursive; font-weight:700;
+  font-size:1.3rem; color: var(--teal-deep);
+  margin: 1.9rem 0 .5rem;
+}
+p{ font-size: .99rem; line-height:1.68; font-weight:600; margin-bottom:.8rem; }
+code{
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size:.86em; font-weight:600;
+  background: var(--cream);
+  border: 1.5px solid rgba(70,51,34,.14);
+  border-radius:5px; padding:.08em .38em;
+  white-space: nowrap;
+}
+.swatches{ display:flex; gap:.5rem; margin:.9rem 0 .2rem; flex-wrap:wrap; }
+.sw{
+  width:3.1rem; height:2.2rem; border-radius:6px;
+  box-shadow: var(--lift-1);
+  clip-path: polygon(2% 6%, 98% 0, 100% 94%, 0 100%);
+}
+.backline{
+  margin-top:2.2rem; padding-top:1.2rem;
+  border-top:3px dashed rgba(70,51,34,.22);
+  display:flex; gap:.8rem; align-items:center; justify-content:center; flex-wrap:wrap;
+  font-size:.85rem; font-weight:700; color:var(--ink-soft);
+  text-align:center;
+}
+a{
+  color: var(--teal-deep);
+  text-decoration: underline wavy rgba(46,140,131,.6) 1.5px;
+  text-underline-offset: 4px;
+}
+a:hover{ color: var(--coral); }
+</style>
+</head>
+<body>
+<article class="sheet">
+  <p class="kicker">Site 12 / 25 · How it’s made</p>
+  <h1>Paper engineering, in CSS</h1>
+  <p class="lede">FOLD is a five-spread pop-up book about Pip, the smallest mountain ever measured. There isn’t a single image file in it — every hill, star and pennant is a styled element, cut and creased in code.</p>
+
+  <h2>The pop-up hinge</h2>
+  <p>The signature move is honest paper mechanics. Every piece of scenery sits with its base on the spread’s fold line, gets <code>transform-origin: 50% 100%</code>, and rests at <code>rotateX(-91deg)</code> — lying flat on the page. When an <code>IntersectionObserver</code> sees a spread cross a third of the viewport, it adds one class; CSS transitions stand everything up through an overshoot curve, <code>cubic-bezier(.30,1.52,.42,1)</code>, so each cutout springs a few degrees past vertical and settles, the way card stock actually behaves. Staggering is a custom property: each piece carries <code>--i</code>, and <code>transition-delay: calc(var(--i) * 115ms)</code> raises the scene in reading order. Scroll back and the same observer folds it all flat again, ready to replay.</p>
+
+  <h2>Cutting the paper</h2>
+  <p>Torn edges are <code>clip-path</code> polygons with pseudo-random jitter (generated once by a tiny script, pasted in as literals). Scalloped edges are two stacked <code>mask-image</code> layers — a repeating radial gradient for the bumps over a linear fill — relying on the default <code>mask-composite: add</code>. Lift comes from two or three stacked <em>hard</em> box-shadows with small offsets and zero blur, which reads as layered card, not a glow. Center creases are hard-stop linear gradients that shade one half of a shape a step darker. The night spread is one big navy sheet clipped with a torn top edge so the daytime cream peeks out behind it; its stars are radial gradients with an <em>inset</em> shadow at the top rim, which is what sells them as punched holes rather than stickers.</p>
+
+  <h2>Keeping it alive</h2>
+  <p>Ambient motion is all CSS keyframes on inner wrappers, so it never fights the pop transition: the sun’s twelve-point <code>clip-path</code> star rotates on its stick, the cloud bobs on its visible kraft tab, flowers sway from their stem bases, and the “THE END” pennants pendulum on an SVG string. Hanging pieces get a damped <code>swing</code> keyframe on hover. The page-corner curl (a 315° gradient that stops at the diagonal) advances spreads on click.</p>
+
+  <h2>Passes</h2>
+  <p>Pass one built the five spreads and the hinge system. The verification pass ran screenshots at 1440×900 and 390×844, then fixed what the pictures showed: overlapping cards, mobile flower crowding, and contrast on the night card. <code>prefers-reduced-motion</code> flattens every animation and presents the book already open — legible, just quieter.</p>
+
+  <div class="swatches" aria-hidden="true">
+    <span class="sw" style="background:#D9C7A7"></span>
+    <span class="sw" style="background:#FBF6EA"></span>
+    <span class="sw" style="background:#F2695C"></span>
+    <span class="sw" style="background:#2E8C83"></span>
+    <span class="sw" style="background:#F2B33D"></span>
+  </div>
+
+  <div class="backline">
+    <span>12 / 25 · FOLD — designed &amp; coded by Claude Fable 5</span>
+    <span aria-hidden="true">✂</span>
+    <a href="../">Back to the book</a>
+    <span aria-hidden="true">·</span>
+    <a href="/">Index</a>
+  </div>
+</article>
+</body>
+</html>

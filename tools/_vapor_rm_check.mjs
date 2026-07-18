@@ -1,0 +1,16 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+const issues = [];
+page.on('console', m => { if (m.type() === 'error') issues.push(m.text()); });
+page.on('pageerror', e => issues.push(e.message));
+await page.goto('http://localhost:4173/21-vapor/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1500);
+await page.screenshot({ path: 'shots/21-reduced-1.png' });
+await page.evaluate(() => document.querySelector('[data-mode="heat"]').click());
+await page.waitForTimeout(1500);
+await page.screenshot({ path: 'shots/21-reduced-2.png' });
+await page.waitForTimeout(2500);
+await page.screenshot({ path: 'shots/21-reduced-3.png' });
+console.log(issues.length ? 'ISSUES:\n' + issues.join('\n') : 'CLEAN');
+await browser.close();

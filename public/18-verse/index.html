@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VERSE — kinetic poetry, words with physics</title>
+<meta name="description" content="VERSE is four original short poems about impermanence, each governed by its own hand-rolled physics: words that fall under gravity, letters that flinch from your cursor, scattered type that assembles on arrival, and lines that erode to their essence as you scroll.">
+<meta property="og:title" content="VERSE — kinetic poetry, words with physics">
+<meta property="og:description" content="Four poems, four physics engines, no libraries: gravity, magnetism, assembly, erosion — all hand-rolled. Ivory paper, ink that misbehaves.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VERSE">
+<meta name="theme-color" content="#FBF8F1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23FBF8F1' stroke='%23B8963E' stroke-width='1.4'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%2317151F'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="verse.css">
+<noscript><style>
+  .word, .letter { opacity: 1 !important; transform: none !important; }
+  .lift, .m-rail { display: none !important; }
+</style></noscript>
+</head>
+<body id="top">
+
+<div class="grain" aria-hidden="true"></div>
+<div class="motes" aria-hidden="true">
+  <span class="mote"></span><span class="mote"></span><span class="mote"></span>
+  <span class="mote"></span><span class="mote"></span><span class="mote"></span>
+  <span class="mote"></span><span class="mote"></span><span class="mote"></span>
+  <span class="mote"></span><span class="mote"></span><span class="mote"></span>
+</div>
+
+<header class="topbar">
+  <a class="wordmark" href="#top">VERSE</a>
+  <nav class="m-rail" aria-label="Movements">
+    <a href="#m1"><i>I</i></a>
+    <a href="#m2"><i>II</i></a>
+    <a href="#m3"><i>III</i></a>
+    <a href="#m4"><i>IV</i></a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero" id="hero">
+    <p class="eyebrow">Verse — kinetic poetry</p>
+    <h1>Words, <em>held loosely.</em></h1>
+    <p class="lede">Four short poems about the things that don&rsquo;t stay — an orchard, an attention span, a sky, a Tuesday. Nothing on this page has agreed to hold still. Touch it and find out.</p>
+
+    <ol class="toc">
+      <li>
+        <a href="#m1" class="toc-item toc-gravity">
+          <span class="toc-n">I</span>
+          <span class="toc-body">
+            <span class="toc-title">Gravity <em>— Windfall</em></span>
+            <span class="toc-desc">hung by habit; click a word and let it go</span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="#m2" class="toc-item toc-magnet">
+          <span class="toc-n">II</span>
+          <span class="toc-body">
+            <span class="toc-title">Magnet <em>— Nearness</em></span>
+            <span class="toc-desc">reading, here, physically parts the text</span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="#m3" class="toc-item toc-assembly">
+          <span class="toc-n">III</span>
+          <span class="toc-body">
+            <span class="toc-title">Assembly <em>— Constellation</em></span>
+            <span class="toc-desc">scattered light, until you arrive</span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a href="#m4" class="toc-item toc-erosion">
+          <span class="toc-n">IV</span>
+          <span class="toc-body">
+            <span class="toc-title">Erosion <em>— Palimpsest</em></span>
+            <span class="toc-desc">edits itself down to what it means</span>
+          </span>
+        </a>
+      </li>
+    </ol>
+
+    <a class="scroll-cue" href="#m1"><span>begin</span><i></i></a>
+  </section>
+
+  <section class="movement" id="m1" data-movement="gravity">
+    <div class="m-head">
+      <span class="numeral">I</span>
+      <span class="m-title">Gravity</span>
+    </div>
+    <h2 class="poem-title">Windfall</h2>
+    <div class="poem" id="poem-gravity">
+      <p class="pline">The apple hangs by habit, not permission.</p>
+      <p class="pline">The branch was never asked to keep it.</p>
+      <p class="pline">One evening in October, habit ends —</p>
+      <p class="pline">and what we called forever</p>
+      <p class="pline">lands quietly in the grass.</p>
+    </div>
+    <div class="m-foot">
+      <p class="whisper">Click a word. Gravity remembers it.</p>
+      <button class="lift" id="liftBtn" type="button">lift <span aria-hidden="true">↑</span></button>
+    </div>
+    <div class="floor" id="floor1" aria-hidden="true"></div>
+  </section>
+
+  <section class="movement" id="m2" data-movement="magnet">
+    <div class="m-head">
+      <span class="numeral">II</span>
+      <span class="m-title">Magnet</span>
+    </div>
+    <h2 class="poem-title">Nearness</h2>
+    <div class="poem" id="poem-magnet">
+      <p class="pline">Come closer and the sentence flinches,</p>
+      <p class="pline">the way a name thins when it&rsquo;s said too often,</p>
+      <p class="pline">the way a coastline edits itself around every tide.</p>
+      <p class="pline">To read this closely is to change it.</p>
+      <p class="pline">Nothing stays the shape you found it in.</p>
+    </div>
+    <p class="whisper">Reading, here, is a kind of touching.</p>
+  </section>
+
+  <section class="movement" id="m3" data-movement="assembly">
+    <div class="m-head">
+      <span class="numeral">III</span>
+      <span class="m-title">Assembly</span>
+    </div>
+    <h2 class="poem-title">Constellation</h2>
+    <div class="poem" id="poem-assembly">
+      <p class="pline">Someone once looked up at scattered light</p>
+      <p class="pline">and called it a bear, a hunter, a spoon —</p>
+      <p class="pline">gave the accidental a name, and a story.</p>
+      <p class="pline">The stars never agreed to the shape.</p>
+      <p class="pline">They only happened to be seen, once, together.</p>
+    </div>
+    <p class="whisper">Scroll. Let it arrive.</p>
+  </section>
+
+  <section class="movement tall" id="m4" data-movement="erosion">
+    <div class="sticky-wrap" id="m4rail">
+      <div class="m-head">
+        <span class="numeral">IV</span>
+        <span class="m-title">Erosion</span>
+      </div>
+      <h2 class="poem-title">Palimpsest</h2>
+      <div class="poem" id="poem-erosion">
+        <p class="pline" data-keep="remember">I meant to remember the ordinary Tuesday,</p>
+        <p class="pline" data-keep="light">light on the table, a radio half-heard,</p>
+        <p class="pline" data-keep="hand">your hand, doing nothing in particular.</p>
+        <p class="pline" data-keep="meant">now I keep only that I meant to.</p>
+        <p class="pline" data-keep="water">that, and your hand. everything else, water.</p>
+      </div>
+      <p class="whisper">Keep reading. Watch what survives.</p>
+      <div class="erode-gauge" aria-hidden="true"><i id="erodeFill"></i></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <span class="foot-id">18 / 25 · VERSE — designed &amp; coded by Claude Fable 5</span>
+  <span class="foot-links">
+    <a href="/">Index</a>
+    <a href="guide/">How it&rsquo;s made</a>
+  </span>
+</footer>
+
+<script src="verse.js"></script>
+</body>
+</html>

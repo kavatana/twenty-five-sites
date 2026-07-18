@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAUHAUS SPIELPLATZ — Komposition ist Spiel</title>
+<meta name="description" content="A Bauhaus playground where composition is interactive: drag hand-physics geometry, watch form follow function, and print generated Weimar-style posters.">
+<meta property="og:title" content="BAUHAUS SPIELPLATZ — Komposition ist Spiel">
+<meta property="og:description" content="1923 Weimar poster, come alive. Draggable Kandinsky-esque geometry with hand-rolled physics, a red-diagonal manifesto, and generated posters. Site 16 of 25.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BAUHAUS SPIELPLATZ">
+<meta name="theme-color" content="#F2E8DC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141414'/%3E%3Ccircle cx='20' cy='20' r='12' fill='%23D93829'/%3E%3Cpolygon points='44,10 58,34 30,34' fill='%23F2B705'/%3E%3Crect x='16' y='38' width='24' height='18' fill='%232350A8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bauhaus.css">
+<noscript><style>.rv{opacity:1!important;transform:none!important;} .stage{display:none;}</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+
+<header class="topbar" id="top">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="brand-word">Spielplatz</span>
+  </a>
+  <nav class="topnav" aria-label="Sections">
+    <a href="#spiel">Spiel</a>
+    <a href="#manifest">Manifest</a>
+    <a href="#form">Form</a>
+    <a href="#plakate">Plakate</a>
+  </nav>
+  <span class="topbar-tag">16 / 25</span>
+</header>
+
+<main>
+
+<section class="hero" id="spiel">
+  <div class="hero-head">
+    <p class="kicker">Bauhaus Spielplatz · Weimar, 1923</p>
+    <h1 class="hero-title">Komposition<br>ist Spiel</h1>
+    <p class="hero-sub">Every circle wants to roll. Every triangle wants to point. Drag the geometry, fling it to the edge, and watch it argue its way back into balance.</p>
+    <div class="hero-controls">
+      <button class="stamp stamp--reset" id="resetBtn" type="button">Reset<br>Komposition</button>
+      <button class="stamp stamp--zufall" id="zufallBtn" type="button">Zufall</button>
+      <p class="hero-hint">Click and drag any form — release to let it fly. <kbd>Tab</kbd> to a shape, then use the arrow keys.</p>
+    </div>
+  </div>
+  <div class="stage" id="stage" aria-label="Interactive geometric composition of draggable Bauhaus shapes"></div>
+</section>
+
+<section class="manifest rv" id="manifest">
+  <div class="manifest-band">
+    <p class="manifest-huge" aria-hidden="true">Ornament<br>ist Verbrechen</p>
+  </div>
+  <div class="manifest-body">
+    <div class="manifest-head">
+      <h2 class="section-title">Das<br>Manifest</h2>
+      <p class="manifest-num">01 / Grundsatz</p>
+    </div>
+    <div class="manifest-copy">
+      <p class="manifest-text">Ornament is a confession of poverty. We build with the circle, the square, the triangle — the three elemental forms every other form borrows from. Colour is not mood, it is instruction: yellow reaches, red presses, blue recedes. A composition is not arranged. It is balanced — forces held taut, not frozen. Nothing on this page is finished. It is only, for the length of your visit, at rest.</p>
+      <p class="manifest-sign">— Die Werkstatt, Weimar</p>
+    </div>
+  </div>
+</section>
+
+<section class="form rv" id="form">
+  <h2 class="section-title">Form folgt Funktion</h2>
+  <p class="section-sub">Say the word. Watch the shape prove it.</p>
+  <div class="toggle-grid">
+
+    <button class="toggle-card" type="button" data-demo="wheel" aria-pressed="false">
+      <span class="toggle-stage">
+        <span class="demo-wheel" aria-hidden="true"><span class="rim"></span></span>
+        <span class="demo-track" aria-hidden="true"></span>
+      </span>
+      <span class="toggle-label">Kreis</span>
+      <span class="toggle-copy">The wheel doesn't decorate the cart. It moves it.</span>
+      <span class="toggle-action">Rollen</span>
+    </button>
+
+    <button class="toggle-card" type="button" data-demo="window" aria-pressed="false">
+      <span class="toggle-stage">
+        <span class="demo-window" aria-hidden="true">
+          <span class="frame"></span>
+          <span class="pane"></span>
+        </span>
+      </span>
+      <span class="toggle-label">Quadrat</span>
+      <span class="toggle-copy">The window doesn't decorate the wall. It opens it.</span>
+      <span class="toggle-action">Öffnen</span>
+    </button>
+
+    <button class="toggle-card" type="button" data-demo="arrow" aria-pressed="false">
+      <span class="toggle-stage">
+        <span class="demo-arrow" aria-hidden="true">
+          <span class="stem"></span>
+          <span class="tri"></span>
+        </span>
+      </span>
+      <span class="toggle-label">Dreieck</span>
+      <span class="toggle-copy">The arrow doesn't decorate the sign. It points.</span>
+      <span class="toggle-action">Zeigen</span>
+    </button>
+
+  </div>
+</section>
+
+<section class="plakate rv" id="plakate">
+  <h2 class="section-title">Die Plakate</h2>
+  <p class="section-sub">Three posters. Infinite arrangements. Click one to print another.</p>
+  <div class="poster-grid">
+    <button class="poster" type="button" id="poster1" aria-label="Exhibition poster — click to regenerate">
+      <svg viewBox="0 0 300 400" role="img" aria-hidden="true"></svg>
+      <span class="poster-cta">Neu drucken</span>
+    </button>
+    <button class="poster" type="button" id="poster2" aria-label="Exhibition poster — click to regenerate">
+      <svg viewBox="0 0 300 400" role="img" aria-hidden="true"></svg>
+      <span class="poster-cta">Neu drucken</span>
+    </button>
+    <button class="poster" type="button" id="poster3" aria-label="Exhibition poster — click to regenerate">
+      <svg viewBox="0 0 300 400" role="img" aria-hidden="true"></svg>
+      <span class="poster-cta">Neu drucken</span>
+    </button>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot" id="foot">
+  <div class="foot-poster">
+    <p class="foot-huge" aria-hidden="true">Spiel<span>platz</span></p>
+  </div>
+  <div class="foot-bar">
+    <p class="foot-id"><b>16 / 25</b> · BAUHAUS SPIELPLATZ — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="bauhaus.js"></script>
+</body>
+</html>

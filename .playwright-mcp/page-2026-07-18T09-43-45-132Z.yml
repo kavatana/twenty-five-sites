@@ -1,0 +1,92 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content" [ref=f3e2] [cursor=pointer]:
+    - /url: "#top"
+  - generic [ref=f3e4]:
+    - banner [ref=f3e5]:
+      - generic [ref=f3e11]:
+        - strong [ref=f3e12]: VAPOR
+        - generic [ref=f3e13]: Kepler-1649c Relay · Weather Console
+      - tablist "Weather mode" [ref=f3e14]:
+        - tab "Rain" [selected] [ref=f3e16] [cursor=pointer]
+        - tab "Snow" [ref=f3e17] [cursor=pointer]
+        - tab "Aurora" [ref=f3e18] [cursor=pointer]
+        - tab "Heat" [ref=f3e19] [cursor=pointer]
+      - generic [ref=f3e20]:
+        - generic [ref=f3e22]: LINK NOMINAL
+        - generic [ref=f3e23]: ·
+        - generic [ref=f3e24]: SOL 0412 — 16:43:45
+    - main [ref=f3e25]:
+      - region "Current conditions" [ref=f3e26]:
+        - generic [ref=f3e27]:
+          - heading "Current Conditions" [level=1] [ref=f3e28]
+          - generic [ref=f3e29]: STEADY RAIN
+        - generic [ref=f3e73]:
+          - generic [ref=f3e74]: "8"
+          - generic [ref=f3e75]: °C
+        - paragraph [ref=f3e76]: Convective cells drifting east across the basin. Streak angle holding at twelve degrees; ground saturation climbing.
+        - generic [ref=f3e77]: 7-Sol Trend
+        - generic [ref=f3e83]:
+          - generic [ref=f3e84]:
+            - term [ref=f3e85]: Wind
+            - definition [ref=f3e86]: 14 km/h · SSE
+          - generic [ref=f3e87]:
+            - term [ref=f3e88]: Pressure
+            - definition [ref=f3e89]: 98.2 kPa
+          - generic [ref=f3e90]:
+            - term [ref=f3e91]: Humidity
+            - definition [ref=f3e92]: 88%
+      - region "Seven-sol forecast" [ref=f3e93]:
+        - heading "7-Sol Forecast" [level=2] [ref=f3e95]
+        - list [ref=f3e96]:
+          - listitem [ref=f3e97]:
+            - generic [ref=f3e98]: S+1
+            - generic [ref=f3e102]: 9°
+          - listitem [ref=f3e103]:
+            - generic [ref=f3e104]: S+2
+            - generic [ref=f3e108]: 7°
+          - listitem [ref=f3e109]:
+            - generic [ref=f3e110]: S+3
+            - generic [ref=f3e114]: 6°
+          - listitem [ref=f3e115]:
+            - generic [ref=f3e116]: S+4
+            - generic [ref=f3e120]: 8°
+          - listitem [ref=f3e121]:
+            - generic [ref=f3e122]: S+5
+            - generic [ref=f3e126]: 10°
+          - listitem [ref=f3e127]:
+            - generic [ref=f3e128]: S+6
+            - generic [ref=f3e132]: 9°
+          - listitem [ref=f3e133]:
+            - generic [ref=f3e134]: S+7
+            - generic [ref=f3e138]: 11°
+      - region "Atmospheric composition" [ref=f3e139]:
+        - heading "Atmospheric Composition" [level=2] [ref=f3e141]
+        - generic [ref=f3e142]:
+          - img [ref=f3e143]:
+            - generic [ref=f3e150]: ATM
+            - generic [ref=f3e151]: MIX
+          - list [ref=f3e152]:
+            - listitem [ref=f3e153]:
+              - generic [ref=f3e155]: Nitrogen (N₂)
+              - generic [ref=f3e156]: 68%
+            - listitem [ref=f3e157]:
+              - generic [ref=f3e159]: Carbon Dioxide
+              - generic [ref=f3e160]: 15%
+            - listitem [ref=f3e161]:
+              - generic [ref=f3e163]: Argon
+              - generic [ref=f3e164]: 8%
+            - listitem [ref=f3e165]:
+              - generic [ref=f3e167]: H₂O Vapor
+              - generic [ref=f3e168]: 9%
+      - region "Wind field" [ref=f3e169]:
+        - generic [ref=f3e170]:
+          - heading "Wind Field" [level=2] [ref=f3e171]
+          - generic [ref=f3e172]: SURFACE VECTORS — LAMINAR
+        - 'img "Live wind vector field. regime: laminar." [ref=f3e173]'
+    - contentinfo [ref=f3e174]:
+      - paragraph [ref=f3e175]: 21 / 25 · VAPOR — designed & coded by Claude Fable 5
+      - navigation "Footer" [ref=f3e176]:
+        - link "Index" [ref=f3e177] [cursor=pointer]:
+          - /url: /
+        - link "How it's made" [ref=f3e178] [cursor=pointer]:
+          - /url: guide/

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stillness — a breathing instrument</title>
+<meta name="description" content="A slow, hand-coded WebGL gradient and a luminous ring that leads a 4-7-8 breath. Choose a length. Breathe.">
+<meta property="og:title" content="Stillness — a breathing instrument">
+<meta property="og:description" content="A slow, hand-coded WebGL gradient and a luminous ring that leads a 4-7-8 breath. Choose a length. Breathe.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stillness">
+<meta name="theme-color" content="#EBD6DE">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='42%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23F6E7D8'/%3E%3Cstop offset='55%25' stop-color='%23DDA9C4'/%3E%3Cstop offset='100%25' stop-color='%238E7CC3'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='16' fill='none' stroke='%23FFFDF8' stroke-width='2.5' opacity='.92'/%3E%3Ccircle cx='32' cy='32' r='9' fill='none' stroke='%23FFFDF8' stroke-width='2' opacity='.75'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stillness.css">
+</head>
+<body data-ink="dark">
+
+<a class="skip-link" href="#stage">Skip to the instrument</a>
+
+<canvas id="glcanvas" aria-hidden="true"></canvas>
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="wordmark" href="/">Stillness</a>
+  <div class="topbar-controls">
+    <div class="palette-picker" role="group" aria-label="Choose a palette">
+      <button type="button" class="pal-dot is-active" data-set="dawn" aria-pressed="true"><span class="sr-only">Dawn palette</span></button>
+      <button type="button" class="pal-dot" data-set="sea" aria-pressed="false"><span class="sr-only">Sea palette</span></button>
+      <button type="button" class="pal-dot" data-set="dusk" aria-pressed="false"><span class="sr-only">Dusk palette</span></button>
+    </div>
+    <button type="button" class="chime-toggle" id="chimeToggle" aria-pressed="false">
+      <svg class="chime-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="bell" d="M12 4c-3 0-5 2.3-5 5.6v3.2c0 1.1-.5 2.3-1.4 3.5h12.8c-.9-1.2-1.4-2.4-1.4-3.5V9.6C17 6.3 15 4 12 4z"/>
+        <path class="bell" d="M9.6 19a2.5 2.5 0 0 0 4.8 0"/>
+        <path class="slash" d="M4.5 4.5l15 15"/>
+      </svg>
+      <span class="chime-label">chime</span>
+    </button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="ring-field">
+    <div class="stage-scrim" aria-hidden="true"></div>
+    <svg class="ring" id="ringSvg" viewBox="0 0 320 320" aria-hidden="true">
+      <circle class="ring-track" cx="160" cy="160" r="140"/>
+      <circle class="ring-arc" id="ringArc" cx="160" cy="160" r="134" transform="rotate(-90 160 160)"/>
+      <circle class="ring-core" id="ringCore" cx="160" cy="160" r="64"/>
+    </svg>
+    <div class="particle-field" id="particleField" aria-hidden="true"></div>
+    <div class="stage-copy">
+      <p class="phase-word" id="phaseWord" aria-live="polite">settle in</p>
+      <p class="breath-count" id="breathCount"></p>
+      <p class="reduced-count" id="reducedCount" aria-hidden="true"></p>
+    </div>
+  </div>
+
+  <div class="session-picker" id="sessionPicker">
+    <p class="picker-label">choose a length, to begin</p>
+    <div class="picker-row" role="group" aria-label="Session length">
+      <button type="button" data-mins="1">1 min</button>
+      <button type="button" data-mins="3">3 min</button>
+      <button type="button" data-mins="5">5 min</button>
+    </div>
+  </div>
+
+  <button type="button" class="end-session" id="endSession" hidden>end here</button>
+
+  <p class="completion-line" id="completionLine" hidden>you were here the whole time</p>
+
+  <p class="reduced-note" id="reducedNote" hidden>Motion is reduced on this device — the gradient holds still, and the count still breathes with you.</p>
+</main>
+
+<footer class="foot">
+  <p class="foot-id">23 / 25 · STILLNESS — designed &amp; coded by Claude Fable 5</p>
+  <nav class="foot-nav" aria-label="Footer">
+    <a href="/">Index</a>
+    <a href="guide/">How it's made</a>
+  </nav>
+</footer>
+
+<script src="stillness.js"></script>
+</body>
+</html>

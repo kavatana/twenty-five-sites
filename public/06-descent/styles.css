@@ -29,22 +29,41 @@ body{
 .sea{position:fixed;inset:0;background:var(--surface);z-index:0}
 .rays{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .ray{
+  --op:1;
   position:absolute;top:-42vh;height:170vh;width:60vw;
   transform-origin:50% 0;
   background:conic-gradient(from 187deg at 50% 0%,
     transparent 0deg, rgba(255,253,240,.4) 5deg,
     transparent 11deg, rgba(255,253,240,.2) 15deg, transparent 20deg);
-  animation:raySway 11s var(--ease-drift) infinite alternate;
+  animation:raySway 11s var(--ease-drift) infinite alternate,
+            rayBreathe 7s var(--ease-drift) infinite;
   mix-blend-mode:screen;
 }
-.r1{left:-6%;animation-duration:13s;opacity:1}
-.r2{left:16%;animation-duration:9.5s;animation-delay:-3s;opacity:.75}
-.r3{left:36%;animation-duration:15s;animation-delay:-7s;opacity:.95}
-.r4{left:57%;animation-duration:10.5s;animation-delay:-2s;opacity:.7}
-.r5{left:74%;animation-duration:12.5s;animation-delay:-5s;opacity:.9}
+.r1{left:-6%;animation-duration:13s,8s;--op:1}
+.r2{left:16%;animation-duration:9.5s,6.4s;animation-delay:-3s,-2s;--op:.75}
+.r3{left:36%;animation-duration:15s,7.6s;animation-delay:-7s,-4s;--op:.95}
+.r4{left:57%;animation-duration:10.5s,6.8s;animation-delay:-2s,-1s;--op:.7}
+.r5{left:74%;animation-duration:12.5s,8.6s;animation-delay:-5s,-3.4s;--op:.9}
 @keyframes raySway{
-  from{transform:rotate(-4.5deg)}
-  to{transform:rotate(4.5deg)}
+  from{transform:rotate(-6deg)}
+  to{transform:rotate(5.5deg)}
+}
+@keyframes rayBreathe{
+  0%,100%{opacity:calc(var(--op)*.68)}
+  50%{opacity:var(--op)}
+}
+/* dappled interference shimmer — only lives while the rays live */
+.caustics{
+  position:absolute;inset:-30% -12%;
+  background-image:
+    repeating-radial-gradient(circle at 30% 12%, transparent 0 24px, rgba(255,255,255,.07) 33px, transparent 44px),
+    repeating-radial-gradient(circle at 74% 4%, transparent 0 32px, rgba(255,255,255,.055) 45px, transparent 60px);
+  mix-blend-mode:screen;
+  animation:causticDrift 30s var(--ease-drift) infinite;
+}
+@keyframes causticDrift{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(-2.2%,1.6%,0) scale(1.07)}
 }
 .surface-glow{
   position:absolute;top:-30vh;left:50%;width:160vw;height:80vh;
@@ -67,13 +86,22 @@ body{
   position:fixed;top:1.6rem;left:1.8rem;z-index:7;
   font-family:"Playfair Display",serif;font-weight:600;
   font-size:.85rem;letter-spacing:.34em;text-decoration:none;
-  color:var(--ink-dark);transition:color .8s ease;
+  color:var(--ink-dark);transition:color .8s ease,background-color .8s ease;
+  padding:.5em .8em;margin:-.5em -.8em;border-radius:999px;
+  background-color:rgba(155,212,228,0);
+  backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);
 }
 .wordmark span{
   font-family:"Source Sans 3",sans-serif;font-weight:400;
   font-size:.62rem;letter-spacing:.2em;opacity:.6;margin-left:.5em;
 }
-html.is-deep .wordmark{color:rgba(206,231,240,.85)}
+/* a card can scroll beneath the mark at small viewports — a soft scrim
+   keeps it legible no matter what is passing underneath */
+html.is-deep .wordmark{
+  color:rgba(206,231,240,.85);
+  background-color:rgba(3,8,18,.88);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
 
 /* depth-meter HUD */
 .hud{
@@ -111,6 +139,7 @@ html.is-deep .hud{color:rgba(206,231,240,.88)}
 .hud-needle{
   position:absolute;top:50%;right:6px;width:30px;height:1.5px;
   background:var(--bio-a);box-shadow:0 0 8px rgba(127,255,212,.8);
+  transform-origin:100% 50%;will-change:transform;
 }
 .hud-needle::before{
   content:"";position:absolute;right:-6px;top:-3.25px;
@@ -128,6 +157,11 @@ html.is-deep .hud{color:rgba(206,231,240,.88)}
   font-size:.56rem;font-weight:600;letter-spacing:.4em;
   text-transform:uppercase;color:var(--bio-a);opacity:.95;
   transition:opacity .4s ease;
+}
+.hud-zone.zone-flash{animation:zoneFlash 1.1s var(--ease-out)}
+@keyframes zoneFlash{
+  0%{opacity:.1;letter-spacing:.62em;filter:blur(3px)}
+  100%{opacity:.95;letter-spacing:.4em;filter:blur(0)}
 }
 html:not(.is-deep) .hud-zone{color:inherit;opacity:.7}
 .hud-press{
@@ -148,21 +182,39 @@ section,header.hero{position:relative}
   font-size:clamp(.62rem,1vw,.72rem);font-weight:600;
   letter-spacing:.42em;text-transform:uppercase;opacity:.72;
   margin-bottom:2.2rem;
+  animation:heroIn 1s var(--ease-out) .15s both;
 }
 .hero-title{
   font-family:"Playfair Display",serif;font-weight:500;
   font-size:clamp(3.2rem,11vw,7.6rem);letter-spacing:.18em;
   text-indent:.18em;line-height:1.04;
+  animation:heroIn 1.3s var(--ease-out) .32s both;
+}
+@supports (-webkit-background-clip:text){
+  .hero-title{
+    background:linear-gradient(180deg,#14435C 0%,#083048 46%,#031A29 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
 }
 .hero-sub{
   max-width:44ch;margin-top:2rem;font-weight:400;
   font-size:clamp(.98rem,1.4vw,1.12rem);line-height:1.75;
   color:#0E2A3C;
+  animation:heroIn 1.1s var(--ease-out) .6s both;
+}
+@keyframes heroIn{
+  from{opacity:0;transform:translateY(28px)}
+  to{opacity:1;transform:none}
 }
 .scroll-cue{
   position:absolute;bottom:3.2rem;display:flex;flex-direction:column;
   align-items:center;gap:.4rem;font-size:.6rem;font-weight:600;
-  letter-spacing:.4em;text-transform:uppercase;opacity:.7;
+  letter-spacing:.4em;text-transform:uppercase;
+  animation:cueIn 1s var(--ease-out) 1.1s both;
+}
+@keyframes cueIn{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:.7;transform:none}
 }
 .scroll-cue svg{animation:cueDip 2.4s var(--ease-drift) infinite}
 @keyframes cueDip{
@@ -186,6 +238,25 @@ section,header.hero{position:relative}
   color:var(--ink-dim);max-width:52ch;
 }
 
+/* sounding lines — small annotations dropped on the long falls between encounters */
+.sounding{
+  min-height:52vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1.7rem;
+  text-align:center;padding:5vh clamp(1.4rem,8vw,6rem);
+}
+.sounding::before,.sounding::after{
+  content:"";width:1px;height:clamp(3rem,9vh,6.5rem);
+}
+.sounding::before{background:linear-gradient(to bottom,transparent,rgba(127,255,212,.4))}
+.sounding::after{background:linear-gradient(to bottom,rgba(127,255,212,.4),transparent)}
+.sounding-line{
+  font-size:.66rem;font-weight:600;letter-spacing:.3em;
+  text-transform:uppercase;line-height:2.1;max-width:52ch;
+  color:rgba(206,231,240,.72);text-wrap:balance;
+}
+.sounding-line em{font-style:normal;color:var(--bio-a)}
+.sounding-line i{font-style:normal;opacity:.85}
+
 /* encounters */
 .encounter{
   position:relative;isolation:isolate;
@@ -196,26 +267,59 @@ section,header.hero{position:relative}
 }
 .encounter.flip .stage{order:2}
 .encounter.flip .card{order:1;justify-self:end}
-.stage{display:flex;justify-content:center;position:relative;z-index:1}
-.card{position:relative;z-index:1}
+.stage{display:flex;justify-content:center;position:relative;z-index:1;min-width:0}
+/* faint pressure-pocket of bioluminescent light behind each creature */
+.stage::before{
+  content:"";position:absolute;left:50%;top:46%;
+  width:min(60vw,620px);aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%);z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(127,255,212,.08),transparent 62%);
+}
+.tint-pink .stage::before{background:radial-gradient(circle,rgba(255,126,182,.075),transparent 62%)}
+.trench .stage::before{background:radial-gradient(circle,rgba(255,223,160,.06),transparent 62%)}
+.card{position:relative;z-index:1;min-width:0}
 
-/* colossal ghost depth-numeral — unifies the stage+card composition */
+/* colossal ghost depth-numeral — anchors the stage side, cropped at the edge */
 .ghost-num{
-  position:absolute;z-index:0;left:50%;top:50%;
-  transform:translate(-50%,-46%);
+  position:absolute;z-index:0;left:-1.5vw;top:50%;
+  transform:translateY(calc(-52% + var(--par,0px)));
+  will-change:transform;
   font-family:"Playfair Display",serif;font-weight:600;font-style:normal;
-  font-size:clamp(6rem,24vw,19rem);line-height:1;letter-spacing:-.01em;
-  color:transparent;-webkit-text-stroke:1px rgba(127,255,212,.1);
+  font-size:clamp(6rem,23vw,20rem);line-height:1;letter-spacing:-.01em;
+  color:rgba(127,255,212,.035);-webkit-text-stroke:1px rgba(127,255,212,.13);
   white-space:nowrap;pointer-events:none;user-select:none;
 }
-.trench .ghost-num{-webkit-text-stroke-color:rgba(255,223,160,.12)}
-.tint-pink .ghost-num{-webkit-text-stroke-color:rgba(255,126,182,.12)}
+.flip .ghost-num{left:auto;right:-1.5vw}
+.trench .ghost-num{color:rgba(255,223,160,.04);-webkit-text-stroke-color:rgba(255,223,160,.15)}
+.tint-pink .ghost-num{color:rgba(255,126,182,.035);-webkit-text-stroke-color:rgba(255,126,182,.14)}
 .creature{
   width:min(100%,480px);height:auto;overflow:visible;
   filter:drop-shadow(0 0 26px rgba(127,255,212,.22));
+  transition:filter .7s var(--ease-out);
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 .dumbo{filter:drop-shadow(0 0 26px rgba(255,126,182,.24))}
 .trieste{filter:drop-shadow(0 0 22px rgba(255,223,160,.16))}
+@media (hover:hover){
+  .creature{cursor:pointer}
+  .creature:hover{filter:drop-shadow(0 0 44px rgba(127,255,212,.42))}
+  .dumbo:hover{filter:drop-shadow(0 0 44px rgba(255,126,182,.44))}
+  .trieste:hover{filter:drop-shadow(0 0 40px rgba(255,223,160,.32))}
+}
+.creature:focus-visible{outline-offset:12px}
+
+/* touch affordance under the first creature */
+.stage-hint{
+  position:absolute;left:50%;bottom:-2.6rem;transform:translateX(-50%);
+  font-size:.56rem;font-weight:600;letter-spacing:.36em;
+  text-transform:uppercase;white-space:nowrap;
+  color:rgba(127,255,212,.62);pointer-events:none;
+  animation:hintBreath 3.4s var(--ease-drift) infinite;
+  transition:opacity 1.2s ease;
+}
+.stage.hint-done .stage-hint{opacity:0}
+@keyframes hintBreath{0%,100%{opacity:.45}50%{opacity:.9}}
 
 .card{
   max-width:46ch;padding:1.85rem 2.1rem 2.1rem;
@@ -331,6 +435,74 @@ section,header.hero{position:relative}
   letter-spacing:.5em;fill:#AFC8D4;opacity:.8;
 }
 
+/* ---------- touch responses: each creature answers in its own light ---------- */
+/* Atolla burglar alarm — a spinning pinwheel of cold blue light */
+.al{
+  fill:none;stroke:#9FD4FF;stroke-width:2.2;stroke-linecap:round;
+  stroke-dasharray:12 30;opacity:0;
+  transform-box:fill-box;transform-origin:50% 50%;
+}
+.jelly.burst .al{animation:alarmSpin 2s cubic-bezier(.17,.84,.28,1) both}
+.jelly.burst .al2{animation-delay:.14s;animation-direction:reverse;stroke-dasharray:8 22}
+.jelly.burst .al3{animation-delay:.28s;stroke-dasharray:16 38;stroke-width:1.6}
+@keyframes alarmSpin{
+  0%{opacity:0;transform:rotate(0deg) scale(.35)}
+  12%{opacity:1}
+  70%{opacity:.75}
+  100%{opacity:0;transform:rotate(300deg) scale(1.28)}
+}
+.jelly.burst .jelly-core{animation:coreFlash 2s var(--ease-out) both}
+@keyframes coreFlash{0%{opacity:1}18%{opacity:1;filter:brightness(2.2)}100%{opacity:.55;filter:none}}
+.jelly.burst .jelly-bell{animation:bellRecoil 2s var(--ease-out) both}
+@keyframes bellRecoil{0%{transform:scale(1)}14%{transform:scale(.9,1.12)}38%{transform:scale(1.06,.94)}100%{transform:scale(1)}}
+
+/* anglerfish — the lure flares wide open */
+.angler.burst .lure-halo{animation:lureFlare 1.9s cubic-bezier(.17,.84,.28,1) both;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes lureFlare{
+  0%{opacity:1;transform:scale(1)}
+  16%{opacity:1;transform:scale(3.4)}
+  55%{opacity:.85;transform:scale(1.9)}
+  100%{opacity:1;transform:scale(1)}
+}
+.angler.burst .lure-bulb{animation:bulbFlare 1.9s cubic-bezier(.17,.84,.28,1) both;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes bulbFlare{0%{transform:scale(1)}16%{transform:scale(2.1)}100%{transform:scale(1)}}
+
+/* gulper — the tail lantern strobes, panicked */
+.gulper.burst .tail-light,.gulper.burst .tail-halo{animation:tailStrobe 1.5s steps(1,end) both}
+@keyframes tailStrobe{
+  0%,14%,28%,42%,60%{opacity:1}
+  7%,21%,35%,50%{opacity:.05}
+  100%{opacity:1}
+}
+.gulper.burst .gulper-tail{animation:tailPanic 1.5s var(--ease-drift) both}
+@keyframes tailPanic{
+  0%{transform:rotate(0)}18%{transform:rotate(14deg)}42%{transform:rotate(-11deg)}
+  66%{transform:rotate(8deg)}100%{transform:rotate(0)}
+}
+
+/* dumbo — startled, gently: quick fin scramble, deeper blush */
+.dumbo.burst .fin{animation:finScramble .42s var(--ease-drift) 4 alternate both}
+@keyframes finScramble{from{transform:rotate(-18deg)}to{transform:rotate(12deg)}}
+.dumbo.burst .dumbo-body{transform-box:fill-box;transform-origin:50% 55%;animation:shyShrink 1.8s var(--ease-out) both}
+@keyframes shyShrink{0%{transform:scale(1)}22%{transform:scale(.93)}100%{transform:scale(1)}}
+.dumbo.burst .blush{animation:blushBloom 1.8s var(--ease-out) both}
+@keyframes blushBloom{0%{opacity:.22}25%{opacity:.72}100%{opacity:.22}}
+
+/* Trieste — the porthole answers in Morse: O·K */
+.trieste.burst .port-glass,.trieste.burst .port-halo{animation:morseOK 2.3s steps(1,end) both}
+@keyframes morseOK{
+  /* O: dah dah dah · K: dah dit dah */
+  0%,9%{opacity:1}10%,13%{opacity:.1}
+  14%,23%{opacity:1}24%,27%{opacity:.1}
+  28%,37%{opacity:1}38%,47%{opacity:.1}
+  48%,57%{opacity:1}58%,61%{opacity:.1}
+  62%,65%{opacity:1}66%,69%{opacity:.1}
+  70%,82%{opacity:1}
+  100%{opacity:1}
+}
+.trieste.burst .beam{animation:beamSweep 2.3s var(--ease-drift) both;transform-box:fill-box;transform-origin:50% 0}
+@keyframes beamSweep{0%{transform:rotate(0)}30%{transform:rotate(-7deg)}70%{transform:rotate(6deg)}100%{transform:rotate(0)}}
+
 /* reveals */
 .reveal{opacity:0;transform:translateY(36px)}
 .reveal.in{
@@ -344,6 +516,22 @@ section,header.hero{position:relative}
 .card.reveal.in>:nth-child(2){transition-delay:.09s}
 .card.reveal.in>:nth-child(3){transition-delay:.17s}
 .card.reveal.in>:nth-child(4){transition-delay:.26s}
+
+/* card micro-interactions — brackets reach, the pane lifts */
+.card::before,.card::after{transition:width .55s var(--ease-out),height .55s var(--ease-out),border-color .55s ease}
+@media (hover:hover){
+  .card{transition:opacity .9s var(--ease-out),transform .7s var(--ease-out),border-color .6s ease,box-shadow .8s ease}
+  .card.reveal.in:hover{
+    transform:translateY(-5px);
+    border-color:rgba(127,255,212,.34);
+    box-shadow:0 42px 84px -30px rgba(0,0,0,.8),0 0 46px -12px rgba(127,255,212,.14);
+  }
+  .card:hover::before,.card:hover::after{width:28px;height:28px}
+  .plaque.reveal.in:hover{
+    border-color:rgba(255,223,160,.42);
+    box-shadow:0 42px 84px -30px rgba(0,0,0,.8),0 0 46px -12px rgba(255,223,160,.14);
+  }
+}
 
 /* finale */
 .finale{
@@ -400,33 +588,41 @@ section,header.hero{position:relative}
 @media (max-width:760px){
   .wordmark{top:1.1rem;left:1.1rem;font-size:.72rem}
   .hud{right:.55rem;gap:.4rem}
-  .hud-rail{height:24vh;width:52px}
+  .hud-cap{display:none}
+  .hud-rail{height:19vh;width:62px}
   .hud-read{font-size:1.02rem}
   .tick .tick-num{font-size:.5rem;right:18px}
   .hud-label{font-size:.5rem}
   .hud-zone{font-size:.5rem;letter-spacing:.3em}
   .hud-press{font-size:.54rem}
 
-  .hero{padding:0 3.6rem 0 1.4rem}
+  .hero{padding:0 5.7rem 0 1.5rem}
   .hero-kicker{letter-spacing:.3em;margin-bottom:1.6rem}
   .hero-sub{margin-top:1.6rem}
   .scroll-cue{bottom:2.4rem}
 
-  .marker{padding:0 3.8rem 0 1.5rem;min-height:88vh}
+  .marker{padding:0 5.6rem 0 1.5rem;min-height:88vh}
 
   .encounter{
     grid-template-columns:1fr;min-height:auto;
-    padding:11vh 3.9rem 11vh 1.5rem;gap:2.4rem;
+    padding:11vh 5.7rem 11vh 1.5rem;gap:2.4rem;
     justify-items:center;
   }
   .encounter.flip .stage{order:0}
   .encounter.flip .card{order:1;justify-self:center}
-  .creature{width:min(78vw,360px);max-height:46vh}
+  .creature{width:min(100%,320px);max-height:46vh}
   .card{padding:1.5rem 1.4rem 1.6rem;max-width:100%}
   .card-index{font-size:.56rem}
-  .ghost-num{font-size:22vw;opacity:.7}
+  .ghost-num,.flip .ghost-num{
+    left:50%;right:auto;top:32%;
+    transform:translate(-50%,calc(-50% + var(--par,0px)));
+    font-size:24vw;opacity:.8;
+  }
+  .stage-hint{bottom:-1.9rem;letter-spacing:.28em}
+  .sounding{min-height:40vh;padding:4vh 3.8rem 4vh 1.5rem}
+  .sounding-line{font-size:.56rem;letter-spacing:.24em;line-height:2.2}
   .trench{min-height:auto}
-  .finale{padding:0 3.6rem 0 1.5rem;gap:2.6rem}
+  .finale{padding:0 5.6rem 0 1.5rem;gap:2.6rem}
   .site-footer{flex-direction:column;align-items:flex-start;padding-bottom:3.4rem}
 }
 
@@ -441,4 +637,7 @@ section,header.hero{position:relative}
   .card.reveal>*{opacity:1;transform:none}
   .stage.reveal{transform:none}
   .scroll-cue svg{animation:none}
+  .caustics{opacity:.14}
+  .stage-hint{display:none}
+  .ghost-num{will-change:auto}
 }

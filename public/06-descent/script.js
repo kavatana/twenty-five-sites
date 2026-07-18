@@ -94,15 +94,30 @@
     tape.appendChild(frag);
   }
 
+  /* ---------- pointer lamp — the one light you carry down ---------- */
+  let px = -1, py = -1, lamp = 0;
+  if (!reduced) {
+    addEventListener("pointermove", (e) => {
+      if (e.pointerType === "mouse") { px = e.clientX; py = e.clientY; }
+    }, { passive: true });
+    document.addEventListener("pointerleave", () => { px = -1; py = -1; });
+  }
+
   /* ---------- marine snow ---------- */
-  let W = 0, H = 0, DPR = 1;
+  let W = 0, H = 0, DPR = 1, lastW = -1;
   let particles = [];
+  let bubbles = [];
   function sizeCanvas() {
     DPR = Math.min(2, devicePixelRatio || 1);
     W = innerWidth; H = innerHeight;
     canvas.width = W * DPR;
     canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    // mobile browsers fire `resize` when their address bar collapses on
+    // scroll — that changes H, not W. Skip re-seeding the field (which
+    // would teleport every mote) unless the width genuinely changed.
+    if (W === lastW) return;
+    lastW = W;
     const target = Math.min(150, Math.round((W * H) / 9200));
     particles = Array.from({ length: target }, () => ({
       x: Math.random() * W,
@@ -113,9 +128,28 @@
       glow: Math.random() < 0.1,
       hue: Math.random() < 0.62 ? "127,255,212" : "255,126,182",
     }));
+    bubbles = Array.from({ length: Math.max(9, Math.round(W / 105)) }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * (H + 30),
+      r: 0.9 + Math.random() * 2.4,
+      v: 18 + Math.random() * 32,     // rise speed px/s
+      ph: Math.random() * Math.PI * 2,
+      wf: 0.5 + Math.random() * 0.9,
+    }));
   }
-  function drawSnow(t, scrollS, progress) {
+  function drawSnow(t, scrollS, progress, vel) {
     ctx.clearRect(0, 0, W, H);
+    // pointer lamp: a faint bioluminescent halo that only matters once the sun is gone
+    const lampTarget = px >= 0 && progress > 0.1 ? Math.min(1, (progress - 0.1) / 0.14) : 0;
+    lamp += (lampTarget - lamp) * 0.06;
+    if (lamp > 0.015) {
+      const g = ctx.createRadialGradient(px, py, 0, px, py, 150);
+      g.addColorStop(0, `rgba(127,255,212,${(0.085 * lamp).toFixed(3)})`);
+      g.addColorStop(0.55, `rgba(127,255,212,${(0.028 * lamp).toFixed(3)})`);
+      g.addColorStop(1, "rgba(127,255,212,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(px - 150, py - 150, 300, 300);
+    }
     // dust is thickest through the sunlit/twilight fall, then thins as the
     // water empties out toward the hadal floor — but never vanishes.
     const rise = Math.min(1, progress * 2.4);
@@ -128,9 +162,32 @@
       const drift = reduced ? 0 : t * (3 + p.z * 14);
       let sy = (p.y - scrollS * (0.22 + p.z * 0.55) - drift) % (H + 40);
       if (sy < -20) sy += H + 40;
-      const sx = p.x + (reduced ? 0 : Math.sin(t * p.wf + p.ph) * (5 + p.z * 9));
+      let sx = p.x + (reduced ? 0 : Math.sin(t * p.wf + p.ph) * (5 + p.z * 9));
+      // lamp deflection: motes stir away from the light you carry
+      if (lamp > 0.05) {
+        const dx = sx - px, dy = sy - 20 - py;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < 16900 && d2 > 1) {
+          const d = Math.sqrt(d2);
+          const push = (1 - d / 130) * (1 - d / 130) * 30 * lamp;
+          sx += (dx / d) * push;
+          sy += (dy / d) * push;
+        }
+      }
       const r = 0.5 + p.z * 1.5;
       const a = (0.13 + p.z * 0.4) * visibility;
+      // scroll-velocity motion blur: the water rushes past when you sink or rocket up
+      const streak = reduced ? 0 : vel * (0.028 + p.z * 0.05);
+      if (Math.abs(streak) > 3.5 && !p.glow) {
+        const len = Math.max(-130, Math.min(130, streak));
+        ctx.beginPath();
+        ctx.moveTo(sx, sy - 20);
+        ctx.lineTo(sx, sy - 20 + len);
+        ctx.lineWidth = r * 1.4;
+        ctx.strokeStyle = `rgba(207,233,242,${(a * 0.85).toFixed(3)})`;
+        ctx.stroke();
+        continue;
+      }
       if (p.glow) {
         const ga = Math.min(1, a * bioStrength);
         ctx.beginPath();
@@ -148,17 +205,54 @@
         ctx.fill();
       }
     }
+    // near the surface only: small glassy bubbles racing back up toward the light
+    const surf = Math.max(0, 1 - progress / 0.115);
+    if (surf > 0.02) {
+      ctx.lineWidth = 1;
+      const span = H + 30;
+      for (const b of bubbles) {
+        const rise = reduced ? 0 : t * b.v;
+        let by = (b.y - rise - scrollS * 0.4) % span;
+        if (by < 0) by += span;
+        by -= 15;
+        const bx = b.x + (reduced ? 0 : Math.sin(t * b.wf + b.ph) * (4 + b.r * 2.2));
+        const a = (0.16 + b.r * 0.09) * surf;
+        ctx.beginPath();
+        ctx.arc(bx, by, b.r, 0, 7);
+        ctx.strokeStyle = `rgba(255,255,255,${a.toFixed(3)})`;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(bx - b.r * 0.35, by - b.r * 0.35, b.r * 0.32, 0, 7);
+        ctx.fillStyle = `rgba(255,255,255,${Math.min(1, a * 1.6).toFixed(3)})`;
+        ctx.fill();
+      }
+    }
+  }
+
+  /* ---------- ghost-numeral parallax stops ---------- */
+  let ghosts = [];
+  function cacheGhosts() {
+    ghosts = [...document.querySelectorAll(".ghost-num")].map((el) => {
+      const sec = el.closest("section");
+      const rect = sec.getBoundingClientRect();
+      return { el, center: rect.top + scrollY + rect.height / 2 };
+    });
   }
 
   /* ---------- master update ---------- */
   let targetY = scrollY, smoothY = scrollY, lastT = 0, rafId = 0;
+  let smoothVel = 0, lastZone = "";
+  const needle = document.querySelector(".hud-needle");
 
   function update(t, dt) {
     const scrollable = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     targetY = scrollY;
+    const prevY = smoothY;
     if (reduced) smoothY = targetY;
     else smoothY += (targetY - smoothY) * Math.min(1, 1 - Math.exp(-dt * 7));
     if (Math.abs(targetY - smoothY) < 0.1) smoothY = targetY;
+    const vel = reduced ? 0 : (smoothY - prevY) / Math.max(dt, 0.001); // px/s
+    smoothVel += (vel - smoothVel) * Math.min(1, dt * 9);
 
     const p = Math.min(1, Math.max(0, smoothY / scrollable));
 
@@ -177,12 +271,38 @@
     // depth meter
     const depth = depthAt(p);
     depthNum.textContent = Math.round(depth).toLocaleString("en-US");
-    zoneLabel.textContent = zoneAt(depth);
+    const zone = zoneAt(depth);
+    if (zone !== lastZone) {
+      zoneLabel.textContent = zone;
+      if (lastZone && !reduced) {
+        zoneLabel.classList.remove("zone-flash");
+        void zoneLabel.offsetWidth;
+        zoneLabel.classList.add("zone-flash");
+      }
+      lastZone = zone;
+    }
     pressLabel.textContent = Math.round(1 + depth * 0.1003).toLocaleString("en-US") + " atm";
     const railH = rail.clientHeight;
     tape.style.transform = `translateY(${(railH / 2 - depth * PPM).toFixed(2)}px)`;
 
-    drawSnow(t / 1000, smoothY, p);
+    // needle quivers with descent speed, like a real pressure gauge under strain
+    if (!reduced) {
+      const quiver = Math.max(-7, Math.min(7, smoothVel * 0.0035))
+        + Math.sin(t * 0.021) * Math.min(1.4, Math.abs(smoothVel) * 0.0012);
+      needle.style.transform = `rotate(${quiver.toFixed(2)}deg)`;
+    }
+
+    // colossal depth numerals fall slower than the water — parallax anchors the deep
+    if (!reduced) {
+      const mid = smoothY + innerHeight / 2;
+      for (const g of ghosts) {
+        const rel = g.center - mid;
+        if (Math.abs(rel) < innerHeight * 1.6)
+          g.el.style.setProperty("--par", (rel * 0.16).toFixed(1) + "px");
+      }
+    }
+
+    drawSnow(t / 1000, smoothY, p, smoothVel);
   }
 
   function loop(t) {
@@ -201,6 +321,26 @@
   );
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
+  /* ---------- touch responses — every creature answers in light ---------- */
+  document.querySelectorAll(".creature").forEach((svg) => {
+    let timer = 0;
+    const fire = () => {
+      if (reduced) return;
+      svg.classList.remove("burst");
+      void svg.getBoundingClientRect();
+      svg.classList.add("burst");
+      clearTimeout(timer);
+      timer = setTimeout(() => svg.classList.remove("burst"), 2600);
+      const stage = svg.closest(".stage");
+      if (stage) stage.classList.add("hint-done");
+    };
+    svg.addEventListener("pointerdown", (e) => { e.preventDefault(); fire(); });
+    svg.setAttribute("tabindex", "0");
+    svg.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fire(); }
+    });
+  });
+
   /* ---------- ascent ---------- */
   $("#ascend").addEventListener("click", () => {
     if (reduced) { scrollTo(0, 0); return; }
@@ -216,15 +356,25 @@
   });
 
   /* ---------- lifecycle ---------- */
-  function relayout() { sizeCanvas(); buildDepthStops(); update(lastT || 0, 0.016); }
+  function relayout() { sizeCanvas(); buildDepthStops(); cacheGhosts(); update(lastT || 0, 0.016); }
+  // coalesce bursts of resize events (mobile address-bar collapse, drag-resize)
+  // into one relayout per frame instead of thrashing layout on every tick
+  let resizeQueued = false;
+  function queueRelayout() {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(() => { resizeQueued = false; relayout(); });
+  }
 
   buildTape();
   sizeCanvas();
   buildDepthStops();
+  cacheGhosts();
 
-  addEventListener("resize", relayout);
+  addEventListener("resize", queueRelayout, { passive: true });
   addEventListener("load", relayout);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => buildDepthStops());
+  if (document.fonts && document.fonts.ready)
+    document.fonts.ready.then(() => { buildDepthStops(); cacheGhosts(); });
 
   if (reduced) {
     update(0, 0.016);

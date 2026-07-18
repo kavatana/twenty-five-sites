@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAPOR — Kepler-1649c Relay Weather Console</title>
+<meta name="description" content="VAPOR: a live glassmorphic weather console for the Kepler-1649c relay. Rain, snow, aurora and heat rendered in a hand-rolled canvas simulation behind frosted-glass instruments.">
+<meta property="og:title" content="VAPOR — Kepler-1649c Relay Weather Console">
+<meta property="og:description" content="A pristine sci-fi weather instrument for an exoplanet relay — four live regimes, one canvas simulation, glass panels that morph in 1.2s.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VAPOR">
+<meta name="theme-color" content="#1A1B3A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%231A1B3A'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='16'%20fill='none'%20stroke='%236FA8DC'%20stroke-width='3'/%3E%3Cpath%20d='M14%2040%20L50%2024'%20stroke='%2348E5C2'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='4'%20fill='%239D6FF0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Albert+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vapor.css">
+<noscript><style>
+  .swap{ opacity:1!important; transform:none!important; }
+  .dial-thumb{ transition:none!important; }
+</style></noscript>
+</head>
+<body data-mode="rain">
+
+<a class="skip" href="#top">Skip to content</a>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="app" id="top">
+
+  <header class="topbar glass">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+      </span>
+      <div class="brand-text">
+        <strong>VAPOR</strong>
+        <span>Kepler-1649c Relay · Weather Console</span>
+      </div>
+    </div>
+
+    <div class="dial" role="tablist" aria-label="Weather mode">
+      <span class="dial-thumb" aria-hidden="true"></span>
+      <button type="button" role="tab" data-mode="rain" aria-selected="true">Rain</button>
+      <button type="button" role="tab" data-mode="snow" aria-selected="false">Snow</button>
+      <button type="button" role="tab" data-mode="aurora" aria-selected="false">Aurora</button>
+      <button type="button" role="tab" data-mode="heat" aria-selected="false">Heat</button>
+    </div>
+
+    <div class="status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-text">LINK NOMINAL</span>
+      <span class="status-sep" aria-hidden="true">·</span>
+      <span class="status-clock" id="solClock">SOL 0412 — 00:00:00</span>
+    </div>
+  </header>
+
+  <main class="main-grid">
+
+    <section class="panel current glass" aria-label="Current conditions">
+      <div class="panel-head">
+        <h1>Current Conditions</h1>
+        <span class="panel-tag" id="conditionTag">STEADY RAIN</span>
+      </div>
+      <div class="current-body">
+        <div class="glyph-stage" aria-hidden="true">
+          <svg class="g-icon g-rain active" viewBox="0 0 64 64">
+            <g class="cloud">
+              <ellipse cx="34" cy="24" rx="18" ry="11" fill="currentColor" opacity=".92"/>
+              <circle cx="21" cy="23" r="9" fill="currentColor" opacity=".92"/>
+              <circle cx="44" cy="20" r="11" fill="currentColor" opacity=".92"/>
+            </g>
+            <g class="drops" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <line class="drop d1" x1="22" y1="38" x2="19" y2="46"/>
+              <line class="drop d2" x1="33" y1="40" x2="30" y2="50"/>
+              <line class="drop d3" x1="44" y1="38" x2="41" y2="46"/>
+            </g>
+          </svg>
+          <svg class="g-icon g-snow" viewBox="0 0 64 64">
+            <g transform="translate(32,32)">
+              <g class="flake-spin" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <g class="spoke">
+                  <line x1="0" y1="-20" x2="0" y2="20"/><line x1="0" y1="-20" x2="-5" y2="-13"/><line x1="0" y1="-20" x2="5" y2="-13"/>
+                  <line x1="0" y1="20" x2="-5" y2="13"/><line x1="0" y1="20" x2="5" y2="13"/>
+                </g>
+                <g class="spoke" transform="rotate(60)">
+                  <line x1="0" y1="-20" x2="0" y2="20"/><line x1="0" y1="-20" x2="-5" y2="-13"/><line x1="0" y1="-20" x2="5" y2="-13"/>
+                  <line x1="0" y1="20" x2="-5" y2="13"/><line x1="0" y1="20" x2="5" y2="13"/>
+                </g>
+                <g class="spoke" transform="rotate(120)">
+                  <line x1="0" y1="-20" x2="0" y2="20"/><line x1="0" y1="-20" x2="-5" y2="-13"/><line x1="0" y1="-20" x2="5" y2="-13"/>
+                  <line x1="0" y1="20" x2="-5" y2="13"/><line x1="0" y1="20" x2="5" y2="13"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <svg class="g-icon g-aurora" viewBox="0 0 64 64">
+            <path class="ribbon r1" d="M4 34c6-10 12-10 18 0s12 10 18 0 12-10 18 0" fill="none" stroke="#48E5C2" stroke-width="3" stroke-linecap="round"/>
+            <path class="ribbon r2" d="M4 26c6-8 12-8 18 0s12 8 18 0 12-8 18 0" fill="none" stroke="#9D6FF0" stroke-width="2.4" stroke-linecap="round" opacity=".82"/>
+          </svg>
+          <svg class="g-icon g-heat" viewBox="0 0 64 64">
+            <circle class="sun" cx="32" cy="28" r="11" fill="currentColor"/>
+            <g class="rays" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <line x1="32" y1="6" x2="32" y2="12"/><line x1="32" y1="44" x2="32" y2="50"/>
+              <line x1="10" y1="28" x2="16" y2="28"/><line x1="48" y1="28" x2="54" y2="28"/>
+              <line x1="16" y1="12" x2="20" y2="16"/><line x1="44" y1="40" x2="48" y2="44"/>
+              <line x1="48" y1="12" x2="44" y2="16"/><line x1="20" y1="40" x2="16" y2="44"/>
+            </g>
+            <path class="haze" d="M14 54c4-3 6-3 10 0s6 3 10 0 6-3 10 0 6-3 10 0" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="temp-block">
+          <span class="temp-num" id="tempNum">8</span><span class="temp-unit">°C</span>
+        </div>
+      </div>
+      <p class="current-note" id="conditionNote">Convective cells drifting east across the basin. Streak angle holding at twelve degrees; ground saturation climbing.</p>
+      <div class="trend-block">
+        <span class="trend-label">7-Sol Trend</span>
+        <svg class="trend-svg" viewBox="0 0 280 70" preserveAspectRatio="none" aria-hidden="true">
+          <path id="trendArea" class="trend-area" d="M10.0,30.0 L53.3,50.0 L96.7,60.0 L140.0,40.0 L183.3,20.0 L226.7,30.0 L270.0,10.0 L270.0,60.0 L10.0,60.0 Z"></path>
+          <polyline id="trendPoly" class="trend-line" points="10.0,30.0 53.3,50.0 96.7,60.0 140.0,40.0 183.3,20.0 226.7,30.0 270.0,10.0"></polyline>
+          <circle id="trendDot" class="trend-dot" r="3.4" cx="270.0" cy="10.0"></circle>
+        </svg>
+      </div>
+      <dl class="stat-row">
+        <div><dt>Wind</dt><dd id="statWind">14 km/h · SSE</dd></div>
+        <div><dt>Pressure</dt><dd id="statPressure">98.2 kPa</dd></div>
+        <div><dt id="statThirdLabel">Humidity</dt><dd id="statThird">88%</dd></div>
+      </dl>
+    </section>
+
+    <section class="panel forecast glass" aria-label="Seven-sol forecast">
+      <div class="panel-head"><h2>7-Sol Forecast</h2></div>
+      <ol class="forecast-strip">
+        <li class="fc-card"><span class="fc-sol">S+1</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">9°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+2</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">7°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+3</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">6°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+4</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">8°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+5</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">10°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+6</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">9°</span></li>
+        <li class="fc-card"><span class="fc-sol">S+7</span><span class="fc-icon"><svg viewBox="0 0 24 24" class="mini-rain" aria-hidden="true"><path d="M12 3c3.2 4 5.2 7.1 5.2 9.6a5.2 5.2 0 1 1-10.4 0C6.8 10.1 8.8 7 12 3Z" fill="currentColor" opacity=".9"/><path class="mini-drip" d="M9 19v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mini-drip d2" d="M13.6 20v2.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="fc-temp">11°</span></li>
+      </ol>
+    </section>
+
+    <section class="panel composition glass" aria-label="Atmospheric composition">
+      <div class="panel-head"><h2>Atmospheric Composition</h2></div>
+      <div class="donut-wrap">
+        <svg class="donut" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/>
+          <g transform="rotate(-90 60 60)">
+            <circle id="segN2" cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="14" stroke-dasharray="213.63 314.16" stroke-dashoffset="0"/>
+            <circle id="segCO2" cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.34)" stroke-width="14" stroke-dasharray="47.12 314.16" stroke-dashoffset="-213.63"/>
+            <circle id="segAr" cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.20)" stroke-width="14" stroke-dasharray="25.13 314.16" stroke-dashoffset="-260.75"/>
+            <circle id="segAccent" class="seg-accent" cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="14" stroke-dasharray="28.27 314.16" stroke-dashoffset="-285.89"/>
+          </g>
+          <text x="60" y="57" text-anchor="middle" class="donut-center-label">ATM</text>
+          <text x="60" y="68" text-anchor="middle" class="donut-center-label" style="font-size:7px;opacity:.55">MIX</text>
+        </svg>
+        <ul class="donut-legend">
+          <li id="legN2"><span class="leg-swatch" style="background:rgba(255,255,255,.55)"></span><span class="leg-name">Nitrogen (N₂)</span><span class="leg-val">68%</span></li>
+          <li id="legCO2"><span class="leg-swatch" style="background:rgba(255,255,255,.34)"></span><span class="leg-name">Carbon Dioxide</span><span class="leg-val">15%</span></li>
+          <li id="legAr"><span class="leg-swatch" style="background:rgba(255,255,255,.20)"></span><span class="leg-name">Argon</span><span class="leg-val">8%</span></li>
+          <li id="legAccent"><span class="leg-swatch accent-swatch"></span><span class="leg-name">H₂O Vapor</span><span class="leg-val">9%</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel wind glass" aria-label="Wind field">
+      <div class="panel-head">
+        <h2>Wind Field</h2>
+        <span class="panel-tag" id="windTag">SURFACE VECTORS — LAMINAR</span>
+      </div>
+      <canvas id="windMap" class="wind-canvas" role="img" aria-label="Live wind vector field. Regime: laminar."></canvas>
+    </section>
+
+  </main>
+
+  <footer class="foot glass">
+    <p class="foot-id"><b>21 / 25</b> · VAPOR — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script src="vapor.js"></script>
+</body>
+</html>

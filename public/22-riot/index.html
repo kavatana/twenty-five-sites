@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RIOT PRESS — NOISE 013 (a zine that hates your algorithm)</title>
+<meta name="description" content="RIOT PRESS presents NOISE 013: an anti-design punk zine built by hand — ransom-letter headlines, a spray-paint cursor trail, a table of contents that straightens when you dare touch it, and a manifesto nobody fact-checked. Price: 1 safety pin.">
+<meta property="og:title" content="RIOT PRESS — NOISE 013">
+<meta property="og:description" content="Xeroxed. Stapled. Undeniable. Forty pages of unfiltered opinion, none of it optimized for engagement. Hand-coded, site 22 of 25.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230D0D0D'/%3E%3Ccircle cx='24' cy='27' r='11' fill='%23B6FF00'/%3E%3Crect x='33' y='29' width='20' height='20' fill='%23FF00A8' transform='rotate(14 43 39)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Bungee&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="riot.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<canvas id="spray" aria-hidden="true"></canvas>
+<div class="scanbar" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<div class="marquee marquee--top" aria-hidden="true">
+  <div class="marquee__track">
+    <span class="marquee__seg">COPY. PASTE. DESTROY. <i>★</i> NOISE 013 OUT NOW, PROBABLY CROOKED <i>★</i> NO ADS. NO ALGORITHM. NO APOLOGIES. <i>★</i> TONER LEVELS: CRITICAL <i>★</i> STAPLED, NOT STREAMED <i>★</i> THIS ZINE VOTES NO <i>★</i> MADE ON A DYING MACHINE AT 3AM <i>★</i></span>
+    <span class="marquee__seg" aria-hidden="true">COPY. PASTE. DESTROY. <i>★</i> NOISE 013 OUT NOW, PROBABLY CROOKED <i>★</i> NO ADS. NO ALGORITHM. NO APOLOGIES. <i>★</i> TONER LEVELS: CRITICAL <i>★</i> STAPLED, NOT STREAMED <i>★</i> THIS ZINE VOTES NO <i>★</i> MADE ON A DYING MACHINE AT 3AM <i>★</i></span>
+  </div>
+</div>
+
+<main id="main">
+
+  <header class="masthead">
+
+    <div class="sticker sticker--tv" style="--r:-8deg">AS SEEN<br>ON NO TV</div>
+    <div class="sticker sticker--cal" style="--r:6deg">100%<br>UNCALIBRATED</div>
+
+    <div class="issue-stamp" style="--r:-3deg">
+      <span class="issue-stamp__label">ISSUE No.</span>
+      <span class="issue-stamp__num" id="issueNum" aria-live="off">013</span>
+      <span class="issue-stamp__sub">NOISE</span>
+    </div>
+
+    <h1 class="logo" style="--r:-1.4deg">
+      <span class="visually-hidden">RIOT PRESS</span>
+      <span aria-hidden="true" class="logo__row">
+        <span class="rl-word"><span>R</span><span>I</span><span>O</span><span>T</span></span>
+        <span class="rl-word rl-word--accent"><span>P</span><span>R</span><span>E</span><span>S</span><span>S</span></span>
+      </span>
+    </h1>
+    <p class="tagline">Xeroxed. Stapled. Undeniable.</p>
+
+    <div class="barcode-block">
+      <div class="barcode" id="barcode" aria-hidden="true"></div>
+      <div class="barcode-info">
+        <span>PRICE: 1 SAFETY PIN</span>
+        <span>OR WHATEVER'S IN YOUR POCKET</span>
+        <span class="dim">NOT MACHINE READABLE (NEITHER ARE WE)</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2 class="hero__headline" style="--r:.6deg">
+      <span class="visually-hidden">PRINT NEVER LOGS OFF</span>
+      <span aria-hidden="true" class="rl-line">
+        <span class="rl-word"><span>P</span><span>R</span><span>I</span><span>N</span><span>T</span></span>
+        <span class="rl-word"><span>N</span><span>E</span><span>V</span><span>E</span><span>R</span></span>
+        <span class="rl-word"><span>L</span><span>O</span><span>G</span><span>S</span></span>
+        <span class="rl-word"><span>O</span><span>F</span><span>F</span></span>
+      </span>
+    </h2>
+
+    <div class="hero__stamp" style="--r:-2deg">ISSUE 013 · STILL WARM FROM THE COPIER</div>
+
+    <p class="hero__lede">
+      Forty-eight pages arrive smudged, crooked, and completely uncalibrated —
+      same as us. No push notifications. No newsletter. Just a stapled object
+      that showed up at the record shop and refuses to explain itself.
+    </p>
+  </section>
+
+  <section class="photos" aria-label="Contributor snapshots">
+    <figure class="photo photo--1" style="--r:-4deg">
+      <span class="tape tape--a" style="--tr:-14deg"></span>
+      <span class="tape tape--b" style="--tr:8deg"></span>
+      <div class="photo__halftone photo__halftone--a"></div>
+      <figcaption>FIG. 1 — "THE STUDIO" (A GARAGE)</figcaption>
+    </figure>
+    <figure class="photo photo--2" style="--r:3deg">
+      <span class="tape tape--a" style="--tr:-6deg"></span>
+      <span class="tape tape--b" style="--tr:16deg"></span>
+      <div class="photo__halftone photo__halftone--b"></div>
+      <figcaption>FIG. 2 — "OUR ONLY CAMERA"</figcaption>
+    </figure>
+    <figure class="photo photo--3" style="--r:-2deg">
+      <span class="tape tape--a" style="--tr:-18deg"></span>
+      <span class="tape tape--b" style="--tr:4deg"></span>
+      <div class="photo__halftone photo__halftone--c"></div>
+      <figcaption>FIG. 3 — "THE EDITOR, PROBABLY"</figcaption>
+    </figure>
+  </section>
+
+  <section class="toc">
+    <h2 class="section-label" style="--r:-1deg">INSIDE No. 013</h2>
+    <ol class="toc__list">
+      <li class="toc__row" style="--r:-1.3deg"><span class="toc__num">01</span><span class="toc__title">WHY YOUR BAND'S LOGO LOOKS LIKE A TAX FORM</span><span class="toc__page">pg. 03</span></li>
+      <li class="toc__row" style="--r:1deg"><span class="toc__num">02</span><span class="toc__title">A CONVERSATION WITH THE COPIER THAT HATES US</span><span class="toc__page">pg. 06</span></li>
+      <li class="toc__row" style="--r:-.6deg"><span class="toc__num">03</span><span class="toc__title">FONT CRIMES: A FULL CONFESSION</span><span class="toc__page">pg. 09</span></li>
+      <li class="toc__row" style="--r:1.4deg"><span class="toc__num">04</span><span class="toc__title">HOW TO START A RIOT WITH ONE STAPLER</span><span class="toc__page">pg. 11</span></li>
+      <li class="toc__row" style="--r:-1.1deg"><span class="toc__num">05</span><span class="toc__title">CLASSIFIEDS: LOST DIGNITY, MODEST REWARD</span><span class="toc__page">pg. 14</span></li>
+      <li class="toc__row" style="--r:.8deg"><span class="toc__num">06</span><span class="toc__title">THE MANIFESTO (ALSO BELOW, WE'RE NOT SUBTLE)</span><span class="toc__page">pg. 18</span></li>
+      <li class="toc__row" style="--r:-1.5deg"><span class="toc__num">07</span><span class="toc__title">READER MAIL: "PLEASE STOP"</span><span class="toc__page">pg. 22</span></li>
+      <li class="toc__row" style="--r:1.1deg"><span class="toc__num">08</span><span class="toc__title">TOP 5 DUMPSTERS IN THIS TOWN, RANKED</span><span class="toc__page">pg. 27</span></li>
+    </ol>
+  </section>
+
+  <section class="manifesto">
+    <h2 class="section-label section-label--pink" style="--r:1.4deg">THE MANIFESTO</h2>
+    <p class="manifesto__body">
+      WE STARTED RIOT PRESS BECAUSE THE INTERNET GOT
+      <span class="strike">POLITE</span> <span class="hl">BORING</span>.
+      SOMEWHERE BETWEEN THE SECOND COOKIE BANNER AND THE THIRD
+      "SUBSCRIBE FOR MORE" WE LOST THE PLOT — SO WE BOUGHT A
+      PHOTOCOPIER INSTEAD. ISSUE 013 IS FORTY PAGES OF
+      <span class="scribble">UNFILTERED</span> OPINION, STAPLED BY HAND,
+      CORRECT MAYBE SIXTY PERCENT OF THE TIME. NOTHING HERE WAS A/B
+      TESTED. NOBODY <span class="strike">OPTIMIZED</span>
+      <span class="hl">WROTE</span> THIS FOR ENGAGEMENT — WE MADE IT FOR
+      THE BUS RIDE HOME. IF A PAGE MAKES YOU ANGRY,
+      <span class="strike">WE'RE SORRY</span> <span class="hl">GOOD</span>,
+      KEEP READING. XEROX IT AGAIN. STAPLE IT TO A LAMPPOST.
+      <span class="scribble">IT WAS NEVER OURS TO KEEP.</span>
+    </p>
+    <p class="manifesto__sign">— THE DESK, RIOT PRESS, PROBABLY 3AM</p>
+  </section>
+
+  <footer class="site-foot">
+    <span class="foot-id">22 / 25 · RIOT PRESS — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </span>
+  </footer>
+
+</main>
+
+<div class="marquee marquee--bottom" aria-hidden="true">
+  <div class="marquee__track">
+    <span class="marquee__seg">SUBSCRIBE TO NOTHING <i>★</i> THE ALGORITHM CAN'T READ PAPER <i>★</i> RIOT PRESS IS NOT A BRAND <i>★</i> PHOTOCOPIERS NEVER FORGET <i>★</i> DIY OR DIE TRYING <i>★</i> NOW WITH 40% MORE STATIC <i>★</i></span>
+    <span class="marquee__seg" aria-hidden="true">SUBSCRIBE TO NOTHING <i>★</i> THE ALGORITHM CAN'T READ PAPER <i>★</i> RIOT PRESS IS NOT A BRAND <i>★</i> PHOTOCOPIERS NEVER FORGET <i>★</i> DIY OR DIE TRYING <i>★</i> NOW WITH 40% MORE STATIC <i>★</i></span>
+  </div>
+</div>
+
+<script src="riot.js"></script>
+</body>
+</html>

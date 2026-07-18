@@ -175,9 +175,13 @@ lighter version to the accord orb cluster (a tap on a tier "drops" a stone
 into that orb's colour) could tie the signature interaction to a second
 section.
 
-## Pass 3 — 2026-07-12
+## Pass 3 — 2026-07-16
 
-Craft & finish pass. Verified with `tools/snap.mjs` (1440×900 + 390×844,
+Craft & finish pass. (Begun 07-12, interrupted mid-flight by a rate limit;
+resumed and completed 07-16 by a fresh pair of eyes — every claim below from
+the first attempt was re-verified against the actual code before finishing,
+and all of them were genuinely applied. The "Finish, resumed" section at the
+end of this pass covers the second half.) Verified with `tools/snap.mjs` (1440×900 + 390×844,
 plus a delayed frame) and a set of hand-written Playwright scripts driving
 scroll position, hover, click, keyboard-tab focus, and a
 `reducedMotion:'reduce'` emulation — the mandated snap only shoots the
@@ -259,3 +263,56 @@ brief mood, and the click-ripple already proves the shader can produce
 sharp, legible structure when the moment calls for it. Re-litigating the
 base look without a concrete complaint felt like churn rather than
 craft.
+
+### Finish, resumed — 2026-07-16
+
+Fresh-eyes verification first: confirmed every item logged above actually
+exists in the shipped code (cursor-tracked sheen via `--mx`/`--my`,
+`orbPulse` tier click, the `.accords-head` reveal-wrapper fix, `lang="fr"`
+markup, the `.tier.reveal.in` transition restatement), then re-shot both
+viewports (`shots/01-p3-*`) and looked. Two concrete visual complaints
+survived the look — both fixed, plus four more finish items:
+
+- **Silk moiré artifact.** The thread micro-grain
+  (`N.x += 0.018·sin(vUv.y·780)`) aliased into visible ~7 px horizontal
+  scanline bands and moiré patches across the whole hero at 1× DPR — it
+  read as a rendering defect, not weave. Cut to `0.006·sin(vUv.y·260)`;
+  re-shot: the banding is gone at both 1440×900 and 390×844 and the
+  anisotropic hint survives.
+- **Off-palette olive cast.** `mix(duo, film, 0.4)` let the raw
+  interference rainbow's green band through, and unlit teal over the warm
+  base averaged to sage/olive — a hue nowhere in the brand's
+  pearl/gold/ink/rose/teal set. Trimmed the raw-film contribution to 0.2,
+  rose-biased the duotone floor (`mix(uTeal, uRose, .24 + .76·film.r)` —
+  dawn leans rose first, teal as the counter-note), and raised `uIrid`
+  .85→.94 to recover the shimmer energy the trim cost. The hero now reads
+  pearl/mauve/rose with teal as a cool accent instead of green streaks.
+- **`.hero-note` contrast.** `rgba(185,179,196,.62)` over ink computed to
+  ~4.2:1 — under AA for its size. Now `rgba(197,192,207,.82)` (~7.4:1
+  against ink) plus a soft ink text-shadow against bright silk moments.
+- **Keyboard parity for the tier controls.** The accord rows were
+  pointer-only interactive (cursor dilates, click pulses orbs) with no
+  keyboard path at all. Added `tabindex="0"`, focus/blur handlers that
+  drive the same `data-active` orb highlight as hover, Enter/Space firing
+  the same pulse (still gated behind `!RM`), and a `:focus-visible` state
+  reusing the hover's gold rail. Verified via scripted keyboard pass:
+  focusing Cœur lights the gold register and Enter drops the ring.
+- **Parallax anchors measured before webfonts.** `measurePlx()` only ran
+  at script eval and on resize, so Cormorant/Outfit swapping in later left
+  stale section tops. Now re-measured on `document.fonts.ready` and
+  `window.load`.
+- Smaller: `og:site_name` + `og:locale` added to the OG block (no
+  `og:image` by design — the brief bars external images and scrapers don't
+  honour data URIs); the guide page's stale pre-contrast-fix
+  `--gold-deep:#8f7342` token updated to the site's audited `#7c5f37`;
+  guide "Passes" paragraph extended to stay accurate to this pass.
+
+Final gate: `node tools/snap.mjs /01-aurelia/ shots/01-p3v3 5000` clean at
+both viewports (sole console output remains the benign `GPU stall due to
+ReadPixels` driver-perf warning provoked by the screenshot readback
+itself — zero errors, zero failed requests), plus a scripted
+scroll-through of every section, tier focus/Enter, and guide page at both
+viewports: zero console issues everywhere. Footer line and Index /
+How-it's-made links verified in-shot on desktop and mobile; guide re-read
+(now ~440 words, within the 300–600 brief) and accurate to the code as
+shipped.

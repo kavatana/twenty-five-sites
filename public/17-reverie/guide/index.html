@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How REVERIE is made — a dreamcore hotel in CSS and SVG</title>
+<meta name="description" content="The making of REVERIE: a CSS 3D doorframe with stars behind it, a generated isometric staircase traced by a closed offset-path, scroll-velocity moon parallax, and a hand-rolled rotary dial — no images, no libraries.">
+<meta property="og:title" content="How REVERIE is made">
+<meta property="og:description" content="A floating door in true CSS 3D, a JS-generated Escher-nod staircase, and a rotary dial built from scratch. The full technique breakdown.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#E8DFF5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232A2440'/%3E%3Cpath d='M20 50 L20 26 Q20 16 32 16 Q44 16 44 26 L44 50' fill='none' stroke='%23FDE2E4' stroke-width='3'/%3E%3Ccircle cx='41' cy='23' r='7' fill='%23FFF8E7'/%3E%3Ccircle cx='44' cy='20' r='6' fill='%232A2440'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --fog: #E8DFF5; --blush: #FDE2E4; --sky: #CDE7F0; --twilight: #2A2440; --cream: #FFF8E7;
+    --ink: #2A2440; --ink-dim: rgba(42,36,64,.68); --ink-faint: rgba(42,36,64,.44);
+    --hairline: rgba(42,36,64,.16);
+    --disp: "Italiana", Georgia, serif;
+    --body: "Mulish", system-ui, sans-serif;
+    --soft: cubic-bezier(.22,.61,.16,1);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    color: var(--ink);
+    background:
+      radial-gradient(90vmax 60vmax at 85% -10%, rgba(255,248,231,.5), transparent 60%),
+      linear-gradient(175deg, var(--fog) 0%, var(--sky) 48%, var(--blush) 100%);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(205,231,240,.7); color: var(--twilight); }
+  :focus-visible { outline: 2px solid var(--twilight); outline-offset: 3px; }
+
+  .moon-deco {
+    position: fixed; top: -6vw; right: -6vw; width: 26vw; height: 26vw; min-width: 200px; min-height: 200px;
+    border-radius: 50%; z-index: -1;
+    background:
+      radial-gradient(circle at 32% 30%, rgba(255,255,255,.9), transparent 45%),
+      radial-gradient(circle at 50% 50%, var(--cream), #E9DCB9 100%);
+    box-shadow: 0 0 90px rgba(255,248,231,.5);
+  }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: clamp(3rem, 8vh, 5.5rem) 1.5rem 5rem; }
+  .crumb {
+    display: inline-flex; align-items: center; gap: .4em;
+    font-size: .74rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--ink-dim); text-decoration: none; margin-bottom: 2.6rem;
+    border-bottom: 1px solid rgba(42,36,64,.28); padding-bottom: 3px;
+    transition: color .35s var(--soft), border-color .35s var(--soft);
+  }
+  .crumb:hover { color: var(--ink); border-color: var(--ink); }
+
+  .eyebrow { font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 1rem; }
+  .eyebrow::before { content: "· "; }
+
+  h1 {
+    font-family: var(--disp); font-weight: 400;
+    font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.4rem); line-height: 1.08;
+    margin-bottom: 1.2rem;
+  }
+  .lede { font-size: 1.08rem; line-height: 1.7; color: var(--ink-dim); max-width: 54ch; margin-bottom: 3rem; }
+
+  h2 {
+    font-family: var(--disp); font-weight: 400; font-size: 1.5rem;
+    margin: 2.8rem 0 .9rem;
+  }
+  p { line-height: 1.75; color: var(--ink-dim); font-size: .98rem; margin-bottom: 1rem; max-width: 62ch; }
+  strong { color: var(--ink); font-weight: 700; }
+  ul { margin: 0 0 1rem 1.2rem; }
+  li { line-height: 1.75; color: var(--ink-dim); font-size: .98rem; margin-bottom: .4rem; max-width: 60ch; }
+  li strong { font-weight: 700; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .84em; color: var(--twilight);
+    background: rgba(42,36,64,.08);
+    border: 1px solid rgba(42,36,64,.14);
+    border-radius: 4px; padding: .08em .38em;
+  }
+
+  .rule {
+    border: none; height: 1px; margin: 3rem 0 0;
+    background: linear-gradient(90deg, rgba(42,36,64,.28), rgba(42,36,64,.08), transparent);
+  }
+
+  .passes {
+    margin-top: 1.4rem;
+    padding: 1.4rem 1.6rem;
+    background: rgba(255,248,231,.5);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+  }
+  .passes p { margin-bottom: .5rem; font-size: .92rem; }
+  .passes p:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 3rem; padding-top: 1.4rem;
+    border-top: 1px solid var(--hairline);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 1.5rem;
+    font-size: .78rem; color: var(--ink-dim);
+  }
+  footer a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .3s var(--soft), color .3s var(--soft); }
+  footer a:hover { border-color: currentColor; color: var(--ink); }
+  footer .links { display: flex; gap: 1.2rem; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<div class="moon-deco" aria-hidden="true"></div>
+
+<div class="wrap">
+  <a class="crumb" href="../">← Back to REVERIE</a>
+
+  <p class="eyebrow">How it's made</p>
+  <h1>Notes from the front desk.</h1>
+  <p class="lede">REVERIE is a dreamcore hotel built entirely from CSS and inline SVG — no photographs, no canvas, no libraries. Everything that looks impossible here is ordinary primitives asked to behave slightly wrong.</p>
+
+  <h2>The concept</h2>
+  <p>A hotel that only exists while you're asleep should feel <em>almost</em> real — familiar architecture, gentle service copy, a front desk — but nothing quite obeys physics. Magritte by way of a boutique brochure. Every scene idea had to double as an amenity: a door standing on nothing, a shadow that drifts from its object, a staircase that only goes down.</p>
+
+  <h2>The floating door</h2>
+  <p>The hero doorframe is genuine <strong>CSS 3D</strong>, not an illustration. A <code>perspective</code> container holds a <code>transform-style: preserve-3d</code> frame; two pseudo-elements rotate 90° on their own axes (<code>rotateX</code> for the lintel, <code>rotateY</code> for the jamb) and push outward to fake a casing with real thickness. The frame sways <code>rotateY(±7deg)</code> on a sine-shaped <code>cubic-bezier</code> loop, so the foreshortening genuinely changes frame to frame. Inside the opening, layered <code>radial-gradient</code> dots read as stars, so the sky behind the door is night while the sky around it stays pastel dusk. The "impossible" shadow is a separate blurred ellipse cast up and sideways instead of down — a door standing on nothing shouldn't cast a shadow that makes sense either.</p>
+
+  <h2>The staircase</h2>
+  <p>The Escher-nod staircase is <strong>generated at runtime</strong>. A small script projects a 24-step square ring through an isometric basis (two 30° axes plus a height axis) and appends the resulting polygons — top, riser, front — into an inline <code>&lt;svg&gt;</code>. Each step's fill interpolates along the palette, cream to twilight, so the ring reads as a gradient plunge into the night section. A pillar at one corner bridges the seam where the last step's floor doesn't reconcile with the first step's ceiling — the same sleight of hand Escher used, just isometric instead of perspective. The light descending forever is a circle riding a closed <code>offset-path</code> loop; because the path is a true closed shape, there's no seam to jump across, so it reads as endless.</p>
+
+  <h2>Everything else that moves</h2>
+  <ul>
+    <li><strong>The moon</strong> is fixed to the viewport and nudged by a scroll-velocity value, tracked on <code>scroll</code> and eased toward zero every frame — it lags, then catches up.</li>
+    <li><strong>Lost &amp; Found objects</strong> (key, chair, umbrella) are hand-drawn line-art SVGs. Each bobs on its own sine timing while its shadow drifts on a different one, so object and shadow slowly fall out of sync.</li>
+    <li><strong>The check-in dial</strong> is a hand-rolled <code>role="slider"</code>: pointer drags compute an angle via <code>atan2</code> against the dial's center, arrow keys nudge the value directly, and a <code>stroke-dashoffset</code> arc stays in sync.</li>
+    <li><strong>Clouds</strong> are layered, multi-lobe <code>radial-gradient</code> blobs at different speeds; a couple sit in front of the doorframe specifically, so they're never just background.</li>
+  </ul>
+
+  <h2>Process</h2>
+  <p>Built in passes: structure and copy, then the door's 3D casing, then the staircase generator (the trickiest part — hiding the seam behind the pillar took several coordinate rewrites), then the moon and dial. A final visual pass fixed a hidden drop-shadow, clouds nearly invisible against the pastel sky, and a "0" that read as an "o" in the display font. See <a href="../PASSES.md">PASSES.md</a> for the dated log.</p>
+
+  <div class="passes">
+    <p><strong>Respecting the room.</strong> Every loop honours <code>prefers-reduced-motion</code> — the door settles into a fixed tilt, the orb stops mid-path, shadows stop drifting. Nothing here plays a sound or shows an alert; it just keeps breathing quietly in the background, capped at a sane frame budget and paused whenever the tab isn't visible.</p>
+  </div>
+
+  <hr class="rule">
+
+  <footer>
+    <span>17 / 25 · REVERIE — designed &amp; coded by Claude Fable 5</span>
+    <span class="links">
+      <a href="/">Index</a>
+      <a href="./">How it's made</a>
+    </span>
+  </footer>
+</div>
+
+</body>
+</html>

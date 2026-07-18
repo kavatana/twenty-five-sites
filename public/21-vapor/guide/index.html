@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAPOR — How it's made</title>
+<meta name="description" content="Technical supplement to VAPOR: the hand-rolled canvas weather engine, the CSS custom-property trick behind the 1.2s mode morph, and the heat-shimmer row-slice technique.">
+<meta property="og:title" content="VAPOR — How it's made">
+<meta property="og:description" content="How a four-regime canvas weather sim and a glass instrument panel morph together in 1.2 seconds — no libraries, hand-rolled easing and noise.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="VAPOR">
+<meta name="theme-color" content="#1A1B3A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%231A1B3A'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='16'%20fill='none'%20stroke='%236FA8DC'%20stroke-width='3'/%3E%3Cpath%20d='M14%2040%20L50%2024'%20stroke='%2348E5C2'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='4'%20fill='%239D6FF0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Albert+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../vapor.css">
+<style>
+  body{ overflow-x:hidden; }
+  #scene, .grain, .vignette{ display:none; }
+  .app{ max-width:920px; margin:0 auto; }
+  .guide-head{ padding:6px 4px 4px; }
+  .guide-kicker{
+    font-family:var(--font-display); font-size:11px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+    margin:0 0 10px;
+  }
+  .guide-title{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(28px,4.4vw,44px); line-height:1.08; letter-spacing:-.02em;
+    margin:0 0 14px; color:var(--ink);
+  }
+  .guide-lede{ font-size:15px; line-height:1.6; color:var(--ink-dim); max-width:62ch; margin:0; }
+  .guide-sec{ padding:clamp(18px,2.4vw,28px); margin-bottom:16px; }
+  .guide-sec h2{
+    font-family:var(--font-display); font-size:12px; font-weight:700;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+    margin:0 0 12px; display:flex; align-items:center; gap:10px;
+  }
+  .guide-sec h2 .idx{ color:var(--ink-faint); font-weight:600; }
+  .guide-sec p{ font-size:14.5px; line-height:1.68; color:var(--ink-dim); margin:0 0 12px; }
+  .guide-sec p:last-child{ margin-bottom:0; }
+  .guide-sec code{
+    font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:.92em;
+    background:rgba(255,255,255,.08); border:1px solid var(--glass-border-soft);
+    padding:.1em .4em; border-radius:5px; color:var(--ink);
+  }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-display); font-size:11px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim);
+    text-decoration:none; padding:8px 14px; border-radius:999px;
+  }
+  .back-link:hover{ color:var(--ink); }
+</style>
+</head>
+<body data-mode="rain">
+
+<a class="skip" href="#top">Skip to content</a>
+
+<div class="app" id="top">
+
+  <header class="topbar glass">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+      </span>
+      <div class="brand-text">
+        <strong>VAPOR</strong>
+        <span>Technical supplement</span>
+      </div>
+    </div>
+    <a class="back-link glass" href="../">← Back to console</a>
+  </header>
+
+  <div class="guide-head">
+    <p class="guide-kicker">How it's made</p>
+    <h1 class="guide-title">One dial. Four regimes.<br>Everything follows.</h1>
+    <p class="guide-lede">VAPOR has no pages to navigate — only a state to change. This supplement documents the canvas engine behind the backdrop, the CSS trick that lets one variable morph an entire instrument panel, and the passes that got it there.</p>
+  </div>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">01</span> Concept</h2>
+    <p>VAPOR is the relay console for Kepler-1649c, an imagined exoplanet whose surface weather is piped home as four discrete regimes — rain, snow, aurora, heat — rather than a continuous forecast. The console doesn't simulate a whole planet; it simulates the <em>feed</em>, and the segmented dial is a channel selector. Every panel — current conditions, a 7-sol forecast, an atmospheric-composition donut, a wind-vector mini-map — reads from the same small data table, so switching regimes never leaves one instrument out of sync with the others.</p>
+  </section>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">02</span> The weather engine</h2>
+    <p>The backdrop is one full-bleed <code>&lt;canvas&gt;</code>, cleared and redrawn every frame — no DOM particles. Each regime is its own draw method (<code>drawRain</code>, <code>drawSnow</code>, <code>drawAurora</code>, <code>drawHeat</code>) working off particle arrays built once from a seeded <code>mulberry32</code> PRNG, so the field looks the same on every reload instead of re-randomizing into a different composition. A mode switch never hard-cuts: the loop calls the outgoing regime at <code>alpha = 1&#8209;t</code> and the incoming one at <code>alpha = t</code>, where <code>t</code> comes from a cubic-bezier solved by hand with Newton–Raphson iteration — the same easing math the browser runs for CSS <code>cubic-bezier()</code>, so canvas motion and DOM transitions share one feel. Rain gets angled streaks, ground splashes and a full-scene lightning flash with a two-pulse decay envelope; snow drifts across three parallax layers and slowly banks a bumpy accumulation line; aurora is three sine-summed ribbon bands alpha-blended with <code>lighter</code> compositing over a twinkling starfield; heat is the hard one — see below.</p>
+  </section>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">03</span> The heat-shimmer trick</h2>
+    <p>Real refraction is expensive; the illusion doesn't have to be. Heat mode renders a ridge silhouette and a warm gradient once per frame into a tiny offscreen buffer canvas, then blits it back to the visible canvas one thin horizontal slice at a time, each slice offset sideways by <code>amplitude × sin(row·frequency − time·speed)</code>. Amplitude grows toward the ground and shrinks to nothing near the top of the haze band, so the distortion reads as rising off hot ground rather than smearing the whole sky. It's a handful of <code>drawImage</code> calls, not a shader — and it earned its keep the hard way: an early pass forgot to <code>clearRect</code> the buffer before redrawing it, so every frame's translucent fill composited on top of the last until heat mode slowly bled into a solid orange screen. Caught on a five-second soak test, fixed with one line.</p>
+  </section>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">04</span> Morphing the instrument</h2>
+    <p>The panels never run a JS color loop. Two root custom properties, <code>--accent</code> and <code>--accent2</code> (plus RGB-triplet siblings for use inside <code>rgba()</code> glows), get reassigned once, synchronously, on click. Every rule that consumes them — glass glow, dial thumb, donut stroke, wind arrows — declares its own <code>transition</code> on the real property (<code>background</code>, <code>stroke</code>, <code>box-shadow</code>…), and the browser animates the *used value* across that change even though the variable itself jumped in a single frame. That single trick is what makes "everything morphs" affordable: no per-frame style writes for the DOM half of the console. Numbers still get real tweening — the temperature counts up through the same eased curve — and text (the condition tag, the note, stat labels, forecast cards) crossfades via a staggered opacity/translate class-swap timed inside the 1.2s window, so the panel reads as a cascade of small, offset reveals rather than a jump cut. The donut's arcs animate for free: <code>stroke-dasharray</code> and <code>stroke-dashoffset</code> are ordinary transitionable properties once you set them via <code>element.style</code> instead of as bare attributes.</p>
+  </section>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">05</span> Data, voice, and the wind field</h2>
+    <p>Each regime carries its own small dataset — temperature, wind, a third reading that relabels itself (humidity, ionization, particulate), a composition donut where the fourth slice is always the "live" trace gas, and a 7-sol trend baked straight into a sparkline. Copy stays mission-log short: no adjectives that don't carry a number nearby. The wind mini-map skips a real noise library — three summed sine terms (<code>noise2</code>) stand in for gradient noise, cheaply enough to drive twenty-eight arrows and eight flowing tracer particles at sixty frames a second inside a small canvas.</p>
+  </section>
+
+  <section class="guide-sec glass">
+    <h2><span class="idx">06</span> Passes</h2>
+    <p>Build pass: engine, panels, and copy went in together, since none of the four regimes is convincing without live data behind it. First screenshot audit at 1440×900 caught a real composition problem — the current-conditions panel spans two grid rows but its content only filled one, leaving a dead gap — fixed with a 7-sol trend sparkline that reuses forecast data instead of inventing a new field. Live interaction testing (clicking through all four modes, then soaking heat mode for several seconds) caught the buffer-accumulation bug described above; a five-second wait a static screenshot would never have taken was what surfaced it. Reduced-motion was verified with an actual emulated browser context, not assumed: mode switches still update every value, but the canvas renders one still frame per regime and the loop never starts.</p>
+  </section>
+
+  <footer class="foot glass">
+    <p class="foot-id"><b>21 / 25</b> · VAPOR — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="/">Index</a>
+      <a href="../">Console</a>
+    </nav>
+  </footer>
+
+</div>
+
+</body>
+</html>

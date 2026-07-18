@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How RIOT PRESS is made — a photocopier's-eye view</title>
+<meta name="description" content="The making of RIOT PRESS / NOISE 013: hand-authored ransom-letter typography via nth-child cycling, a canvas spray-paint cursor trail with destination-out fade, CSS-only halftone photos via mask-image, and the discipline underneath the chaos.">
+<meta property="og:title" content="How RIOT PRESS is made">
+<meta property="og:description" content="Ransom letters, a spray-can cursor, and a manifesto edited by hand — the full technique breakdown behind NOISE 013.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230D0D0D'/%3E%3Ccircle cx='24' cy='27' r='11' fill='%23B6FF00'/%3E%3Crect x='33' y='29' width='20' height='20' fill='%23FF00A8' transform='rotate(14 43 39)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Bungee&family=Rubik+Mono+One&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --paper: #EFEFE6; --ink: #0D0D0D; --lime: #B6FF00; --pink: #FF00A8;
+    --ease: cubic-bezier(.22,.61,.16,1);
+  }
+  body {
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(circle, rgba(13,13,13,.08) 1px, transparent 1.3px),
+      repeating-linear-gradient(0deg, rgba(13,13,13,.03) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(90deg, rgba(13,13,13,.03) 0 1px, transparent 1px 34px);
+    background-size: 6px 6px, 34px 34px, 34px 34px;
+    color: var(--ink);
+    font-family: "Archivo", system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--lime); color: var(--ink); }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: clamp(2.6rem, 7vh, 4.5rem) 22px 5rem; }
+
+  .crumb {
+    display: inline-block; font-family: "Rubik Mono One", monospace;
+    font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink); text-decoration: none; margin-bottom: 2.2rem;
+    background: var(--paper); border: 2px solid var(--ink);
+    padding: .4em .7em; box-shadow: 3px 3px 0 var(--ink);
+    transform: rotate(-1deg);
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s;
+  }
+  .crumb:hover { transform: rotate(0deg) translateY(-2px); background: var(--lime); box-shadow: 5px 5px 0 var(--ink); }
+
+  .stamp {
+    display: inline-block; font-family: "Rubik Mono One", monospace;
+    font-size: .64rem; letter-spacing: .12em; color: var(--pink);
+    border: 2px solid var(--pink); padding: .3em .7em; transform: rotate(1.4deg);
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: "Bungee", sans-serif; font-weight: 400;
+    font-size: clamp(1.9rem, 6vw, 3.1rem); line-height: 1.05;
+    letter-spacing: -.01em; margin-bottom: 1.1rem; transform: rotate(-.5deg);
+  }
+  h1 span { background: var(--ink); color: var(--paper); padding: 0 .12em; box-shadow: 4px 4px 0 var(--lime); }
+
+  .lede {
+    font-size: 1.02rem; line-height: 1.65; max-width: 58ch; margin-bottom: 2.8rem; font-weight: 500;
+  }
+
+  h2 {
+    font-family: "Rubik Mono One", monospace; font-weight: 400;
+    font-size: .95rem; letter-spacing: .04em;
+    background: var(--lime); display: inline-block; padding: .25em .5em;
+    margin: 2.4rem 0 .9rem; transform: rotate(-.8deg);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  h2.pink { background: var(--pink); color: var(--paper); }
+
+  p, li { font-size: .96rem; line-height: 1.65; max-width: 62ch; }
+  p + p { margin-top: .9rem; }
+
+  code {
+    font-family: "Rubik Mono One", monospace; font-size: .82em;
+    background: rgba(13,13,13,.08); padding: .1em .35em; border-radius: 2px;
+  }
+
+  ul { margin: .6rem 0 1.2rem 1.2rem; }
+  li { margin-bottom: .55rem; }
+  li::marker { color: var(--pink); font-weight: 900; }
+
+  .callout {
+    margin: 1.6rem 0; padding: 1rem 1.2rem; background: var(--paper);
+    border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--pink);
+    transform: rotate(.6deg); font-size: .92rem; line-height: 1.55;
+  }
+  .callout strong { color: var(--pink); }
+
+  .passlist { list-style: none; margin: 0; }
+  .passlist li {
+    padding-left: 1.4rem; position: relative; margin-bottom: .7rem;
+  }
+  .passlist li::before {
+    content: "→"; position: absolute; left: 0; color: var(--lime);
+    -webkit-text-stroke: .5px var(--ink);
+    font-weight: 900;
+  }
+
+  footer {
+    margin-top: 3.4rem; padding-top: 1.4rem; border-top: 3px dashed rgba(13,13,13,.4);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .8rem;
+    font-family: "Rubik Mono One", monospace; font-size: .58rem; letter-spacing: .03em;
+  }
+  footer a { text-decoration: none; border-bottom: 2px solid var(--ink); padding-bottom: 1px; }
+  footer a:hover { color: var(--pink); border-color: var(--pink); }
+  .foot-links { display: flex; gap: 1.1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="crumb" href="../">← BACK TO NOISE 013</a>
+
+  <p class="stamp">HOW IT'S MADE</p>
+  <h1>The <span>xerox</span> is the medium.</h1>
+  <p class="lede">
+    RIOT PRESS is a fake zine collective's landing page for a fake issue —
+    but the printshop mess it imitates is real CSS, real canvas, and real
+    restraint hiding underneath. Here's how the chaos was assembled, on purpose.
+  </p>
+
+  <h2>THE CONCEPT</h2>
+  <p>
+    Punk zine culture runs on constraint: a photocopier, a stapler, scissors,
+    and a deadline. The whole site borrows that production logic —
+    ransom-note headlines built from "cut" letters, gaffer-taped photos,
+    a tilted table of contents, and a manifesto that looks hand-corrected
+    with a pen. The rule that keeps it from turning into noise: every
+    rotation lives inside a controlled range (0.5°–3°) and every element
+    still sits on an invisible 34px grid. Chaos with craft, not chaos
+    instead of it.
+  </p>
+
+  <h2>RANSOM-LETTER TYPE</h2>
+  <p>
+    The hero headline and logo aren't styled as strings — each letter is
+    its own <code>&lt;span&gt;</code>. Rather than hand-assign a class to
+    every glyph, six letter "variants" (background, border, font, rotation,
+    size) are defined once and applied automatically with
+    <code>:nth-of-type(6n+1)</code> through <code>:nth-of-type(6n)</code>
+    selectors scoped per word. Add or remove letters and the cutout pattern
+    keeps cycling correctly with zero markup changes. A visually-hidden
+    plain-text duplicate keeps it readable to screen readers.
+  </p>
+
+  <h2>THE SPRAY-CAN CURSOR</h2>
+  <p>
+    The signature piece: a fixed full-viewport <code>&lt;canvas&gt;</code>
+    tracks <code>pointermove</code> and drops clustered lime dots along the
+    travel path — density and dot-count scale with pointer speed, like a
+    real nozzle needs distance to build up paint. A
+    <code>requestAnimationFrame</code> loop fades the whole canvas every
+    frame using <code>globalCompositeOperation = 'destination-out'</code>
+    with a low-alpha fill, which erases old paint faster than new paint
+    accumulates — that's the trail. The canvas sits on
+    <code>mix-blend-mode: multiply</code> so it tints the newsprint instead
+    of flattening it. A ring cursor replaces the system pointer as the
+    "nozzle." All of it is gated behind
+    <code>matchMedia('(pointer: fine)')</code> and disabled entirely under
+    reduced motion or on touch — no canvas, no listeners, no cost.
+  </p>
+
+  <div class="callout">
+    <strong>Also hand-rolled:</strong> the halftone "photos" are one
+    <code>radial-gradient</code> dot tile clipped by a second radial
+    <code>mask-image</code> to fake a vignette; the barcode is 30
+    JS-generated bars from a tiny seeded PRNG (deterministic, not
+    <code>Math.random()</code>, so it never reflows oddly on reload); the
+    manifesto's underlines are an inline SVG squiggle path baked into a
+    <code>background-image</code> data URI, repeated with
+    <code>repeat-x</code>.
+  </div>
+
+  <h2>MOTION THAT NEVER STOPS</h2>
+  <p>
+    Two marquees (top and bottom, opposite directions, different speeds)
+    keep the page visibly alive even when nothing else moves — a
+    requirement for something meant to be screen-recorded. A slow
+    diagonal-tinted "scanbar" sweeps down the page on a 9s loop to suggest
+    a scanner glass. The issue counter flickers on a randomized interval,
+    briefly swapping digits for glitch characters like a copier miscounting
+    — pure <code>setInterval</code> and <code>textContent</code> swaps, no
+    library. Every one of these pauses via <code>document.hidden</code>
+    and drops to a static frame under <code>prefers-reduced-motion</code>.
+  </p>
+
+  <h2 class="pink">THE PASSES</h2>
+  <ul class="passlist">
+    <li>Pass 1 — structure and copy: masthead, hero, photo strips, tilted
+      TOC, manifesto, footer, both marquees in place with real zine voice
+      throughout (no lorem ipsum, ever).</li>
+    <li>Pass 2 — signature technique: canvas spray trail with speed-scaled
+      density and destination-out fade; ring cursor; reduced-motion and
+      coarse-pointer gating.</li>
+    <li>Pass 3 — typographic system: nth-child ransom-letter cycling,
+      halftone mask photos, seeded barcode generator, scribble-SVG
+      underlines, sticker peel-corner hover.</li>
+    <li>Pass 4 — visual QA at 1440×900 and 390×844: fixed marquee overlap,
+      tightened rotation ranges on mobile so nothing clipped the viewport,
+      verified zero console errors.</li>
+  </ul>
+
+  <footer>
+    <span>22 / 25 · RIOT PRESS — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="../">Back to issue</a>
+    </span>
+  </footer>
+
+</div>
+</body>
+</html>

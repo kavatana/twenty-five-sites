@@ -1,0 +1,94 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content" [ref=f1e2]:
+    - /url: "#main"
+  - generic: NOIR
+  - generic: P. 01 — Cover
+  - generic: Collection Nº14 — Absence
+  - generic: MMXXVI
+  - main [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - paragraph [ref=f1e5]: NOIR — Paris
+      - heading "Absence — Collection Nº14" [level=1] [ref=f1e6]:
+        - generic [ref=f1e7]: Absence Absence
+      - paragraph [ref=f1e9]: The collection that removed itself.
+      - list [ref=f1e10]:
+        - listitem [ref=f1e11]: Collection Nº14
+        - listitem [ref=f1e12]: Six looks
+        - listitem [ref=f1e13]: Wool · silk · void
+        - listitem [ref=f1e14]: No print. No name. No noise.
+      - generic [ref=f1e15]: Scroll
+    - generic [ref=f1e17]:
+      - generic [ref=f1e18]:
+        - paragraph [ref=f1e19]: Lookbook
+        - heading "Six looks." [level=2] [ref=f1e20]:
+          - generic [ref=f1e21]: Six looks. Six looks.
+        - paragraph [ref=f1e23]: Scroll, or press →
+      - region "Lookbook — six looks, scroll horizontally or use arrow keys" [ref=f1e24]:
+        - article [ref=f1e25]:
+          - generic [ref=f1e26]:
+            - generic [ref=f1e27]: "01"
+            - img "Silhouette of an unlined A-line coat with broad shoulders" [ref=f1e28]
+          - generic [ref=f1e30]:
+            - paragraph [ref=f1e31]: Look 01 / 06
+            - heading "The Last Coat" [level=3] [ref=f1e32]
+            - paragraph [ref=f1e33]: Weight, and nothing to prove it.
+        - article [ref=f1e34]:
+          - generic [ref=f1e35]:
+            - generic [ref=f1e36]: "02"
+            - img "Silhouette of a narrow floor-length column dress with a straight boat neckline" [ref=f1e37]
+          - generic [ref=f1e39]:
+            - paragraph [ref=f1e40]: Look 02 / 06
+            - heading "Column" [level=3] [ref=f1e41]
+            - paragraph [ref=f1e42]: A body, standing still.
+        - article [ref=f1e43]:
+          - generic [ref=f1e44]:
+            - generic [ref=f1e45]: "03"
+            - img "Silhouette of a V-neck shift dress with a vertical keyhole cut into the bodice" [ref=f1e46]
+          - generic [ref=f1e48]:
+            - paragraph [ref=f1e49]: Look 03 / 06
+            - heading "Negative Dress" [level=3] [ref=f1e50]
+            - paragraph [ref=f1e51]: Cut from what wasn't there.
+        - article [ref=f1e52]:
+          - generic [ref=f1e53]:
+            - generic [ref=f1e54]: "04"
+            - img "Silhouette of a close-fitting sheath with a raised, squared turtleneck" [ref=f1e55]
+          - generic [ref=f1e57]:
+            - paragraph [ref=f1e58]: Look 04 / 06
+            - heading "Second Skin" [level=3] [ref=f1e59]
+            - paragraph [ref=f1e60]: Closer than a decision.
+        - article [ref=f1e61]:
+          - generic [ref=f1e62]:
+            - generic [ref=f1e63]: "05"
+            - img "Silhouette of an asymmetric one-shoulder drape, a single strap on the right and the left shoulder bare, cut on a long diagonal" [ref=f1e64]
+          - generic [ref=f1e69]:
+            - paragraph [ref=f1e70]: Look 05 / 06
+            - heading "Undone Drape" [level=3] [ref=f1e71]
+            - paragraph [ref=f1e72]: Falls the way silence does.
+        - article [ref=f1e73]:
+          - generic [ref=f1e74]:
+            - generic [ref=f1e75]: "06"
+            - img "Silhouette reduced to a single line and one soft curve — nearly nothing" [ref=f1e76]
+          - generic [ref=f1e79]:
+            - paragraph [ref=f1e80]: Look 06 / 06
+            - heading "Study Nº6" [level=3] [ref=f1e81]
+            - paragraph [ref=f1e82]: Nothing left to remove.
+      - generic [ref=f1e86]:
+        - button "Previous look" [ref=f1e87]
+        - button "Next look" [ref=f1e90]
+    - generic [ref=f1e93]: Collection Nº14—Absence—No ornament—Six looks—Wool · silk · void—Collection Nº14—Absence—No ornament—Six looks—Wool · silk · void—
+    - generic [ref=f1e96]:
+      - paragraph [ref=f1e97]: Manifesto
+      - paragraph [ref=f1e98]: There is a moment before the garment — before the seam, before the first mark on cloth — when nothing has been decided yet. Collection Nº14 lives inside that moment, and refuses to leave it.
+      - paragraph [ref=f1e99]: Absence Absence
+      - generic [ref=f1e100]: Absence.
+      - paragraph [ref=f1e101]: We removed what a dress is expected to say. What is left is weight, fall, the quiet architecture of a body in a room. No print. No slogan. No proof of labor left on the surface. Six looks, one discipline — wool, silk, void.
+      - paragraph [ref=f1e102]: Nothing performs here. Everything is worn the way a room holds its silence after the door closes.
+  - contentinfo [ref=f1e103]:
+    - paragraph [ref=f1e105]: Bodoni Moda, Figtree. Two tones, nothing else.
+    - generic [ref=f1e106]:
+      - paragraph [ref=f1e107]: 14 / 25 · NOIR — designed & coded by Claude Fable 5
+      - navigation "Footer" [ref=f1e108]:
+        - link "Index" [ref=f1e109]:
+          - /url: /
+        - link "How it's made" [ref=f1e110]:
+          - /url: guide/

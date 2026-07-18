@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RELIC — Museum of Vanished Sounds</title>
+<meta name="description" content="RELIC is a museum of sounds the world stopped making: the rotary dial, the typewriter bell, the modem handshake, the CRT degauss, the film projector, the telegraph. Every sound reconstructed live in WebAudio — no recordings used.">
+<meta property="og:title" content="RELIC — Museum of Vanished Sounds">
+<meta property="og:description" content="Six extinct sounds, reconstructed live from oscillators and filtered noise. Walk the hall. Press Listen. Nothing here was recorded.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#121110">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23121110'/%3E%3Cpath d='M18 46h28l-4.5-22h-19z' fill='none' stroke='%23B08D57' stroke-width='2'/%3E%3Cpath d='M14 27c4.5-9 9-9 13.5 0M36.5 27c4.5-9 9-9 13.5 0' fill='none' stroke='%236E2B25' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="relic.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<!-- ============ ENTRANCE HALL ============ -->
+<header class="entrance" id="entrance">
+  <div class="entrance-frame" aria-hidden="true"></div>
+  <p class="kicker">Museum of Vanished Sounds</p>
+  <h1 class="wordmark">REL<em>I</em>C</h1>
+  <p class="subhead">Est. for sounds the century stopped making</p>
+  <p class="lede">Six exhibits. Six machines whose voices went quiet — not lost, just no longer needed. Nothing here was recorded; every sound on this floor is reconstructed live, from oscillators and filtered noise, the instant you press Listen.</p>
+
+  <nav class="floorplan" aria-label="Gallery floor plan">
+    <a class="fp-btn" data-jump="1" href="#room-1"><b>I</b> Rotary Dial</a>
+    <a class="fp-btn" data-jump="2" href="#room-2"><b>II</b> Typewriter</a>
+    <a class="fp-btn" data-jump="3" href="#room-3"><b>III</b> Modem</a>
+    <a class="fp-btn" data-jump="4" href="#room-4"><b>IV</b> Degauss</a>
+    <a class="fp-btn" data-jump="5" href="#room-5"><b>V</b> Projector</a>
+    <a class="fp-btn" data-jump="6" href="#room-6"><b>VI</b> Telegraph</a>
+    <a class="fp-btn is-shop" data-jump="7" href="#room-shop"><b>VII</b> Gift Shop</a>
+  </nav>
+
+  <div class="scrollcue">
+    <span>Enter the hall</span>
+    <svg viewBox="0 0 14 20" aria-hidden="true"><path d="M7 1v16M2 12l5 5 5-5"/></svg>
+  </div>
+</header>
+
+<!-- ============ GALLERY ============ -->
+<div class="gallery-shell">
+<main class="gallery" id="gallery" tabindex="-1" aria-label="Exhibit gallery, scroll horizontally">
+
+  <!-- ROOM I — ROTARY DIAL TELEPHONE -->
+  <section class="room" id="room-1" data-room="1">
+    <div class="room-wrap">
+      <p class="room-tag"><b>I</b>Rotary Dial Telephone</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="42" y="148" width="116" height="15" rx="3" class="brass-part"/>
+            <circle cx="100" cy="92" r="66" class="brass-part"/>
+            <g class="dial-disc" id="dialDisc">
+              <circle cx="100" cy="92" r="54"/>
+              <circle cx="100" cy="92" r="5" class="fill-brass"/>
+              <g stroke-width="1.4">
+                <circle cx="67.2" cy="114.9" r="7.5"/><circle cx="60.3" cy="97.0" r="7.5"/><circle cx="62.5" cy="78.0" r="7.5"/><circle cx="73.4" cy="62.1" r="7.5"/><circle cx="90.4" cy="53.2" r="7.5"/><circle cx="109.6" cy="53.2" r="7.5"/><circle cx="126.6" cy="62.1" r="7.5"/><circle cx="137.5" cy="78.0" r="7.5"/><circle cx="139.7" cy="97.0" r="7.5"/><circle cx="132.8" cy="114.9" r="7.5"/>
+              </g>
+              <g font-family="Assistant, sans-serif" font-size="8" stroke="none" fill="currentColor" text-anchor="middle">
+                <text x="67.2" y="118">1</text><text x="60.3" y="100">2</text><text x="62.5" y="81">3</text><text x="73.4" y="65">4</text><text x="90.4" y="56">5</text><text x="109.6" y="56">6</text><text x="126.6" y="65">7</text><text x="137.5" y="81">8</text><text x="139.7" y="100">9</text><text x="132.8" y="118">0</text>
+              </g>
+            </g>
+            <path d="M162 118l8 8" class="brass-part" stroke-width="2.2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 1985.06.T &middot; Room I</p>
+        <h2 class="placard-title">Rotary Dial Telephone</h2>
+        <p class="placard-dates">In service 1892 – 1985</p>
+        <p class="placard-desc">Ten numbered holes and a spring that owed you nothing. A full number took eleven seconds if your fingers were quick, twenty if someone in your life had a nine in it.</p>
+        <p class="placard-note">Reassembled from: filtered noise clicks, decelerating by hand.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="rotary" aria-label="Listen to the rotary dial reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM II — TYPEWRITER -->
+  <section class="room" id="room-2" data-room="2">
+    <div class="room-wrap">
+      <p class="room-tag"><b>II</b>Typewriter &amp; Carriage Bell</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M30 150 Q30 120 55 118 L145 118 Q170 120 170 150 L170 163 Q170 170 162 170 L38 170 Q30 170 30 163 Z"/>
+            <circle class="key" cx="52" cy="140" r="6"/><circle class="key" cx="67" cy="142" r="6"/><circle class="key" cx="82" cy="143" r="6"/><circle class="key" cx="100" cy="143.5" r="6"/><circle class="key" cx="118" cy="143" r="6"/><circle class="key" cx="133" cy="142" r="6"/><circle class="key" cx="148" cy="140" r="6"/>
+            <g class="carriage" id="carriage">
+              <rect x="52" y="93" width="96" height="18" rx="9" class="brass-part"/>
+              <rect x="80" y="52" width="34" height="46" rx="2" transform="rotate(-2 97 75)"/>
+              <path d="M150 88l14-9" stroke-width="2"/>
+              <circle class="bell" cx="163" cy="112" r="4.5" class="fill-brass"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 1986.03.T &middot; Room II</p>
+        <h2 class="placard-title">Typewriter, Carriage Return Bell</h2>
+        <p class="placard-dates">In service 1874 – 1986</p>
+        <p class="placard-desc">Every letter struck the page with identical force, whichever you meant more. The bell at the margin was not a suggestion — it was the machine's only opinion.</p>
+        <p class="placard-note">Reassembled from: noise clacks, a sliding sweep, one sine bell.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="typewriter" aria-label="Listen to the typewriter reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM III — MODEM -->
+  <section class="room" id="room-3" data-room="3">
+    <div class="room-wrap">
+      <p class="room-tag"><b>III</b>Dial-Up Modem Handshake</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="42" y="72" width="116" height="56" rx="6"/>
+            <path d="M56 84h20M84 84h20M112 84h20M56 92h20M84 92h20M112 92h20" stroke-width="1.2" opacity=".7"/>
+            <circle class="led" cx="60" cy="112" r="4"/><circle class="led" cx="80" cy="112" r="4"/><circle class="led" cx="100" cy="112" r="4"/><circle class="led" cx="120" cy="112" r="4"/><circle class="led" cx="140" cy="112" r="4"/>
+            <path d="M42 122c-18 8-18 26-4 30 14 4 8 18-6 20" stroke-width="1.4" class="brass-part"/>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 2006.14.T &middot; Room III</p>
+        <h2 class="placard-title">Dial-Up Modem Handshake</h2>
+        <p class="placard-dates">In service 1958 – 2006</p>
+        <p class="placard-desc">Before two modems spoke, they introduced themselves in six frequencies, apologised twice, and agreed on a shared language — a ritual repeated, unedited, on every single call.</p>
+        <p class="placard-note">Reassembled from: swept oscillators and noise, unabridged choreography.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="modem" aria-label="Listen to the modem handshake reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM IV — CRT DEGAUSS -->
+  <section class="room" id="room-4" data-room="4">
+    <div class="room-wrap">
+      <p class="room-tag"><b>IV</b>Cathode-Ray Degauss &amp; Hum</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M100 60l-24 -32M100 60l24 -32" stroke-width="1.3"/>
+            <circle cx="76" cy="28" r="2.4" class="fill-brass" stroke="none"/><circle cx="124" cy="28" r="2.4" class="fill-brass" stroke="none"/>
+            <rect x="35" y="60" width="130" height="95" rx="14" class="brass-part"/>
+            <rect class="tv-screen" x="50" y="72" width="100" height="70" rx="8"/>
+            <rect class="tv-flicker" x="50" y="72" width="100" height="70" rx="8" fill="currentColor" stroke="none"/>
+            <path d="M60 165h10l4 -10M140 165h-10l-4 -10" stroke-width="1.3"/>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 2015.02.T &middot; Room IV</p>
+        <h2 class="placard-title">Cathode-Ray Degauss &amp; Hum</h2>
+        <p class="placard-dates">In service 1938 – 2015</p>
+        <p class="placard-desc">The picture tube's colour needed periodic, deliberate violence to remember its manners. The thunk was a magnet forgiving itself; the hum underneath never really stopped.</p>
+        <p class="placard-note">Reassembled from: a falling sine, two 60&nbsp;Hz ghosts.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="degauss" aria-label="Listen to the degauss reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM V — FILM PROJECTOR -->
+  <section class="room" id="room-5" data-room="5">
+    <div class="room-wrap">
+      <p class="room-tag"><b>V</b>Film Projector Flutter</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <polygon class="beam" points="46,128 8,108 8,150" fill="currentColor" stroke="none" opacity=".45"/>
+            <rect x="45" y="112" width="112" height="34" rx="6" class="brass-part"/>
+            <circle cx="45" cy="129" r="7"/>
+            <g class="reel" style="transform-origin:74px 88px">
+              <circle cx="74" cy="88" r="27"/>
+              <circle cx="74" cy="88" r="5" class="fill-brass"/>
+              <path d="M74 61v54M47 88h54M55.9 68.9l36.2 38.2M92.1 68.9L55.9 107.1" stroke-width="1.1" opacity=".65"/>
+            </g>
+            <g class="reel" style="transform-origin:148px 90px">
+              <circle cx="148" cy="90" r="21"/>
+              <circle cx="148" cy="90" r="4.5" class="fill-brass"/>
+              <path d="M148 69v42M127 90h42M133 75.5l30 29M163 75.5l-30 29" stroke-width="1.1" opacity=".65"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 1998.29.T &middot; Room V</p>
+        <h2 class="placard-title">Film Projector Flutter</h2>
+        <p class="placard-dates">In service 1896 – 1998</p>
+        <p class="placard-desc">Twenty-four still pictures a second, each one a small lie the eye agreed to believe. The clatter was proof of work; silence meant the reel, or the room, had ended.</p>
+        <p class="placard-note">Reassembled from: a noise loop clocked to 24&nbsp;fps.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="projector" aria-label="Listen to the film projector reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM VI — TELEGRAPH -->
+  <section class="room" id="room-6" data-room="6">
+    <div class="room-wrap">
+      <p class="room-tag"><b>VI</b>Telegraph Key — &lsquo;SOS&rsquo;</p>
+      <div class="stage">
+        <div class="spotlight" aria-hidden="true"><div class="dust"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="plinth">
+          <svg class="artifact" viewBox="0 0 200 190" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="30" y="140" width="140" height="14" rx="2" class="brass-part"/>
+            <rect x="118" y="98" width="42" height="42" rx="4"/>
+            <circle cx="130" cy="119" r="6" stroke-width="1.2"/><circle cx="148" cy="119" r="6" stroke-width="1.2"/>
+            <path d="M139 98v-8M139 90h-14" stroke-width="1.2"/>
+            <line x1="38" y1="128" x2="38" y2="110" stroke-width="1.3"/>
+            <circle cx="38" cy="128" r="4.5" class="fill-brass" stroke="none"/>
+            <g class="key-lever">
+              <line x1="38" y1="128" x2="90" y2="110" stroke-width="2.4"/>
+              <circle cx="90" cy="110" r="9" class="fill-brass" stroke="none"/>
+            </g>
+            <circle class="spark fill-ox" cx="90" cy="129" r="3.5" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="placard">
+        <p class="placard-acc">Acc. 1999.01.T &middot; Room VI</p>
+        <h2 class="placard-title">Telegraph Key — &lsquo;SOS&rsquo;</h2>
+        <p class="placard-dates">In service 1844 – 1999</p>
+        <p class="placard-desc">Three short, three long, three short — the one sentence every operator on Earth was obliged to drop everything and answer. Commercial Morse fell silent on 1 February 1999.</p>
+        <p class="placard-note">Reassembled from: one gated tone, timed to international law.</p>
+        <div class="listen-row">
+          <button class="listen-btn" type="button" data-exhibit="telegraph" aria-label="Listen to the telegraph reconstruction">
+            <span class="listen-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="listen-label">Listen</span>
+          </button>
+          <div class="scope"><span class="scope-label">Live reconstruction</span><canvas class="scope-canvas" width="300" height="60"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM VII — GIFT SHOP -->
+  <section class="room room--shop" id="room-shop" data-room="7">
+    <div class="shop-inner">
+      <p class="shop-kicker">Exit Through the Gift Shop</p>
+      <h2 class="shop-title">Souvenirs of Sound</h2>
+      <p class="shop-lede">You cannot take the sounds home — they were never anywhere to begin with. You can take a postcard of the machine that made them. It is, we admit, a slightly dishonest souvenir.</p>
+
+      <div class="postcards">
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="50" cy="46" r="34"/><circle cx="50" cy="46" r="3" fill="currentColor" stroke="none"/><circle cx="26" cy="60" r="4"/><circle cx="24" cy="42" r="4"/><circle cx="33" cy="26" r="4"/><circle cx="67" cy="26" r="4"/><circle cx="76" cy="42" r="4"/><circle cx="74" cy="60" r="4"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 01</p><p class="postcard-name">The Last Dial Tone</p><p class="postcard-tag">Rotate to send.</p></div>
+        </article>
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 78Q15 55 32 53h36Q85 55 85 78"/><rect x="38" y="26" width="24" height="30" rx="1"/><circle cx="26" cy="70" r="3"/><circle cx="38" cy="71" r="3"/><circle cx="50" cy="71.5" r="3"/><circle cx="62" cy="71" r="3"/><circle cx="74" cy="70" r="3"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 02</p><p class="postcard-name">Margin Bell</p><p class="postcard-tag">Ding. Return.</p></div>
+        </article>
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="18" y="34" width="64" height="32" rx="4"/><circle cx="30" cy="58" r="2.4" fill="currentColor" stroke="none"/><circle cx="42" cy="58" r="2.4" fill="currentColor" stroke="none"/><circle cx="54" cy="58" r="2.4" fill="currentColor" stroke="none"/><circle cx="66" cy="58" r="2.4" fill="currentColor" stroke="none"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 03</p><p class="postcard-name">56k, Greeting You</p><p class="postcard-tag">Please wait to be understood.</p></div>
+        </article>
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="30" width="60" height="46" rx="7"/><rect x="30" y="38" width="40" height="30" rx="3"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 04</p><p class="postcard-name">Thunk</p><p class="postcard-tag">A magnet, forgiven.</p></div>
+        </article>
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="36" cy="44" r="18"/><circle cx="72" cy="46" r="13"/><rect x="20" y="58" width="60" height="16" rx="4"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 05</p><p class="postcard-name">24 Frames, Flickering</p><p class="postcard-tag">A lie the eye believed.</p></div>
+        </article>
+        <article class="postcard" data-tilt>
+          <div class="postcard-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="15" y="66" width="70" height="8" rx="2"/><line x1="24" y1="66" x2="24" y2="52"/><line x1="24" y1="52" x2="58" y2="38"/><circle cx="58" cy="38" r="6" fill="currentColor" stroke="none"/></svg></div>
+          <div class="postcard-cap"><p class="postcard-num">No. 06</p><p class="postcard-name">Our Last Cry</p><p class="postcard-tag">SOS, sent once more.</p></div>
+        </article>
+      </div>
+
+      <p class="shop-close">There is no membership desk. There is no mailing list. There is only the door behind you, and — if you are patient about spring-loaded hardware — the rooms you just walked through, still willing to make their sounds again.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="wayfinder" id="wayfinder" aria-label="Jump to room">
+  <button class="wf-dot" data-jump="1" type="button" title="Rotary Dial">I</button>
+  <button class="wf-dot" data-jump="2" type="button" title="Typewriter">II</button>
+  <button class="wf-dot" data-jump="3" type="button" title="Modem">III</button>
+  <button class="wf-dot" data-jump="4" type="button" title="Degauss">IV</button>
+  <button class="wf-dot" data-jump="5" type="button" title="Projector">V</button>
+  <button class="wf-dot" data-jump="6" type="button" title="Telegraph">VI</button>
+  <button class="wf-dot is-shop" data-jump="7" type="button" title="Gift Shop">VII</button>
+</nav>
+</div>
+
+<footer class="site-foot">
+  <span>24 / 25 &middot; RELIC — designed &amp; coded by Claude Fable 5</span>
+  <span class="foot-links">
+    <a href="/">Index</a>
+    <a href="guide/">How it's made</a>
+  </span>
+</footer>
+
+<script type="module" src="audio.js"></script>
+<script type="module" src="relic.js"></script>
+</body>
+</html>

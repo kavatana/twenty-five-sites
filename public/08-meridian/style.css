@@ -41,6 +41,16 @@ body::after{
 a{ color:inherit; text-decoration:none; }
 :focus-visible{ outline:2px solid var(--red); outline-offset:3px; }
 
+/* skip link — an instrument, not an apology */
+.skip{
+  position:fixed; top:10px; left:10px; z-index:80;
+  transform:translateY(-260%);
+  background:var(--ink); color:var(--paper);
+  font:700 11px/1 "Inter Tight",sans-serif; letter-spacing:.18em; text-transform:uppercase;
+  padding:11px 14px 10px; transition:transform .3s var(--snap);
+}
+.skip:focus-visible{ transform:none; outline:2px solid var(--red); outline-offset:3px; }
+
 .wrap{ max-width:1400px; margin-inline:auto; padding-inline:clamp(20px,4vw,56px); }
 .grid{ display:grid; grid-template-columns:repeat(var(--cols),1fr); column-gap:var(--gut); }
 
@@ -76,20 +86,59 @@ a:hover .u::after, a.u:hover::after, a:focus-visible .u::after, a.u:focus-visibl
 }
 @media (max-width:900px){ .ruler{ display:none; } }
 
-/* ————— grid overlay (the easter egg) ————— */
+/* ————— grid overlay (the easter egg) —————
+   toggling is choreographed: columns draw top-down in sequence, then the
+   baseline rows develop, then the spec chip states what you're seeing */
 .gridlay{
   position:fixed; inset:0; z-index:50; pointer-events:none;
   opacity:0; transition:opacity .3s var(--ease);
-  background:repeating-linear-gradient(to bottom, rgba(230,51,41,.10) 0 1px, transparent 1px var(--bl));
 }
+html.grid-on .gridlay{ opacity:1; transition:none; }
+.gridlay::before{
+  content:""; position:absolute; inset:0;
+  background:repeating-linear-gradient(to bottom, rgba(230,51,41,.10) 0 1px, transparent 1px var(--bl));
+  opacity:0; transition:opacity .45s var(--ease);
+}
+html.grid-on .gridlay::before{ opacity:1; transition-delay:.5s; }
+.gridlay::after{
+  content:"12 columns · 28 px baseline — the same grid the page uses";
+  position:absolute; left:clamp(20px,4vw,56px); bottom:16px;
+  font:700 10px/1 "Inter Tight",sans-serif; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--red); background:var(--paper); padding:7px 9px 6px;
+  border:1px solid rgba(230,51,41,.55);
+  opacity:0; transform:translateY(6px);
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+}
+html.grid-on .gridlay::after{ opacity:1; transform:none; transition-delay:.85s; }
 .gridlay .wrap, .gridlay .grid{ height:100%; }
-.gridlay i{ position:relative; border-inline:1px solid rgba(230,51,41,.55); height:100%; }
+.gridlay i{
+  position:relative; border-inline:1px solid rgba(230,51,41,.55); height:100%;
+  transform:scaleY(0); transform-origin:top center;
+  transition:transform .5s var(--snap);
+}
+html.grid-on .gridlay i{ transform:scaleY(1); }
+html.grid-on .gridlay i:nth-child(1){ transition-delay:0s }
+html.grid-on .gridlay i:nth-child(2){ transition-delay:.035s }
+html.grid-on .gridlay i:nth-child(3){ transition-delay:.07s }
+html.grid-on .gridlay i:nth-child(4){ transition-delay:.105s }
+html.grid-on .gridlay i:nth-child(5){ transition-delay:.14s }
+html.grid-on .gridlay i:nth-child(6){ transition-delay:.175s }
+html.grid-on .gridlay i:nth-child(7){ transition-delay:.21s }
+html.grid-on .gridlay i:nth-child(8){ transition-delay:.245s }
+html.grid-on .gridlay i:nth-child(9){ transition-delay:.28s }
+html.grid-on .gridlay i:nth-child(10){ transition-delay:.315s }
+html.grid-on .gridlay i:nth-child(11){ transition-delay:.35s }
+html.grid-on .gridlay i:nth-child(12){ transition-delay:.385s }
 .gridlay i::before{
   content:attr(data-n); position:absolute; top:6px; left:5px;
   font-size:9px; font-weight:700; font-style:normal; color:var(--red); letter-spacing:.08em;
+  opacity:0; transition:opacity .3s var(--ease);
 }
-html.grid-on .gridlay{ opacity:1; }
-@media (max-width:760px){ .gridlay i:nth-child(n+7){ display:none; } }
+html.grid-on .gridlay i::before{ opacity:1; transition-delay:.7s; }
+@media (max-width:760px){
+  .gridlay i:nth-child(n+7){ display:none; }
+  .gridlay::after{ content:"6 columns · 26 px baseline — the same grid the page uses"; }
+}
 
 .gridbtn{
   display:inline-flex; align-items:center; gap:7px;
@@ -100,6 +149,7 @@ html.grid-on .gridlay{ opacity:1; }
 }
 .gridbtn svg{ width:17px; height:10px; display:block; }
 .gridbtn:hover{ border-color:var(--red); color:var(--red); }
+.gridbtn:active{ transform:translateY(1px); }
 html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var(--paper); }
 
 /* ————— masthead ————— */
@@ -136,6 +186,14 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
   letter-spacing:-.06em; color:var(--ink); user-select:none;
   font-variant-numeric:tabular-nums; will-change:transform;
 }
+/* the red plate hunts in and out of register behind the ink plate —
+   a press that never quite settles. multiply keeps it reading as ink. */
+.numeral::before{
+  content:"04"; position:absolute; inset:0; z-index:-1;
+  color:var(--red); mix-blend-mode:multiply;
+  transform:translate(var(--regx,0px), var(--regy,0px));
+  will-change:transform;
+}
 .regmark{
   position:absolute; z-index:2; width:clamp(28px,3vw,40px); height:auto;
   right:clamp(20px,4vw,56px); top:calc(var(--bl)*1.4); color:var(--red);
@@ -150,6 +208,8 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
   grid-column:1 / span 9; font-size:clamp(44px,6.4vw,92px); font-weight:300;
   line-height:1.02; letter-spacing:-.025em; text-wrap:balance;
 }
+/* the red never decorates; it points — the full stop is the point */
+.statement .dot{ color:var(--red); }
 .dek{
   grid-column:1 / span 5; font-size:15px; line-height:calc(var(--bl)*.86);
   color:var(--ink-2); max-width:44ch;
@@ -160,6 +220,9 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
   font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-2);
 }
 .cover-meta .down{ margin-left:auto; color:var(--red); font-size:16px; letter-spacing:0; }
+/* the arrow descends in register — discrete baseline steps, no easing */
+.cover-meta .down{ animation:tickdown 2.8s steps(4,jump-none) infinite; }
+@keyframes tickdown{ 0%,20%{ transform:translateY(-5px); } 80%,100%{ transform:translateY(7px); } }
 @media (max-width:760px){
   .cover{ min-height:calc(100svh - 84px); align-items:flex-end; }
   .numeral{
@@ -213,11 +276,22 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
 .essay.in .essay-notes .note:nth-child(1){ transition-delay:.06s }
 .essay.in .essay-notes .note:nth-child(2){ transition-delay:.18s }
 .essay.in .essay-notes .note:nth-child(3){ transition-delay:.30s }
+/* the essay itself is set paragraph by paragraph, like a galley —
+   each paragraph is observed individually (JS assigns the stagger only to
+   paragraphs that enter together), so nothing animates below the fold */
+.essay-copy p{ opacity:0; transform:translateY(16px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.essay-copy p.in{ opacity:1; transform:none; }
 
 @media (prefers-reduced-motion:reduce){
   .rv,.rise{ opacity:1 !important; transform:none !important; animation:none !important; transition:none !important; }
-  .toc li,.colo-item,.essay-notes .note{ opacity:1 !important; transform:none !important; transition:none !important; }
+  .toc li,.colo-item,.essay-notes .note,.essay-copy p,.pull .w,.pull cite{ opacity:1 !important; transform:none !important; transition:none !important; }
+  .quote-rule,.airmark i{ transform:none !important; transition:none !important; }
+  .airmark b{ opacity:1 !important; transition:none !important; }
+  .gridlay,.gridlay::before,.gridlay::after,.gridlay i,.gridlay i::before{ transition:none !important; }
+  .numeral::before{ content:none; }
   .u::after{ transition:none; }
+  .cover-meta .down{ animation:none; }
+  .toc-row:hover .toc-i{ transform:none; }
 }
 
 /* ————— contents ————— */
@@ -233,17 +307,22 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
 .toc-i{
   grid-column:2 / span 1; margin-top:.34em; font-size:clamp(15px,1.4vw,19px); font-weight:500;
   color:var(--ink-2); font-variant-numeric:tabular-nums; letter-spacing:.02em;
-  transition:color .3s var(--ease);
+  transition:color .3s var(--ease), transform .35s var(--snap);
 }
 .toc-body{ grid-column:3 / span 8; display:block; }
-.toc-t{ display:block; font-size:clamp(24px,2.6vw,38px); font-weight:600; letter-spacing:-.02em; line-height:1.08; }
-.toc-t .u::after{ bottom:.02em; height:3px; }
-.toc-d{ display:block; margin-top:8px; font-size:13px; line-height:1.5; color:var(--ink-2); max-width:52ch; }
+/* Upright, heavy, tight — the essay refuses "the ornamental italic",
+   so the contents page must too. Spectral's pull-quote stays the only italic. */
+.toc-t{ display:block; font-size:clamp(26px,3vw,44px); font-weight:700; letter-spacing:-.03em; line-height:1.05; }
+.toc-t .u::after{ bottom:.04em; height:3px; }
+.toc-d{ display:block; margin-top:9px; font-size:13px; line-height:1.5; color:var(--ink-2); max-width:52ch; text-wrap:pretty; }
 .toc-p{
   grid-column:12 / span 1; margin-top:.34em; text-align:right; font-size:clamp(15px,1.4vw,19px); font-weight:500;
   font-variant-numeric:tabular-nums; color:var(--ink-2); transition:color .3s var(--ease);
 }
 .toc-row:hover .toc-i, .toc-row:hover .toc-p, .toc-row:focus-visible .toc-i{ color:var(--red); }
+/* the hanging index steps into the gutter on hover — one column-width nudge */
+.toc-row:hover .toc-i, .toc-row:focus-visible .toc-i{ transform:translateX(8px); }
+.toc-row:active .toc-i{ transform:translateX(12px); }
 @media (max-width:760px){
   .toc-i{ grid-column:1 / span 1; }
   .toc-body{ grid-column:2 / span 4; }
@@ -267,6 +346,11 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
 .essay-copy{ grid-column:4 / span 5; max-width:58ch; }
 .essay-copy p{ margin-bottom:var(--bl); hanging-punctuation:first; }
 .essay-copy p:last-child{ margin-bottom:0; }
+/* editorial end-mark: the kicker's square returns to close the argument */
+.essay-copy p:last-child::after{
+  content:""; display:inline-block; width:9px; height:9px;
+  background:var(--red); margin-left:9px;
+}
 .dropcap{
   float:left; font-size:calc(var(--bl)*3.05); line-height:calc(var(--bl)*2.62);
   font-weight:900; letter-spacing:-.02em; padding-right:12px; margin-top:2px;
@@ -293,9 +377,48 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
 }
 
 /* ————— pull quote ————— */
-.quote{ padding-block:calc(var(--bl)*4); }
-.quote-rule{ grid-column:2 / span 1; height:3px; background:var(--red); align-self:start; margin-top:1.1em; }
-.pull{ grid-column:3 / span 9; }
+.quote{ padding-block:calc(var(--bl)*2) calc(var(--bl)*4); }
+/* the void above the quote is not leftover; it is dimensioned, like a
+   technical drawing — toc item 04 made a claim, this is the receipt */
+.airmark{
+  grid-column:2 / span 5; grid-row:1; display:flex; gap:14px;
+  height:calc(var(--bl)*4); margin-bottom:calc(var(--bl)*1.5);
+}
+.airmark i{ width:1px; background:var(--ink-2); position:relative; }
+.airmark i::before,.airmark i::after{
+  content:""; position:absolute; left:-4px; width:9px; height:1px; background:var(--red);
+}
+.airmark i::before{ top:0; } .airmark i::after{ bottom:0; }
+.airmark b{
+  align-self:center; font-size:10px; font-weight:600; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-2); font-variant-numeric:tabular-nums;
+}
+/* the dimension label must not lie: baselines differ per viewport */
+.airmark .am-m{ display:none; }
+@media (max-width:760px){
+  .airmark .am-d{ display:none; }
+  .airmark .am-m{ display:inline; }
+}
+.quote-rule{
+  grid-column:2 / span 1; grid-row:2; height:3px; background:var(--red); align-self:start; margin-top:1.1em;
+  transform:scaleX(0); transform-origin:left center; transition:transform .7s var(--snap) .15s;
+}
+.quote.in .quote-rule{ transform:scaleX(1); }
+/* the dimension line measures itself in before the quote speaks */
+.airmark i{ transform:scaleY(0); transform-origin:top center; transition:transform .9s var(--snap) .1s; }
+.quote.in .airmark i{ transform:scaleY(1); }
+.airmark b{ opacity:0; transition:opacity .5s var(--ease) .8s; }
+.quote.in .airmark b{ opacity:1; }
+.pull{ grid-column:3 / span 9; grid-row:2; }
+/* the quote is set word by word (spans built in JS; plain text if JS skips) */
+.pull .w{
+  display:inline-block; opacity:0; transform:translateY(.4em);
+  transition:opacity .55s var(--ease), transform .55s var(--ease);
+  transition-delay:calc(var(--wd)*38ms + .25s);
+}
+.quote.in .pull .w{ opacity:1; transform:none; }
+.pull cite{ opacity:0; transform:translateY(10px); transition:opacity .6s var(--ease) 1.25s, transform .6s var(--ease) 1.25s; }
+.quote.in .pull cite{ opacity:1; transform:none; }
 .pull p{
   font-family:"Spectral",Georgia,serif; font-style:italic; font-weight:300;
   font-size:clamp(28px,4.2vw,62px); line-height:1.22; letter-spacing:-.012em;
@@ -307,6 +430,7 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
   text-transform:uppercase; color:var(--ink-2);
 }
 @media (max-width:760px){
+  .airmark{ grid-column:1 / -1; height:calc(var(--bl)*3); margin-bottom:var(--bl); }
   .quote-rule{ grid-column:1 / span 1; }
   .pull{ grid-column:1 / -1; margin-top:var(--bl); }
 }
@@ -321,12 +445,18 @@ html.grid-on .gridbtn{ background:var(--red); border-color:var(--red); color:var
 .plate-cap{ font-size:13px; line-height:calc(var(--bl)*.7); color:var(--ink-2); margin-bottom:var(--bl); max-width:30ch; }
 .plate-cap .fig{ color:var(--red); font-weight:700; font-size:11px; letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:6px; }
 .plate-cap em{ font-style:italic; }
-.plate-cap.dim{ color:rgba(17,17,17,.45); }
+.plate-cap.dim{ color:rgba(17,17,17,.6); }
 .plate-fig{ grid-column:4 / span 9; cursor:crosshair; }
 .plate-fig svg{ display:block; width:100%; height:auto; }
 .plate-t1{ font:600 30px "Inter Tight",sans-serif; fill:#F4F1EA; letter-spacing:-.02em; }
 .plate-t2{ font:500 13px "Inter Tight",sans-serif; fill:rgba(244,241,234,.62); letter-spacing:.06em; }
 .plate-t3{ font:800 30px "Inter Tight",sans-serif; fill:#E63329; letter-spacing:-.02em; }
+/* live crosshair: the plate becomes a measuring instrument under a fine pointer */
+#xhair{ pointer-events:none; transition:opacity .3s var(--ease); }
+.plate-t4{
+  font:600 14px "Inter Tight",sans-serif; fill:#E63329; letter-spacing:.08em;
+  font-variant-numeric:tabular-nums;
+}
 @media (max-width:760px){
   .plate-side{ grid-column:1 / -1; position:static; }
   .plate-fig{ grid-column:1 / -1; }

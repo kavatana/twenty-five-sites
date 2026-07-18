@@ -20,6 +20,7 @@
 <div class="sea" id="sea" aria-hidden="true"></div>
 <div class="rays" id="rays" aria-hidden="true">
   <i class="ray r1"></i><i class="ray r2"></i><i class="ray r3"></i><i class="ray r4"></i><i class="ray r5"></i>
+  <i class="caustics"></i>
   <i class="surface-glow"></i>
 </div>
 <canvas class="snow" id="snow" aria-hidden="true"></canvas>
@@ -64,7 +65,7 @@
   <section class="encounter" data-depth="400">
     <span class="ghost-num" aria-hidden="true">400</span>
     <div class="stage reveal">
-      <svg class="creature jelly" viewBox="0 0 320 400" role="img" aria-label="Atolla jellyfish, bell pulsing softly">
+      <svg class="creature jelly" viewBox="0 0 320 400" role="button" aria-label="Atolla jellyfish, bell pulsing softly. Touch to trigger its burglar-alarm light display">
         <defs>
           <radialGradient id="bellGrad" cx="50%" cy="42%" r="62%">
             <stop offset="0%" stop-color="#FF7EB6" stop-opacity=".75"/>
@@ -90,7 +91,13 @@
         <g class="tent t5"><path d="M182,186 C180,252 194,312 178,388" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2.4"/></g>
         <g class="tent t6"><path d="M210,184 C214,250 200,300 216,372" fill="none" stroke="#7FFFD4" stroke-opacity=".42" stroke-width="2"/></g>
         <g class="tent t7"><path d="M238,180 C244,238 230,288 246,348" fill="none" stroke="#7FFFD4" stroke-opacity=".5" stroke-width="2"/></g>
+        <g class="alarm" aria-hidden="true">
+          <circle class="al al1" cx="160" cy="116" r="44"/>
+          <circle class="al al2" cx="160" cy="116" r="70"/>
+          <circle class="al al3" cx="160" cy="116" r="98"/>
+        </g>
       </svg>
+      <p class="stage-hint">touch — it answers in light</p>
     </div>
     <div class="card reveal">
       <div class="card-head">
@@ -103,11 +110,16 @@
     </div>
   </section>
 
+  <!-- sounding line -->
+  <section class="sounding" data-depth="700">
+    <p class="sounding-line reveal"><em>— 700 m</em> · a sperm whale can hunt here on a single held breath</p>
+  </section>
+
   <!-- 1,200 m ─ anglerfish -->
   <section class="encounter flip" data-depth="1200">
     <span class="ghost-num" aria-hidden="true">1,200</span>
     <div class="stage reveal">
-      <svg class="creature angler" viewBox="0 0 440 300" role="img" aria-label="Humpback anglerfish, lure flickering">
+      <svg class="creature angler" viewBox="0 0 440 300" role="button" aria-label="Humpback anglerfish, lure flickering. Touch to make the lure flare">
         <defs>
           <radialGradient id="lureGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#FFFFFF"/>
@@ -157,11 +169,16 @@
     </div>
   </section>
 
+  <!-- sounding line -->
+  <section class="sounding" data-depth="2000">
+    <p class="sounding-line reveal"><em>— 2,000 m</em> · no instrument lowered this far has ever detected sunlight</p>
+  </section>
+
   <!-- 3,000 m ─ gulper eel -->
   <section class="encounter tint-pink" data-depth="3000">
     <span class="ghost-num" aria-hidden="true">3,000</span>
     <div class="stage reveal">
-      <svg class="creature gulper" viewBox="0 0 460 280" role="img" aria-label="Gulper eel, tail light blinking">
+      <svg class="creature gulper" viewBox="0 0 460 280" role="button" aria-label="Gulper eel, tail light blinking. Touch to make the tail lantern strobe">
         <defs>
           <radialGradient id="tailGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#FFD3E6"/>
@@ -205,11 +222,16 @@
     </div>
   </section>
 
+  <!-- sounding line -->
+  <section class="sounding" data-depth="3700">
+    <p class="sounding-line reveal"><em>— 3,700 m</em> · the ocean's average depth. most of the sea floor is still below you</p>
+  </section>
+
   <!-- 5,000 m ─ dumbo octopus -->
   <section class="encounter flip tint-pink" data-depth="5000">
     <span class="ghost-num" aria-hidden="true">5,000</span>
     <div class="stage reveal">
-      <svg class="creature dumbo" viewBox="0 0 320 310" role="img" aria-label="Dumbo octopus, ear fins slowly flapping">
+      <svg class="creature dumbo" viewBox="0 0 320 310" role="button" aria-label="Dumbo octopus, ear fins slowly flapping. Touch to startle it, gently">
         <defs>
           <radialGradient id="dumboGrad" cx="50%" cy="38%" r="72%">
             <stop offset="0%" stop-color="#E88BAF"/>
@@ -234,8 +256,8 @@
           <circle cx="123" cy="152" r="4" fill="#F6E7EE" opacity=".9"/>
           <circle cx="187" cy="152" r="4" fill="#F6E7EE" opacity=".9"/>
           <!-- blush -->
-          <circle cx="106" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
-          <circle cx="214" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
+          <circle class="blush" cx="106" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
+          <circle class="blush" cx="214" cy="184" r="8" fill="#FF7EB6" opacity=".22"/>
         </g>
       </svg>
     </div>
@@ -250,17 +272,27 @@
     </div>
   </section>
 
+  <!-- sounding line -->
+  <section class="sounding" data-depth="6500">
+    <p class="sounding-line reveal"><em>— 6,500 m</em> · the rated limit of the submersible <i>Alvin</i>. past this line, almost nothing built by humans has ever been</p>
+  </section>
+
   <!-- 8,000 m ─ hadal marker -->
   <section class="marker" data-depth="8000">
     <p class="marker-line reveal">— 8,000 metres. The hadal zone, named for the god of the underworld. Eight hundred atmospheres press on every centimetre of you.</p>
     <p class="marker-sub reveal">Snailfish live here — translucent, soft-boned, unbothered. Nothing about the deep asks permission to be alive.</p>
   </section>
 
+  <!-- sounding line -->
+  <section class="sounding" data-depth="10000">
+    <p class="sounding-line reveal"><em>— 10,000 m</em> · everest, sunk in this trench, would still be two kilometres short of daylight</p>
+  </section>
+
   <!-- 10,935 m ─ Trieste -->
   <section class="encounter trench" data-depth="10935">
     <span class="ghost-num" aria-hidden="true">10,935</span>
     <div class="stage reveal">
-      <svg class="creature trieste" viewBox="0 0 360 430" role="img" aria-label="The bathyscaphe Trieste, cabin light glowing">
+      <svg class="creature trieste" viewBox="0 0 360 430" role="button" aria-label="The bathyscaphe Trieste, cabin light glowing. Touch to signal the crew in Morse">
         <defs>
           <radialGradient id="portGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#FFF3D6"/>

@@ -1,0 +1,395 @@
+/* RIOT PRESS — NOISE 013 ================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --paper: #EFEFE6;
+  --paper-dim: #E2E2D6;
+  --ink: #0D0D0D;
+  --lime: #B6FF00;
+  --pink: #FF00A8;
+  --ease-snap: cubic-bezier(.2, .9, .2, 1.3);
+  --ease-out: cubic-bezier(.22, .61, .16, 1);
+  --marquee-h: 30px;
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle, rgba(13,13,13,.09) 1px, transparent 1.3px),
+    repeating-linear-gradient(0deg, rgba(13,13,13,.035) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(90deg, rgba(13,13,13,.035) 0 1px, transparent 1px 34px);
+  background-size: 6px 6px, 34px 34px, 34px 34px;
+  color: var(--ink);
+  font-family: "Archivo", system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+::selection { background: var(--lime); color: var(--ink); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.skip {
+  position: absolute; left: -999px; top: 0; z-index: 999;
+  background: var(--lime); color: var(--ink); padding: .6em 1em;
+  font-family: "Rubik Mono One", monospace; font-size: .8rem;
+}
+.skip:focus { left: 8px; top: 8px; }
+
+a { color: inherit; }
+:focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 2px;
+}
+
+/* ---- ambient overlays ---- */
+#spray {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 40; mix-blend-mode: multiply;
+}
+
+.scanbar {
+  position: fixed; left: 0; right: 0; top: -20%; height: 22vh;
+  pointer-events: none; z-index: 5;
+  background: linear-gradient(180deg, transparent, rgba(182,255,0,.07) 45%, rgba(255,0,168,.05) 55%, transparent);
+  animation: scan-sweep 9s linear infinite;
+  mix-blend-mode: multiply;
+}
+@keyframes scan-sweep {
+  from { transform: translateY(0); }
+  to { transform: translateY(560%); }
+}
+@media (prefers-reduced-motion: reduce) { .scanbar { display: none; } }
+
+.cursor-ring {
+  position: fixed; top: 0; left: 0; width: 22px; height: 22px;
+  margin: -11px 0 0 -11px; border: 2px solid var(--ink);
+  border-radius: 50%; pointer-events: none; z-index: 999;
+  transform: translate(-100px, -100px);
+  transition: transform .06s linear, background .15s;
+}
+.cursor-ring::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%;
+  background: var(--lime);
+}
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body { cursor: none; }
+  a, .toc__row { cursor: none; }
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-ring { display: none; }
+}
+
+/* ---- marquee tickers ---- */
+.marquee {
+  position: fixed; left: 0; right: 0; height: var(--marquee-h);
+  background: var(--ink); color: var(--paper);
+  overflow: hidden; z-index: 500; display: flex; align-items: center;
+}
+.marquee--top { top: 0; border-bottom: 3px solid var(--lime); }
+.marquee--bottom { bottom: 0; border-top: 3px solid var(--pink); }
+.marquee__track {
+  display: flex; width: max-content;
+  animation: marquee-scroll 26s linear infinite;
+}
+.marquee--bottom .marquee__track {
+  animation-name: marquee-scroll-rev; animation-duration: 32s;
+}
+.marquee__seg {
+  display: flex; align-items: center; white-space: nowrap; flex-shrink: 0;
+  font-family: "Rubik Mono One", monospace;
+  font-size: clamp(.62rem, .9vw, .74rem);
+  letter-spacing: .06em; padding-right: 2.4rem;
+}
+.marquee__seg i { color: var(--lime); font-style: normal; padding: 0 .6em; }
+.marquee--bottom .marquee__seg i { color: var(--pink); }
+@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes marquee-scroll-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+/* ---- layout shell ---- */
+main {
+  padding: calc(var(--marquee-h) + 2.4rem) clamp(1.1rem, 4vw, 3rem) calc(var(--marquee-h) + 2rem);
+  max-width: 1180px; margin: 0 auto;
+}
+
+.section-label {
+  display: inline-block; font-family: "Bungee", sans-serif;
+  font-size: clamp(1.3rem, 3vw, 1.9rem); letter-spacing: .01em;
+  background: var(--ink); color: var(--paper);
+  padding: .3em .5em; transform: rotate(var(--r, 0deg));
+  box-shadow: 5px 5px 0 var(--lime);
+  margin: 3.6rem 0 1.6rem;
+}
+.section-label--pink { box-shadow: 5px 5px 0 var(--pink); }
+
+/* ============================= MASTHEAD ================================ */
+.masthead {
+  position: relative;
+  padding: 1.6rem 0 2.4rem;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: .4rem;
+}
+
+.sticker {
+  position: absolute; z-index: 20;
+  font-family: "Rubik Mono One", monospace;
+  font-size: .62rem; line-height: 1.35; letter-spacing: .03em;
+  background: var(--paper); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 50%;
+  width: 84px; height: 84px;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: rotate(var(--r));
+  transition: transform .4s var(--ease-snap), box-shadow .3s;
+}
+.sticker--tv { top: -6px; left: clamp(0px, 2vw, 40px); background: var(--lime); }
+.sticker--cal { top: 4px; right: clamp(0px, 2vw, 40px); background: var(--pink); color: var(--paper); }
+.sticker:hover {
+  transform: rotate(calc(var(--r) * -1)) scale(1.08) translateY(-4px);
+  box-shadow: 7px 9px 0 var(--ink);
+}
+.sticker--cal { position: absolute; }
+.sticker--cal::after {
+  content: ""; position: absolute; bottom: -3px; right: -3px;
+  width: 20px; height: 20px;
+  background: linear-gradient(135deg, transparent 50%, var(--paper) 51%);
+  box-shadow: -2px 2px 5px rgba(0,0,0,.35);
+  transform-origin: bottom right;
+  transition: transform .45s var(--ease-snap);
+}
+.sticker--cal:hover::after { transform: rotate(-32deg) scale(1.5) translate(2px,-2px); }
+
+.issue-stamp {
+  border: 3px double var(--ink);
+  padding: .5rem 1.1rem .6rem;
+  transform: rotate(var(--r));
+  display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  margin-bottom: .6rem;
+}
+.issue-stamp__label {
+  font-family: "Rubik Mono One", monospace; font-size: .58rem; letter-spacing: .22em;
+}
+.issue-stamp__num {
+  font-family: "Rubik Mono One", monospace;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  letter-spacing: .08em;
+  animation: flicker 3.6s infinite steps(1, end);
+}
+.issue-stamp__sub { font-family: "Rubik Mono One", monospace; font-size: .56rem; letter-spacing: .3em; color: var(--pink); }
+@keyframes flicker {
+  0%, 91%, 95%, 100% { opacity: 1; text-shadow: none; }
+  92% { opacity: .35; text-shadow: 2px 0 var(--pink), -2px 0 var(--lime); }
+  93% { opacity: 1; }
+  94% { opacity: .55; text-shadow: -1px 0 var(--lime); }
+}
+@media (prefers-reduced-motion: reduce) { .issue-stamp__num { animation: none; } }
+
+.logo { transform: rotate(var(--r)); line-height: 1; margin: .3rem 0 0; }
+.logo__row { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem .7rem; }
+.rl-word { display: inline-flex; }
+.logo .rl-word span {
+  font-family: "Bungee", sans-serif;
+  font-size: clamp(2.6rem, 9.5vw, 6.2rem);
+  display: inline-block;
+}
+.logo .rl-word span:nth-child(odd) { transform: rotate(-3deg) translateY(2px); }
+.logo .rl-word span:nth-child(even) { transform: rotate(3deg) translateY(-3px); }
+.logo .rl-word--accent span { color: var(--pink); }
+.logo .rl-word--accent span:nth-child(3) { color: var(--lime); }
+
+.tagline {
+  font-family: "Archivo", sans-serif; font-weight: 700; font-style: italic;
+  font-size: clamp(.85rem, 1.4vw, 1.05rem); letter-spacing: .04em;
+  margin-top: .2rem;
+}
+
+.barcode-block {
+  margin-top: 1.6rem; display: flex; align-items: center; gap: .9rem;
+  background: var(--paper); border: 2px solid var(--ink); padding: .6rem .9rem;
+  transform: rotate(-1deg); box-shadow: 4px 4px 0 var(--ink);
+}
+.barcode { display: flex; align-items: stretch; height: 40px; gap: 0; }
+.barcode span { display: block; background: var(--ink); align-self: stretch; }
+.barcode-info {
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+  font-family: "Rubik Mono One", monospace; font-size: .58rem; letter-spacing: .04em; gap: .15rem;
+}
+.barcode-info .dim { opacity: .55; font-size: .52rem; }
+
+/* ============================== HERO ==================================== */
+.hero { padding: 3.2rem 0 2rem; text-align: center; }
+.hero__headline { transform: rotate(var(--r)); margin-bottom: 1.4rem; }
+.rl-line { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem 1rem; }
+.rl-line .rl-word { display: inline-flex; gap: .12rem; flex-wrap: nowrap; }
+.rl-line .rl-word span {
+  display: inline-block; line-height: 1;
+  padding: .12em .18em .08em; border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: clamp(1.7rem, 6.4vw, 3.6rem);
+}
+.rl-line .rl-word span:nth-child(6n+1) { background: var(--ink); color: var(--paper); font-family: "Bungee", sans-serif; transform: rotate(-5deg) translateY(3px); }
+.rl-line .rl-word span:nth-child(6n+2) { background: var(--lime); color: var(--ink); font-family: "Archivo", sans-serif; font-weight: 900; transform: rotate(3deg); }
+.rl-line .rl-word span:nth-child(6n+3) { background: var(--pink); color: var(--paper); font-family: "Rubik Mono One", monospace; font-size: .78em; transform: rotate(-3deg) translateY(-3px); }
+.rl-line .rl-word span:nth-child(6n+4) { background: var(--paper); color: var(--ink); transform: rotate(6deg); font-family: "Bungee", sans-serif; }
+.rl-line .rl-word span:nth-child(6n+5) { background: var(--ink); color: var(--lime); font-family: "Archivo", sans-serif; font-weight: 900; transform: rotate(-6deg) translateY(2px); }
+.rl-line .rl-word span:nth-child(6n) { background: var(--pink); color: var(--ink); font-family: "Bungee", sans-serif; font-size: .92em; transform: rotate(4deg); }
+
+.hero__stamp {
+  display: inline-block; font-family: "Rubik Mono One", monospace;
+  font-size: clamp(.6rem, 1.3vw, .78rem); letter-spacing: .08em;
+  border: 3px solid var(--pink); color: var(--pink);
+  padding: .45em .9em; transform: rotate(var(--r));
+  margin-bottom: 1.6rem;
+}
+
+.hero__lede {
+  max-width: 46ch; margin: 0 auto; font-size: clamp(.95rem, 1.4vw, 1.1rem);
+  line-height: 1.6; font-weight: 500;
+}
+
+/* ============================= PHOTOS =================================== */
+.photos {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 2.6rem 2.2rem;
+  padding: 3.6rem 1rem 1rem;
+}
+.photo {
+  position: relative; width: 190px; background: var(--paper);
+  border: 2px solid var(--ink); padding: 14px 14px 34px;
+  box-shadow: 6px 8px 0 rgba(13,13,13,.9);
+  transform: rotate(var(--r));
+  transition: transform .5s var(--ease-snap), box-shadow .5s;
+}
+.photo:hover {
+  transform: rotate(0deg) translateY(-6px) scale(1.03);
+  box-shadow: 9px 13px 0 rgba(13,13,13,.9);
+}
+.photo__halftone {
+  width: 100%; aspect-ratio: 1 / 1;
+  background-image: radial-gradient(circle, var(--ink) 32%, transparent 34%);
+  background-size: 7px 7px;
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 55%, transparent 78%);
+          mask-image: radial-gradient(circle at 50% 45%, #000 55%, transparent 78%);
+}
+.photo__halftone--a { background-color: var(--lime); }
+.photo__halftone--b { background-color: var(--pink); background-position: 3px 3px; }
+.photo__halftone--c { background-color: var(--ink); background-image: radial-gradient(circle, var(--paper) 30%, transparent 32%); }
+.photo figcaption {
+  font-family: "Rubik Mono One", monospace; font-size: .5rem; letter-spacing: .04em;
+  text-align: center; margin-top: .7rem; line-height: 1.3;
+}
+.tape {
+  position: absolute; width: 62px; height: 22px;
+  background: repeating-linear-gradient(115deg, rgba(239,239,230,.92) 0 3px, rgba(220,220,205,.85) 3px 6px);
+  opacity: .88; box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  border: 1px solid rgba(13,13,13,.15);
+  z-index: 3;
+}
+.tape--a { top: -12px; left: -14px; transform: rotate(var(--tr)); }
+.tape--b { bottom: 8px; right: -18px; transform: rotate(var(--tr)); }
+
+/* ================================ TOC ==================================== */
+.toc { padding-bottom: 1rem; }
+.toc__list { list-style: none; display: flex; flex-direction: column; gap: 1.15rem; }
+.toc__row {
+  display: flex; align-items: baseline; gap: .9rem;
+  background: var(--paper); border: 2px solid var(--ink);
+  padding: .65rem .9rem; position: relative; overflow: hidden;
+  transform: rotate(var(--r));
+  transition: transform .45s var(--ease-snap), box-shadow .45s var(--ease-snap), background .3s;
+  box-shadow: 3px 3px 0 rgba(13,13,13,.85);
+}
+.toc__row::before {
+  content: ""; position: absolute; inset: 0; background: var(--lime);
+  transform: scaleX(0); transform-origin: left; z-index: 0;
+  transition: transform .4s var(--ease-out);
+}
+.toc__row:hover, .toc__row:focus-within {
+  transform: rotate(0deg) translateX(10px);
+  box-shadow: 7px 7px 0 rgba(13,13,13,.9);
+}
+.toc__row:hover::before { transform: scaleX(1); }
+.toc__num, .toc__title, .toc__page { position: relative; z-index: 1; }
+.toc__num {
+  font-family: "Rubik Mono One", monospace; font-size: .8rem; color: var(--pink);
+  flex-shrink: 0;
+}
+.toc__row:hover .toc__num { color: var(--ink); }
+.toc__title {
+  font-weight: 800; font-size: clamp(.72rem, 1.6vw, .92rem); letter-spacing: .01em;
+  flex: 1;
+}
+.toc__page {
+  font-family: "Rubik Mono One", monospace; font-size: .6rem; opacity: .6; flex-shrink: 0;
+}
+
+/* ============================= MANIFESTO ================================= */
+.manifesto { padding: 1rem 0 3rem; }
+.manifesto__body {
+  font-family: "Archivo", sans-serif; font-weight: 800;
+  font-size: clamp(1.25rem, 2.7vw, 2rem);
+  line-height: 1.42; letter-spacing: -.005em;
+  max-width: 900px;
+}
+.manifesto__body .strike {
+  text-decoration: line-through; text-decoration-thickness: 3px;
+  text-decoration-color: var(--ink); opacity: .42;
+}
+.manifesto__body .hl {
+  background: var(--pink); color: var(--paper); padding: 0 .18em;
+  display: inline-block; transform: rotate(-1.2deg);
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.manifesto__body .scribble {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='12'%3E%3Cpath d='M1 7 Q6 1 11 7 T21 7 T31 7 T41 7' stroke='%23B6FF00' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: repeat-x; background-position: 0 100%; background-size: 42px 12px;
+  padding-bottom: 6px;
+}
+.manifesto__sign {
+  margin-top: 1.6rem; font-family: "Rubik Mono One", monospace;
+  font-size: .68rem; letter-spacing: .05em; opacity: .7;
+  transform: rotate(1deg); display: inline-block;
+}
+
+/* =============================== FOOTER =================================== */
+.site-foot {
+  margin-top: 3.6rem; padding-top: 1.6rem;
+  border-top: 3px dashed rgba(13,13,13,.4);
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: .8rem;
+  font-family: "Rubik Mono One", monospace; font-size: .6rem; letter-spacing: .03em;
+}
+.foot-links { display: flex; gap: 1.2rem; }
+.foot-links a {
+  text-decoration: none; border-bottom: 2px solid var(--ink);
+  padding-bottom: 1px; transition: color .25s, border-color .25s;
+}
+.foot-links a:hover { color: var(--pink); border-color: var(--pink); }
+
+/* =============================== RESPONSIVE ================================ */
+@media (max-width: 640px) {
+  :root { --marquee-h: 26px; }
+  .sticker { width: 66px; height: 66px; font-size: .5rem; }
+  .sticker--tv { left: -4px; top: -10px; }
+  .sticker--cal { right: -4px; }
+  .photo { width: 42vw; }
+  .toc__row { flex-wrap: wrap; }
+  .toc__list { gap: .6rem; }
+  .toc__page { margin-left: auto; }
+  main { padding-left: 1rem; padding-right: 1rem; }
+  .barcode-block { flex-direction: column; align-items: flex-start; gap: .5rem; }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .photo { width: 26vw; }
+}

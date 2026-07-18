@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How VERSE is made — four hand-rolled physics engines</title>
+<meta name="description" content="How VERSE works: canonical-home gravity with knock physics, a critically-damped magnet spring, FLIP-style scattered-letter assembly, and a scroll-driven erosion formula — all hand-rolled, no libraries.">
+<meta property="og:title" content="How VERSE is made">
+<meta property="og:description" content="Four poems, four small physics engines: gravity, magnetism, assembly, erosion. The technique breakdown and the pass history.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#FBF8F1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23FBF8F1' stroke='%23B8963E' stroke-width='1.4'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' text-anchor='middle' fill='%2317151F'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ivory: #FBF8F1; --ink: #17151F; --ink-70: rgba(23,21,31,.7); --ink-50: rgba(23,21,31,.5);
+    --ink-14: rgba(23,21,31,.13); --gold: #B8963E; --gold-16: rgba(184,150,62,.16);
+    --serif: "Crimson Pro", Georgia, serif; --sans: "Work Sans", sans-serif;
+    --ease: cubic-bezier(.16,.8,.28,1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ivory); color: var(--ink);
+    font-family: var(--serif); -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(90vmax 60vmax at 100% -10%, rgba(184,150,62,.06), transparent 55%),
+      radial-gradient(90vmax 60vmax at -10% 110%, rgba(23,21,31,.045), transparent 55%);
+  }
+  body::after {
+    content: ""; position: fixed; inset: -10%; pointer-events: none; z-index: 0; opacity: .035; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection { background: var(--gold-16); }
+  .wrap { max-width: 700px; margin: 0 auto; padding: clamp(3rem,8vh,5.5rem) 24px 4rem; position: relative; z-index: 1; }
+  .crumb {
+    display: inline-block; font-family: var(--sans); font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--ink-50); text-decoration: none; margin-bottom: 2.8rem;
+    border-bottom: 1px solid var(--ink-14); padding-bottom: 3px; transition: color .3s, border-color .3s;
+  }
+  .crumb:hover { color: var(--gold); border-color: var(--gold); }
+  .kicker { font-family: var(--sans); font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin: 0 0 1rem; }
+  h1 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(2rem,5.2vw,3rem); line-height: 1.1;
+    letter-spacing: -.01em; margin: 0 0 1.3rem;
+  }
+  h1 em { font-style: italic; font-weight: 300; color: var(--ink-70); }
+  .lede { font-size: 1.08rem; line-height: 1.7; color: var(--ink-70); max-width: 58ch; margin: 0 0 3rem; }
+  h2 {
+    font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 1.28rem; color: var(--ink);
+    margin: 2.6rem 0 .7rem;
+  }
+  h2 b { font-style: normal; font-family: var(--sans); font-size: .7rem; letter-spacing: .18em; color: var(--gold); display: block; margin-bottom: .4rem; text-transform: uppercase; }
+  p { line-height: 1.72; color: var(--ink-70); font-size: 1rem; margin: 0 0 1rem; max-width: 62ch; }
+  strong { color: var(--ink); font-weight: 600; }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .86em; color: var(--ink);
+    background: var(--gold-16); border: 1px solid rgba(184,150,62,.28); border-radius: 4px; padding: .08em .38em; white-space: nowrap;
+  }
+  .rule { border: none; height: 1px; margin: 3rem 0 0; background: linear-gradient(90deg, var(--gold), transparent 65%); }
+  .dots { display: flex; gap: .55rem; margin: 2.6rem 0 0; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); opacity: .85; }
+  .dots i:nth-child(2) { opacity: .55; } .dots i:nth-child(3) { opacity: .3; }
+  footer {
+    margin-top: 2.4rem; padding-top: 1.3rem; border-top: 1px solid var(--ink-14);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 1.5rem;
+    font-family: var(--sans); font-size: .74rem; color: var(--ink-50); letter-spacing: .05em;
+  }
+  footer a { color: var(--ink-70); text-decoration: none; border-bottom: 1px solid var(--ink-14); padding-bottom: 1px; transition: color .3s, border-color .3s; }
+  footer a:hover { color: var(--gold); border-color: var(--gold); }
+  .foot-links { display: flex; gap: 1.3rem; }
+  .fade { opacity: 0; transform: translateY(12px); animation: fade .8s var(--ease) forwards; animation-delay: var(--d,0s); }
+  @keyframes fade { to { opacity: 1; transform: none; } }
+  :focus-visible { outline: 1.5px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb fade" href="../">&larr; Back to VERSE</a>
+
+  <p class="kicker fade" style="--d:.05s">How it&rsquo;s made</p>
+  <h1 class="fade" style="--d:.1s">Four poems. <em>Four small physics engines.</em></h1>
+  <p class="lede fade" style="--d:.18s">No animation library, no easing package, no particle plugin — every misbehaving letter in VERSE is pushed around by plain JavaScript running its own arithmetic, once per movement, tuned by eye until it stopped looking like code and started looking like weight.</p>
+
+  <div class="fade" style="--d:.26s">
+    <h2><b>I — Gravity</b>Mass, drag, and a floor that remembers</h2>
+    <p>Each poem line is split at build time into <code>&lt;span class="word"&gt;</code> elements. Before anything else happens, every word&rsquo;s <strong>canonical home position</strong> is measured once with <code>getBoundingClientRect()</code>, while the whole poem still sits in normal flow. Click a word and it becomes <code>position:absolute</code>, anchored at that home coordinate; a small integrator then adds gravity to its velocity every frame (<code>vy += g·dt</code>), lets it drift sideways on a sine flutter sized inversely to its letter count, and bounces it off a floor line with mass-scaled restitution — short words bounce more, long ones thud and stay. Landed words are tracked in a list so a new arrival can shove any word it overlaps, waking it back into the simulation for a second, smaller bounce. <strong>Lift</strong> reverses the whole thing as a critically-damped spring (<code>a = -k·x - c·v</code>) pulling every fallen word back toward its untouched home, staggered a few dozen milliseconds apart so the return reads as buoyant, not instant.</p>
+
+    <h2><b>II — Magnet</b>A spring that never stops chasing zero</h2>
+    <p>Here the split goes to individual <code>&lt;span class="letter"&gt;</code> characters. Every letter keeps a target offset of <code>(0,0)</code> unless the pointer enters its 96px radius, in which case the target becomes a vector pointing away from the cursor, scaled by <code>(1 − distance/radius)²</code>. A spring integrator chases that target every frame regardless of whether it&rsquo;s zero or not — so release is exactly as physical as repulsion, just running backwards. The ring cursor is a single fixed-position div following <code>pointermove</code>, shown only under <code>(hover:hover) and (pointer:fine)</code>; touch devices never see it.</p>
+
+    <h2><b>III — Assembly</b>FLIP, without the measuring step</h2>
+    <p>A tiny seeded linear-congruential generator scatters every letter to a polar-random offset on load — same shape every reload, tuned rather than left to raw <code>Math.random()</code>. An <code>IntersectionObserver</code> fires once when the poem crosses 30% into view; each letter&rsquo;s stored scatter distance sets its transition-delay and duration, so letters that traveled furthest also arrive last, and the whole poem closes like a slow exhale rather than snapping into place at once.</p>
+
+    <h2><b>IV — Erosion</b>Scroll as a straight razor</h2>
+    <p>The section is a 340vh scroll track holding a <code>position: sticky</code> poem. A scroll listener (throttled to one <code>requestAnimationFrame</code> per tick) turns the sticky element&rsquo;s <code>getBoundingClientRect()</code> into a 0–1 progress value. Each line gets a reading window around its position in that range; once progress passes a line, its non-essential letters fade, drift upward, rotate, and blur in proportion — a smoothstepped erosion amount, not a linear one — while the word marked to survive (set via a <code>data-keep</code> attribute) stays lit in gold. Scroll back up and the ash reassembles, because the whole thing is a pure function of scroll position, not a one-shot animation.</p>
+
+    <h2><b>Process</b>Three passes, mostly by eye</h2>
+    <p>Pass one built the four engines against the brief. Pass two was tuning by screenshot and by hand: gravity&rsquo;s restitution felt too bouncy for long words, the magnet radius read as jittery until the spring constant dropped, and the assembly stagger needed a distance curve instead of a flat index-based delay to avoid a mechanical typewriter feel. Pass three checked both viewports, <code>prefers-reduced-motion</code> (which renders every poem as still type, with Erosion&rsquo;s essential words permanently gold), and keyboard access — every fallen word is a focusable, Enter/Space-operable button, not just a click target.</p>
+  </div>
+
+  <hr class="rule fade" style="--d:.32s">
+  <div class="dots fade" style="--d:.36s"><i></i><i></i><i></i></div>
+
+  <footer class="fade" style="--d:.42s">
+    <span>18 / 25 &middot; VERSE — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="./">How it&rsquo;s made</a>
+    </span>
+  </footer>
+</div>
+</body>
+</html>

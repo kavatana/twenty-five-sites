@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALMANAC — An Atlas of the Visible Sky</title>
+<meta name="description" content="ALMANAC is a hand-drawn astronomical atlas: a live orrery of true relative orbital speeds, the twenty brightest stars plotted by magnitude, every moon of the giant planets counted, an eclipse timeline through 2040, and a diagram of how long light takes to reach you.">
+<meta property="og:title" content="ALMANAC — An Atlas of the Visible Sky">
+<meta property="og:description" content="Charts as the art: a live orrery, the brightest stars by magnitude, the moons of the giant planets counted on screen, an eclipse timeline to 2040, and the minutes light spends getting here.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ALMANAC">
+<meta name="theme-color" content="#0B1026">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230B1026'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23D9A441'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23D9A441' stroke-width='1.3'/%3E%3Ccircle cx='32' cy='32' r='23' fill='none' stroke='%23D9A441' stroke-width='1' opacity='.55'/%3E%3Ccircle cx='55' cy='32' r='2.6' fill='%23E8C077'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="almanac.css">
+<noscript><style>
+  .rv{opacity:1!important;transform:none!important}
+  #stars{display:none}
+</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<!-- reusable corner ornament: register bracket + compass rosette -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <symbol id="rosette" viewBox="0 0 32 32">
+    <g fill="none" stroke="currentColor">
+      <path d="M1 1H12M1 1V12" stroke-width="1"/>
+      <circle cx="15.5" cy="15.5" r="8" stroke-width=".75"/>
+      <circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/>
+      <path d="M15.5 3.7V9.3M15.5 21.7V27.3M3.7 15.5H9.3M21.7 15.5H27.3" stroke-width="1"/>
+      <path d="M8.6 8.6L11.2 11.2M19.8 19.8L22.4 22.4M22.4 8.6L19.8 11.2M11.2 19.8L8.6 22.4" stroke-width=".6"/>
+    </g>
+  </symbol>
+</svg>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brandmark" href="#top">
+      <svg viewBox="0 0 26 26" aria-hidden="true">
+        <circle cx="13" cy="13" r="2" fill="var(--gold)"/>
+        <circle cx="13" cy="13" r="6" fill="none" stroke="var(--gold)" stroke-width="1"/>
+        <circle cx="13" cy="13" r="11.5" fill="none" stroke="var(--gold)" stroke-width=".7" opacity=".55"/>
+      </svg>
+      <span class="word">Almanac</span>
+    </a>
+    <div class="mast-right">
+      <span class="sc" style="color:var(--gold)">Vol. I — Sky &amp; Instrument</span>
+      <span class="clock" id="clock">00:00:00 local</span>
+    </div>
+  </div>
+  <div class="wrap"><div class="mast-rule"></div></div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO — ORRERY ============ -->
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="hero-kicker sc">An Observatory of the Page</p>
+        <h1>Almanac<br><em>of the visible sky.</em></h1>
+        <p class="hero-deck">A hand-drafted atlas where the charts are the artwork. Six worlds keep true relative time below; further down, twenty suns are ranked by brightness, every moon of the outer giants is counted on screen, and the years between eclipses are laid out to the day.</p>
+        <div class="hero-meta">
+          <div><b>Instrument</b>Inline SVG &amp; canvas, no imagery</div>
+          <div><b>Data</b>Real magnitudes, distances, satellite counts</div>
+          <div><b>Motion</b>Continuous, choreographed, reduced on request</div>
+        </div>
+        <div class="scrollcue"><span class="stem" aria-hidden="true"></span>Turn the page</div>
+      </div>
+
+      <div class="orrery-wrap">
+        <svg id="orrerySvg" viewBox="0 0 640 640" role="img" aria-label="Orrery: the six innermost planets orbiting the Sun at their true relative speeds"></svg>
+        <div class="legend-orrery" id="orreryLegend"></div>
+        <p class="orrery-scale">Orbits shown schematically, not to scale. Periods are true ratios, the clock compressed <b>×1,940,000</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FIG I — BRIGHTNESS OF STARS ============ -->
+  <section class="plate-section" id="fig1" aria-label="Figure I: The brightness of stars">
+    <div class="wrap">
+      <div class="plate rv">
+        <svg class="corner tl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner tr" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner bl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner br" aria-hidden="true"><use href="#rosette"/></svg>
+
+        <div class="plate-head">
+          <div><span class="fig-label">Fig. I</span><h2 class="plate-title">The Brightness of Stars</h2></div>
+          <span class="plate-no">Pl. 04 — Horizon Chart</span>
+        </div>
+        <p class="plate-intro">Twenty suns, ranked by how brightly they burn in Earth's sky — a matter of true luminosity crossed with plain distance. Sirius is not the largest star known, merely the nearest bright one. Height above the line and dot size both read as magnitude; rest a pointer, or a finger, on any point for its name and the years its light has spent in transit.</p>
+
+        <div class="starchart-fig">
+          <svg id="starSvg" viewBox="0 0 1000 440" role="img" aria-label="Scatter chart of the twenty brightest stars by apparent magnitude"></svg>
+          <div class="tooltip" id="starTooltip" role="status" aria-live="polite"></div>
+        </div>
+
+        <p class="footnote"><b>*</b> Apparent magnitude, unaided eye, epoch 2000.0 — lower is brighter. Sirius outshines Fomalhaut by a factor of roughly nine. Distances given in light-years, rounded to three figures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FIG II — MOONS OF THE GIANTS ============ -->
+  <section class="plate-section" id="fig2" aria-label="Figure II: Moons of the giants">
+    <div class="wrap">
+      <div class="plate rv">
+        <svg class="corner tl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner tr" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner bl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner br" aria-hidden="true"><use href="#rosette"/></svg>
+
+        <div class="plate-head">
+          <div><span class="fig-label">Fig. II</span><h2 class="plate-title">Moons of the Giants</h2></div>
+          <span class="plate-no">Pl. 07 — Comparative Census</span>
+        </div>
+        <p class="plate-intro">Four worlds, two hundred and eighty-five confirmed satellites between them, and the count is not finished. Each dot below is a named or numbered moon, tallied as of the most recent survey and poured in on arrival — watch the numeral catch up.</p>
+
+        <div class="moon-rows">
+          <div class="moon-row jupiter" data-count="95">
+            <div class="moon-label"><span class="moon-name">Jupiter</span><span class="moon-count"><span class="n">0</span><span>moons</span></span></div>
+            <div class="dot-strip" aria-hidden="true"></div>
+          </div>
+          <div class="moon-row saturn" data-count="146">
+            <div class="moon-label"><span class="moon-name">Saturn</span><span class="moon-count"><span class="n">0</span><span>moons</span></span></div>
+            <div class="dot-strip" aria-hidden="true"></div>
+          </div>
+          <div class="moon-row uranus" data-count="28">
+            <div class="moon-label"><span class="moon-name">Uranus</span><span class="moon-count"><span class="n">0</span><span>moons</span></span></div>
+            <div class="dot-strip" aria-hidden="true"></div>
+          </div>
+          <div class="moon-row neptune" data-count="16">
+            <div class="moon-label"><span class="moon-name">Neptune</span><span class="moon-count"><span class="n">0</span><span>moons</span></span></div>
+            <div class="dot-strip" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <p class="footnote"><b>*</b> Counts shift as observatories confirm new discoveries and reclassify old ones; Saturn overtook Jupiter for the first time in 2023, after a single batch of 62 new finds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FIG III — ECLIPSE TIMELINE ============ -->
+  <section class="plate-section" id="fig3" aria-label="Figure III: Eclipse timeline 2026 to 2040">
+    <div class="wrap">
+      <div class="plate rv">
+        <svg class="corner tl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner tr" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner bl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner br" aria-hidden="true"><use href="#rosette"/></svg>
+
+        <div class="plate-head">
+          <div><span class="fig-label">Fig. III</span><h2 class="plate-title">Eclipses, 2026 – 2040</h2></div>
+          <span class="plate-no">Pl. 11 — Ephemeris Band</span>
+        </div>
+        <p class="plate-intro">The Moon's shadow keeps a schedule of its own. Fourteen solar eclipses fall across the next fifteen years — several grazing the poles, one lingering over the Sahara for six minutes and twenty-three seconds, the longest anyone alive will see until 2114. The hairline marks this instant, read from your own clock.</p>
+
+        <div class="eclipse-figwrap" id="eclipseFigwrap">
+          <div class="eclipse-scroll" id="eclipseScroll">
+            <div id="eclipseTrack"></div>
+          </div>
+          <div class="edge-fade left" aria-hidden="true"></div>
+          <div class="edge-fade right" aria-hidden="true"></div>
+        </div>
+        <p class="scroll-hint" id="eclipseHint" aria-hidden="true"><span class="arrow">&#8594;</span> drag to see the full band, 2026&ndash;2040</p>
+
+        <p class="footnote"><b>*</b> Types and paths per long-range ephemeris. Total eclipses in gold, annular in teal. &ldquo;Now&rdquo; and days-to-next are computed live from the visitor's system clock.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FIG IV — LIGHT TRAVEL TIME ============ -->
+  <section class="plate-section" id="fig4" aria-label="Figure IV: Light travel time">
+    <div class="wrap">
+      <div class="plate rv">
+        <svg class="corner tl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner tr" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner bl" aria-hidden="true"><use href="#rosette"/></svg>
+        <svg class="corner br" aria-hidden="true"><use href="#rosette"/></svg>
+
+        <div class="plate-head">
+          <div><span class="fig-label">Fig. IV</span><h2 class="plate-title">The Minutes Light Spends Getting Here</h2></div>
+          <span class="plate-no">Pl. 15 — Radiant Diagram</span>
+        </div>
+        <p class="plate-intro">Light is fast, not instant. What you see of the Moon left it 1.3 seconds ago; the Sun's light is eight minutes and twenty seconds old on arrival; Neptune's has been travelling since well before your coffee cooled — just over four hours. The pulse below sets out from the centre on loop, lighting each ring as it arrives.</p>
+
+        <div class="rings-fig">
+          <svg id="ringsSvg" viewBox="0 0 600 600" role="img" aria-label="Concentric rings showing light travel time to the Moon, Sun, Mars, Jupiter, and Neptune, with an animated photon pulse"></svg>
+          <div class="legend-rings" id="ringsLegend"></div>
+        </div>
+
+        <p class="footnote"><b>*</b> Travel times vary with orbital position; figures given are mean Earth-object separations. Mars and Jupiter are marked &ldquo;avg.&rdquo; — light from Mars alone can take anywhere from 3 to 22 minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLOPHON ============ -->
+  <section class="colophon-section" aria-label="Colophon">
+    <div class="wrap">
+      <dl class="colo">
+        <div class="colo-item"><dt>Typefaces</dt><dd>Newsreader, italic and roman, for every engraved line; IBM Plex Mono for every measured one.</dd></div>
+        <div class="colo-item"><dt>Instruments</dt><dd>Inline SVG and one canvas starfield — no photography, no stock, nothing rasterised but the sky itself.</dd></div>
+        <div class="colo-item"><dt>Sources</dt><dd>Apparent magnitudes and distances per standard bright-star catalogues; satellite counts per current planetary surveys.</dd></div>
+        <div class="colo-item"><dt>Palette</dt><dd>Midnight #0B1026 · star-paper #E8E4D8 · celestial gold #D9A441 · nebula teal #3E8989 · mars #C2543A.</dd></div>
+        <div class="colo-item"><dt>Edition</dt><dd>Volume I, &ldquo;Sky &amp; Instrument&rdquo; — printed nowhere, rendered on demand, always in the present tense.</dd></div>
+        <div class="colo-item"><dt>Corrections</dt><dd>An earlier proof placed Saturn's moons behind Jupiter's. The survey has since disagreed with us, and we with the earlier proof.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="foot-id">15 / 25 · ALMANAC — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </span>
+  </div>
+</footer>
+
+<script src="almanac.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REVERIE — a hotel that exists only while you sleep</title>
+<meta name="description" content="REVERIE is a dreamcore hotel reachable only by falling asleep: a floating doorframe with stars behind it, a staircase that only descends, and three rooms that are never quite finished being built.">
+<meta property="og:title" content="REVERIE — a hotel that exists only while you sleep">
+<meta property="og:description" content="A floating door, a shy moon, an endless staircase, and three rooms none of them finished. Hand-coded soft surrealism, site 17 of 25.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#E8DFF5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232A2440'/%3E%3Cpath d='M20 50 L20 26 Q20 16 32 16 Q44 16 44 26 L44 50' fill='none' stroke='%23FDE2E4' stroke-width='3'/%3E%3Ccircle cx='41' cy='23' r='7' fill='%23FFF8E7'/%3E%3Ccircle cx='44' cy='20' r='6' fill='%232A2440'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="reverie.css">
+</head>
+<body id="top">
+
+<div class="sky" aria-hidden="true"></div>
+<div class="sky-grain" aria-hidden="true"></div>
+
+<div class="cloud-field" aria-hidden="true">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+  <div class="cloud c5"></div>
+</div>
+
+<div class="moon-layer" aria-hidden="true">
+  <div class="moon" id="moon"></div>
+</div>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<a class="mark" href="#top">REVERIE<span>N°17 · dreamcore</span></a>
+
+<main>
+
+  <section class="hero">
+    <div class="portal-wrap">
+      <div class="door-shadow" aria-hidden="true"></div>
+      <div class="doorframe">
+        <div class="door-opening">
+          <div class="door-moonglow"></div>
+          <div class="door-stars"></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-clouds" aria-hidden="true">
+      <div class="cloud front1"></div>
+      <div class="cloud front2"></div>
+    </div>
+    <div class="hero-copy">
+      <p class="eyebrow">Reverie — open only while you sleep</p>
+      <h1>A hotel with no address,<br>reachable only by closing your eyes.</h1>
+      <p class="lede">Through that door: a lobby, a staircase that never lands, and a room already made up in your name. Scroll gently — everything here is still deciding what it looks like.</p>
+    </div>
+    <p class="scroll-cue">keep drifting ↓</p>
+  </section>
+
+  <section class="note-section">
+    <div class="note-card reveal">
+      <p><strong>A note left on the pillow —</strong> Rule one: the moon here is shy, it only moves when you do. Rule two: nothing casts its shadow where you'd expect. Rule three: you are not required to remember any of this by morning.</p>
+    </div>
+  </section>
+
+  <section class="objects" id="found">
+    <div class="wrap">
+      <div class="objects-heading reveal">
+        <p class="eyebrow">Lost &amp; found, third floor</p>
+        <h2>Some things never made it to a room.</h2>
+      </div>
+      <div class="objects-grid">
+
+        <div class="object-card key reveal">
+          <div class="object-stage">
+            <div class="object-shadow" aria-hidden="true"></div>
+            <div class="object-art" aria-hidden="true">
+              <svg viewBox="0 0 120 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="24" cy="30" r="16"></circle>
+                <circle cx="24" cy="30" r="6" stroke-width="2"></circle>
+                <path d="M40 30 H104"></path>
+                <path d="M88 30 V42"></path>
+                <path d="M100 30 V38"></path>
+              </svg>
+            </div>
+          </div>
+          <h3>A key to Room 000</h3>
+          <p>Recovered from the stairwell for the fourth time this week. It fits every lock in the building and opens nothing.</p>
+        </div>
+
+        <div class="object-card chair reveal">
+          <div class="object-stage">
+            <div class="object-shadow" aria-hidden="true"></div>
+            <div class="object-art" aria-hidden="true">
+              <svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10 V60 M70 10 V60 M20 10 H70 M15 60 H75 M20 60 L15 110 M70 60 L75 110 M22 85 H68"></path>
+              </svg>
+            </div>
+          </div>
+          <h3>One chair, reserved</h3>
+          <p>Held for a guest who checked in decades before the hotel was built. Housekeeping still dusts it nightly.</p>
+        </div>
+
+        <div class="object-card umbrella reveal">
+          <div class="object-stage">
+            <div class="object-shadow" aria-hidden="true"></div>
+            <div class="object-art" aria-hidden="true">
+              <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                <path d="M10 55 A50 50 0 0 1 110 55"></path>
+                <path d="M10 55 Q20 45 30 55 Q40 45 50 55 Q60 45 70 55 Q80 45 90 55 Q100 45 110 55" stroke-width="1.8"></path>
+                <path d="M60 55 V110"></path>
+                <path d="M60 110 Q60 118 52 118"></path>
+              </svg>
+            </div>
+          </div>
+          <h3>An umbrella, still dry</h3>
+          <p>Kept at the door for the rain that falls upward in the east wing. No one has asked for it. Yet.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="night" id="stairs">
+    <div class="night-stars" aria-hidden="true"></div>
+    <div class="wrap night-content">
+      <div class="stair-text reveal">
+        <p class="eyebrow">Sub-level, no floor number</p>
+        <h2>The stairs that only go down.</h2>
+        <p>Something has been descending since before you arrived — a small light, unhurried, never reaching a landing that holds it. Housekeeping has stopped asking where it's headed.</p>
+      </div>
+      <div class="stair-stage reveal">
+        <svg class="stair-svg" id="stairSvg" viewBox="-140 -170 280 300" aria-hidden="true">
+          <!-- populated by reverie.js -->
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms" id="rooms">
+    <div class="wrap">
+      <div class="rooms-heading reveal">
+        <p class="eyebrow">Tonight's availability</p>
+        <h2>Three rooms, none of them finished being built.</h2>
+      </div>
+      <div class="rooms-grid">
+
+        <article class="room-card r1 reveal">
+          <p class="room-num">000</p>
+          <h3>The Room of Forgotten Names</h3>
+          <p class="room-amenities">Turndown service · a mirror that answers to any name but yours · stationery already signed by a guest who hasn't checked in yet</p>
+        </article>
+
+        <article class="room-card r2 reveal">
+          <p class="room-num">π</p>
+          <h3>The Room That Never Repeats</h3>
+          <p class="room-amenities">A window with new weather every 3.14159 seconds · a minibar that restocks mid-sip · no two mornings alike, ever</p>
+        </article>
+
+        <article class="room-card r3 reveal">
+          <p class="room-num">Y</p>
+          <h3>Room Yesterday</h3>
+          <p class="room-amenities">Wake-up call from a version of you that already left · breakfast served at the last hour you felt certain · a view of a sunset that already happened</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="checkin" id="checkin">
+    <div class="wrap checkin-wrap">
+      <div class="checkin-copy reveal">
+        <p class="eyebrow">Front desk</p>
+        <h2>How long have you been asleep?</h2>
+        <p>We ask because the room adjusts itself — the deeper the sleep, the further the window, the stranger the amenities.</p>
+
+        <form id="checkinForm" autocomplete="off">
+          <div class="field">
+            <label for="alias">A dream alias (optional)</label>
+            <input type="text" id="alias" name="alias" placeholder="What should the mirror call you?">
+          </div>
+          <button type="submit" class="checkin-btn" id="checkinBtn">Check in</button>
+          <p class="checkin-confirm" id="checkinConfirm" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="dial-block reveal">
+        <div class="dial">
+          <svg class="dial-ring" viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="dial-track" cx="100" cy="100" r="86"></circle>
+            <circle class="dial-fill" id="dialFill" cx="100" cy="100" r="86" transform="rotate(-90 100 100)"></circle>
+          </svg>
+          <div class="dial-face" id="dialFace"
+               role="slider" tabindex="0"
+               aria-label="How long have you been asleep, in hours"
+               aria-valuemin="0" aria-valuemax="14" aria-valuenow="6" aria-valuetext="6 hours">
+            <div class="dial-rotor" id="dialRotor" aria-hidden="true"><div class="dial-mark"></div></div>
+            <div class="dial-readout" aria-hidden="true"><strong id="dialHours">6h 00m</strong><span>adrift</span></div>
+          </div>
+        </div>
+        <p class="dial-hint">Drag the dial, or focus it and use the arrow keys.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <span class="foot-id">17 / 25 · REVERIE — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="guide/">How it's made</a>
+    </span>
+  </footer>
+
+</main>
+
+<div class="cursor-halo" id="cursorHalo" aria-hidden="true"></div>
+
+<script src="reverie.js"></script>
+</body>
+</html>

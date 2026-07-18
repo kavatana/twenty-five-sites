@@ -1,0 +1,125 @@
+- generic [active] [ref=f3e1]:
+  - banner [ref=f3e2]:
+    - generic [ref=f3e3]:
+      - heading "OSCILLATE" [level=1] [ref=f3e4]
+      - paragraph [ref=f3e5]: OSC-13 · POLYPHONIC WAVE UNIT · MK I
+    - list "specifications" [ref=f3e6]:
+      - listitem [ref=f3e7]: OSC ×2 · SAW/SQR/TRI · ±45¢
+      - listitem [ref=f3e8]: RESONANT LP · Q 0.5–16
+      - listitem [ref=f3e9]: DELAY 340 MS · REGEN 42%
+      - listitem [ref=f3e10]: KEYBED-WIDE POLYPHONY
+  - main [ref=f3e11]:
+    - region "OSC-13 control surface" [ref=f3e12]:
+      - generic [ref=f3e17]:
+        - generic [ref=f3e18]:
+          - generic [ref=f3e19]: OSC-13
+          - generic [ref=f3e20]: SERIAL Nº 013 / 025
+          - generic [ref=f3e21]: MADE OF MATH
+        - generic [ref=f3e29]:
+          - generic [ref=f3e30]: POWER
+          - button "Power" [ref=f3e31] [cursor=pointer]:
+            - generic [ref=f3e32]:
+              - generic [ref=f3e33]: O
+              - generic [ref=f3e34]: I
+      - generic [ref=f3e35]:
+        - generic [ref=f3e36]:
+          - generic [ref=f3e37]: "01"
+          - generic [ref=f3e38]: WAVE
+          - group "Waveform" [ref=f3e39]:
+            - button "Sawtooth" [pressed] [ref=f3e40] [cursor=pointer]
+            - button "Square" [ref=f3e43] [cursor=pointer]
+            - button "Triangle" [ref=f3e46] [cursor=pointer]
+          - generic [ref=f3e49]: OSC A + B
+        - generic [ref=f3e50]:
+          - generic [ref=f3e51]: "02"
+          - generic [ref=f3e52]: FILTER
+          - generic [ref=f3e53]:
+            - slider "CUTOFF" [ref=f3e54]:
+              - generic [ref=f3e73]: 9.0 kHz
+            - slider "RESO" [ref=f3e74]:
+              - generic [ref=f3e93]: Q 1.2
+          - generic [ref=f3e94]: LP · 24 dB/OCT
+        - generic [ref=f3e95]:
+          - generic [ref=f3e96]: "03"
+          - generic [ref=f3e97]: SPREAD
+          - slider "DETUNE" [ref=f3e99]:
+            - generic [ref=f3e118]: ±12 ¢
+          - generic [ref=f3e119]: A +¢ · B −¢
+        - generic [ref=f3e120]:
+          - generic [ref=f3e121]: "04"
+          - generic [ref=f3e122]: DELAY
+          - slider "MIX" [ref=f3e124]:
+            - generic [ref=f3e143]: 28 %
+          - generic [ref=f3e144]: 340 MS · REGEN 42%
+        - generic [ref=f3e145]:
+          - generic [ref=f3e146]: "05"
+          - generic [ref=f3e147]: ARPEGGIATOR
+          - generic [ref=f3e148]:
+            - button "Arpeggiator" [pressed] [ref=f3e149] [cursor=pointer]:
+              - generic [ref=f3e151]: RUN
+            - slider "RATE" [ref=f3e152]:
+              - generic [ref=f3e171]: 6.5 Hz
+          - generic [ref=f3e172]: "PATTERN: Cm7 ↑↓"
+      - generic "Keyboard, C4 to F5" [ref=f3e175]:
+        - button "Key C4" [ref=f3e176] [cursor=pointer]:
+          - generic: C4
+          - generic: A
+        - button "Key C#4" [ref=f3e177] [cursor=pointer]:
+          - generic: W
+        - button "Key D4" [ref=f3e178] [cursor=pointer]:
+          - generic: D4
+          - generic: S
+        - button "Key D#4" [ref=f3e179] [cursor=pointer]:
+          - generic: E
+        - button "Key E4" [ref=f3e180] [cursor=pointer]:
+          - generic: E4
+          - generic: D
+        - button "Key F4" [ref=f3e181] [cursor=pointer]:
+          - generic: F4
+          - generic: F
+        - button "Key F#4" [ref=f3e182] [cursor=pointer]:
+          - generic: T
+        - button "Key G4" [ref=f3e183] [cursor=pointer]:
+          - generic: G4
+          - generic: G
+        - button "Key G#4" [ref=f3e184] [cursor=pointer]:
+          - generic: "Y"
+        - button "Key A4" [ref=f3e185] [cursor=pointer]:
+          - generic: A4
+          - generic: H
+        - button "Key A#4" [ref=f3e186] [cursor=pointer]:
+          - generic: U
+        - button "Key B4" [ref=f3e187] [cursor=pointer]:
+          - generic: B4
+          - generic: J
+        - button "Key C5" [ref=f3e188] [cursor=pointer]:
+          - generic: C5
+          - generic: K
+        - button "Key C#5" [ref=f3e189] [cursor=pointer]
+        - button "Key D5" [ref=f3e190] [cursor=pointer]:
+          - generic: D5
+        - button "Key D#5" [ref=f3e191] [cursor=pointer]
+        - button "Key E5" [ref=f3e192] [cursor=pointer]:
+          - generic: E5
+        - button "Key F5" [ref=f3e193] [cursor=pointer]:
+          - generic: F5
+      - generic [ref=f3e196]:
+        - generic [ref=f3e197]: 20 Hz
+        - generic [ref=f3e198]: "250"
+        - generic [ref=f3e199]: 1k
+        - generic [ref=f3e200]: 4k
+        - generic [ref=f3e201]: 14 kHz
+      - paragraph [ref=f3e202]:
+        - generic [ref=f3e203]: KEYS A W S E D F T G Y H U J K MAP C4–C5
+        - generic [ref=f3e204]: ·CLICK / TOUCH TO PLAY
+        - generic [ref=f3e205]: ·DRAG KNOBS VERTICALLY
+        - generic [ref=f3e206]: ·POWER ON — THE UNIT DEMONSTRATES ITSELF
+    - paragraph [ref=f3e207]: OSC A ⌁ OSC B → LP-24 → ANALOG-TYPE DELAY → LINE OUT
+  - contentinfo [ref=f3e208]:
+    - generic [ref=f3e209]: 13 / 25 · OSCILLATE — designed & coded by Claude Fable 5
+    - navigation [ref=f3e210]:
+      - link "Index" [ref=f3e211] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f3e212]: ·
+      - link "How it's made" [ref=f3e213] [cursor=pointer]:
+        - /url: guide/

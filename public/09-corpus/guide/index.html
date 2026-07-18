@@ -8,6 +8,7 @@
 <meta property="og:title" content="How CORPUS is made">
 <meta property="og:description" content="Four formations in vertex attributes, one quintic-eased GPU morph, and a gravity well on the pointer ray. The full technique breakdown.">
 <meta property="og:type" content="article">
+<meta name="theme-color" content="#060614">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060614'/%3E%3Ccircle cx='23' cy='27' r='10' fill='%237DF9FF' opacity='.85'/%3E%3Ccircle cx='40' cy='25' r='8' fill='%23B39DFF' opacity='.8'/%3E%3Ccircle cx='33' cy='41' r='9' fill='%23FF6EC7' opacity='.75'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,14 +111,15 @@
     <h2>Typography as geometry</h2>
     <p>The SIGIL formation waits for <code>document.fonts.load('800 240px Syne')</code>, rasterises CORPUS on an offscreen 2D canvas, then harvests every opaque pixel from <code>getImageData</code> and lifts them into world space with a little z-thickness. On phones it re-samples as two stacked lines so the word fills the portrait frame.</p>
 
-    <h2>The well</h2>
-    <p>The pointer is a gravity well: the closest point on the camera ray to the origin becomes <code>uWellPos</code>, and the shader shoves particles along an inverse-square falloff. Press and hold, and the power uniform eases from a whisper to a shout. Sprites are round because the fragment shader <em>discards</em> outside <code>gl_PointCoord</code> radius — squared-smoothstep alpha, additive blending, no textures anywhere.</p>
+    <h2>The well, and the release</h2>
+    <p>The pointer is a gravity well: the closest point on the camera ray to the origin becomes <code>uWellPos</code>, and the shader shoves particles along an inverse-square falloff. Hold, and the power uniform eases from a whisper to a shout. Let go, and a shockwave fires — a gaussian ring <code>exp(-((d − t·24)/2.3)²)</code> racing out from the release point, shoving and over-lighting everything it passes while the camera recoils, rattles, and blooms +30% exposure for a beat. Sprites are round because the fragment shader <em>discards</em> outside <code>gl_PointCoord</code> radius — squared-smoothstep alpha, additive blending, no textures anywhere. The galaxy never sits still either: a vertex-stage <code>swirl()</code> adds solid-body spin plus a differential shear that winds and unwinds the arms on a ~57-second breath.</p>
 
     <h2>Staying at 60</h2>
     <p><code>devicePixelRatio</code> is capped at 2, the loop halts on <code>visibilitychange</code>, and an FPS watchdog steps <code>setDrawRange</code> down (never below 30k on desktop) if the average dips — safe to truncate, because the golden-ratio ordering means any prefix of the buffer still covers the whole shape uniformly. Depth-test is off; additive light doesn't need sorting. Fog is a hand-rolled <code>exp(-d²)</code> in the vertex stage. With <code>prefers-reduced-motion</code>, the orbit freezes, the auto-cycle stops, and drift amplitude drops to zero — the universe holds still but stays lit.</p>
 
-    <h2>Passes</h2>
-    <p>Pass one built the engine and the four generators. The screenshot passes tuned what the code couldn't know: brightness of the additive core, camera fit at 390px, headline scale against the knot, and the mobile two-line sigil. Judgement by eye, every time.</p>
+    <h2>Three passes</h2>
+    <p>The build made the engine; three screenshot-driven passes made the site — and each one only found what it did by looking, not by re-reading the code. Pass one was art direction: the additive core summed to pure white, so an exposure uniform and a designed ice→violet→pink gradient riding <code>u</code> gave the body back its hue and its topology. Pass two was motion: choreography moved onto a wall-paced clock (a slow GPU used to stretch the 3-second intro to fifty), the release shockwave got its camera recoil, the galaxy got its shear, phones got swipe nav.</p>
+    <p>Pass three was finish, and it meant navigating to every formation instead of judging the site from its fresh-load frame. That turned up two real problems a first screenshot never shows: the galaxy's outer arm was sitting under the headline — a pixel crop caught the "n" of <em>billion</em> inside a cluster of particles — so the camera now eases to a per-formation clearance, blended by the same quintic progress that drives the morph, and pulls back for the wide shot without shrinking the galaxy itself. And the sigil, the concept's punchline formation, rendered thin next to the round, voluminous knot and galaxy; it's scaled up and gets a shader-side size-and-brightness swell keyed to <code>uFrom</code>/<code>uTo</code> while the word is on screen, so <strong>CORPUS</strong> now lands with the weight the line "the body spells its own name" is asking for. Contrast, focus rings, and the reduced-motion diff got re-checked by hand, not assumed. Judgement by eye, every time.</p>
   </div>
 
   <div class="dots fade" style="--d:.34s"><i></i><i></i><i></i></div>

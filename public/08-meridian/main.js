@@ -11,7 +11,7 @@
   const fmt = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
   });
-  const tick = () => { clockEl.textContent = fmt.format(new Date()); };
+  const tick = () => { if (!document.hidden) clockEl.textContent = fmt.format(new Date()); };
   tick();
   setInterval(tick, 1000);
 
@@ -30,7 +30,10 @@
   gridbtn.addEventListener('click', () =>
     setGrid(!document.documentElement.classList.contains('grid-on')));
   addEventListener('keydown', (e) => {
-    if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (e.key === 'g' || e.key === 'G') {
       setGrid(!document.documentElement.classList.contains('grid-on'));
     }
   });
@@ -72,6 +75,38 @@
   };
   setArcAngles();
 
+  /* ————— plate crosshair: the figure becomes a measuring instrument ————— */
+  const plateSvg = document.getElementById('arcsvg');
+  if (plateSvg && matchMedia('(pointer:fine)').matches) {
+    const xh = document.getElementById('xhair');
+    const xv = document.getElementById('xhV');
+    const xz = document.getElementById('xhH');
+    const ring = document.getElementById('xhRing');
+    const out = document.getElementById('xhOut');
+    const MM = 235 / 720; // plate is 235 mm wide on the printed page
+    const pad = (n) => n.toFixed(1).padStart(5, '0');
+    plateSvg.addEventListener('pointermove', (e) => {
+      const r = plateSvg.getBoundingClientRect();
+      const x = Math.min(720, Math.max(0, (e.clientX - r.left) / r.width * 720));
+      const y = Math.min(720, Math.max(0, (e.clientY - r.top) / r.height * 720));
+      xv.setAttribute('x1', x); xv.setAttribute('x2', x);
+      xz.setAttribute('y1', y); xz.setAttribute('y2', y);
+      ring.setAttribute('cx', x); ring.setAttribute('cy', y);
+      out.textContent = `x ${pad(x * MM)} · y ${pad(y * MM)} mm`;
+    });
+    plateSvg.addEventListener('pointerenter', () => xh.setAttribute('opacity', '1'));
+    plateSvg.addEventListener('pointerleave', () => xh.setAttribute('opacity', '0'));
+  }
+
+  /* ————— pull quote: set word by word ————— */
+  const pullP = document.querySelector('.pull p');
+  if (pullP) {
+    const words = pullP.textContent.trim().split(/\s+/);
+    pullP.innerHTML = words
+      .map((w, i) => `<span class="w" style="--wd:${i}">${w}</span>`)
+      .join(' ');
+  }
+
   /* ————— scroll instruments ————— */
   const bar = document.getElementById('progressBar');
   const marker = document.getElementById('rulerMarker');
@@ -97,13 +132,27 @@
 
   /* ————— reveals ————— */
   const rvs = document.querySelectorAll('.rv');
+  const paras = document.querySelectorAll('.essay-copy p');
   if (reduced() || !('IntersectionObserver' in window)) {
     rvs.forEach((el) => el.classList.add('in'));
+    paras.forEach((p) => p.classList.add('in'));
   } else {
     const io = new IntersectionObserver((ents) => {
       for (const en of ents) if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     rvs.forEach((el) => io.observe(el));
+
+    // essay galley: each paragraph observed on its own; paragraphs that
+    // arrive in the same batch share a stagger, a lone one rises at once
+    const pio = new IntersectionObserver((ents) => {
+      let i = 0;
+      for (const en of ents) if (en.isIntersecting) {
+        en.target.style.transitionDelay = `${i++ * 110}ms`;
+        en.target.classList.add('in');
+        pio.unobserve(en.target);
+      }
+    }, { threshold: 0.1, rootMargin: '0px 0px -4% 0px' });
+    paras.forEach((p) => pio.observe(p));
   }
 
   /* ————— main loop ————— */
@@ -123,10 +172,19 @@
     setArcAngles();
     sys.setAttribute('transform', `rotate(${deflect.toFixed(3)} ${CX} ${CY})`);
 
-    // cover numeral drifts against the scroll; registration mark keeps time
-    numeral.style.setProperty('--drift', `${(cur * 0.06).toFixed(1)}px`);
+    // cover numeral drifts against the scroll, plus a slow ambient breath
+    // (±4px over ~18s) so the cover is never fully at rest
+    const amb = Math.sin(now / 2864.8) * 4; // 2π · 2864.8ms ≈ 18s period
+    numeral.style.setProperty('--drift', `${(cur * 0.06 + amb).toFixed(1)}px`);
     regAngle = (regAngle + 4 * dt) % 360;
     regmark.style.transform = `rotate(${regAngle.toFixed(2)}deg)`;
+
+    // the red plate hunts around register — beat frequencies keep it mostly
+    // seated, then let it slip a few pixels and pull back in
+    const regx = Math.sin(now / 1700) * Math.sin(now / 7300) * 7;
+    const regy = Math.sin(now / 2300 + 1.7) * Math.sin(now / 9100) * 5;
+    numeral.style.setProperty('--regx', `${regx.toFixed(2)}px`);
+    numeral.style.setProperty('--regy', `${regy.toFixed(2)}px`);
 
     raf = requestAnimationFrame(loop);
   };
@@ -144,7 +202,7 @@
     start();
   }
   document.addEventListener('visibilitychange', () => {
-    document.hidden ? stop() : start();
+    if (document.hidden) { stop(); } else { tick(); start(); }
   });
   rm.addEventListener?.('change', () => {
     if (reduced()) { stop(); applyScroll(scrollY); }

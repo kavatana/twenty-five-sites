@@ -212,7 +212,8 @@ a { color: inherit; text-decoration: none; }
 }
 .hero-note {
   font-size: .64rem; letter-spacing: .3em; text-transform: uppercase;
-  color: rgba(185, 179, 196, .62); text-align: right;
+  color: rgba(197, 192, 207, .82); text-align: right;
+  text-shadow: 0 1px 10px rgba(20, 18, 28, 0.7);
 }
 
 /* Shared section furniture -------------------------------------------------*/
@@ -339,6 +340,10 @@ h2 em { font-style: italic; font-weight: 400; color: var(--gold-deep); }
 }
 .tier:last-child { border-bottom: 1px solid rgba(201, 169, 106, 0.16); }
 .tier:hover { border-left-color: var(--gold); background: rgba(246, 242, 236, 0.025); cursor: pointer; }
+.tier:focus-visible {
+  outline: none; border-left-color: var(--gold);
+  background: rgba(246, 242, 236, 0.025);
+}
 /* a smaller pre-reveal offset than the generic 30px: in a compact list a
    full-size slide moves each row far enough, for long enough, that a
    stationary cursor can end up hovering (and highlighting) the row above

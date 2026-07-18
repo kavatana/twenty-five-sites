@@ -11,6 +11,7 @@
   --dim: #8A90B8;
   --faint: #727BB5;
   --ease-out: cubic-bezier(.22, .61, .16, 1);
+  --fa: var(--ice); /* active-formation accent, set from JS */
 }
 
 html, body {
@@ -103,17 +104,35 @@ body::after {
 .stage-copy {
   position: absolute;
   left: 36px; bottom: 138px;
-  max-width: min(620px, 46vw);
+  max-width: min(700px, 50vw);
 }
 
 .kicker {
   font-size: .72rem;
   letter-spacing: .3em;
   text-transform: uppercase;
-  color: var(--ice);
-  margin-bottom: 1.1rem;
+  color: var(--fa); /* wears the active formation's accent */
+  transition: color .9s var(--ease-out);
 }
 .kicker-dim { color: var(--faint); }
+
+/* auto-cycle countdown: fills over the dwell, drains during the morph */
+.cycle {
+  width: min(240px, 40%);
+  height: 2px;
+  margin: .85rem 0 1.5rem;
+  background: rgba(138, 144, 184, .18);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.cycle i {
+  display: block;
+  height: 100%;
+  background: var(--fa);
+  transition: background .9s var(--ease-out);
+  transform: scaleX(0);
+  transform-origin: left;
+}
 
 .headlines, .decks { display: grid; }
 .headline, .deck { grid-area: 1 / 1; }
@@ -121,18 +140,30 @@ body::after {
 .headline {
   font-family: "Syne", sans-serif;
   font-weight: 800;
-  font-size: clamp(1.9rem, 1rem + 2.9vw, 3.55rem);
-  line-height: 1.02;
-  letter-spacing: -.015em;
+  font-size: clamp(1.9rem, .9rem + 2.75vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -.02em;
   color: var(--text);
-  text-shadow: 0 0 42px rgba(125, 249, 255, .22);
+  text-shadow: 0 0 36px rgba(125, 249, 255, .18);
   align-self: end;
   opacity: 0;
   transform: translateY(16px);
   filter: blur(7px);
-  transition: opacity .8s var(--ease-out), transform .8s var(--ease-out), filter .8s var(--ease-out);
+  /* visibility rides the fade so inactive slides leave the accessibility
+     tree — a screen reader hears one headline, not all four at once */
+  visibility: hidden;
+  transition: opacity .8s var(--ease-out), transform .8s var(--ease-out),
+              filter .8s var(--ease-out), visibility .8s;
 }
-.headline.is-active { opacity: 1; transform: none; filter: none; transition-delay: .2s; }
+.headline.is-active {
+  opacity: 1; transform: none; filter: none; visibility: visible; transition-delay: .2s;
+  animation: hglow 8s ease-in-out infinite; /* the glow band breathes */
+}
+@keyframes hglow {
+  0%, 100% { text-shadow: 0 0 34px rgba(125, 249, 255, .14); }
+  40% { text-shadow: 0 0 48px rgba(179, 157, 255, .3); }
+  70% { text-shadow: 0 0 42px rgba(255, 110, 199, .2); }
+}
 
 .decks { margin-top: 1.15rem; }
 .deck {
@@ -142,15 +173,23 @@ body::after {
   max-width: 42ch;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity .7s var(--ease-out) .05s, transform .7s var(--ease-out) .05s;
+  visibility: hidden;
+  transition: opacity .7s var(--ease-out) .05s, transform .7s var(--ease-out) .05s,
+              visibility .75s;
 }
-.deck.is-active { opacity: 1; transform: none; transition-delay: .3s; }
+.deck.is-active { opacity: 1; transform: none; visibility: visible; transition-delay: .3s; }
 
 .hint {
   margin-top: 1.6rem;
   font-size: .78rem;
   letter-spacing: .04em;
   color: var(--faint);
+  max-width: 52ch;
+}
+.hint-touch { display: none; }
+@media (pointer: coarse) {
+  .hint-more { display: none; }
+  .hint-touch { display: inline; }
 }
 .hint-key {
   display: inline-block;
@@ -163,6 +202,11 @@ body::after {
   font-size: .72rem;
   letter-spacing: .12em;
   text-transform: uppercase;
+  animation: keypulse 3.4s ease-in-out infinite;
+}
+@keyframes keypulse {
+  0%, 100% { border-color: rgba(125, 249, 255, .3); box-shadow: 0 0 0 rgba(125, 249, 255, 0); }
+  50% { border-color: rgba(125, 249, 255, .65); box-shadow: 0 0 14px rgba(125, 249, 255, .18); }
 }
 
 /* ---------- formation nav ---------- */
@@ -191,14 +235,15 @@ body::after {
   font-size: .74rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  opacity: .45;
+  opacity: .68;
   transform: translateX(6px);
   transition: opacity .4s var(--ease-out), transform .4s var(--ease-out), color .4s;
   white-space: nowrap;
 }
-.flab b { font-weight: 600; color: var(--faint); margin-right: .35em; }
+.flab b { font-weight: 600; color: var(--dim); margin-right: .35em; }
 .fdot {
-  width: 9px; height: 9px;
+  position: relative;
+  width: 10px; height: 10px;
   border-radius: 50%;
   border: 1px solid var(--dim);
   background: transparent;
@@ -206,7 +251,12 @@ body::after {
   transition: background .4s, border-color .4s, box-shadow .4s, transform .4s var(--ease-out);
 }
 .fbtn:hover .flab, .fbtn:focus-visible .flab { opacity: 1; transform: none; color: var(--text); }
-.fbtn:hover .fdot { border-color: var(--accent); transform: scale(1.25); }
+.fbtn:hover .fdot {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  transform: scale(1.25);
+}
+.fbtn:active .fdot { transform: scale(.8); transition-duration: .12s; }
 .fbtn.is-active .flab { opacity: 1; transform: none; color: var(--text); }
 .fbtn.is-active .flab b { color: var(--accent); }
 .fbtn.is-active .fdot {
@@ -214,6 +264,22 @@ body::after {
   border-color: var(--accent);
   box-shadow: 0 0 12px var(--accent), 0 0 30px color-mix(in srgb, var(--accent) 55%, transparent);
   transform: scale(1.3);
+  animation: dotbreathe 3.2s ease-in-out infinite;
+}
+/* activation ping: an accent ring blooms off the dot the moment it takes over */
+.fbtn.is-active .fdot::after {
+  content: ""; position: absolute; inset: -1px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  animation: ping .8s var(--ease-out) both;
+}
+@keyframes ping {
+  from { transform: scale(1); opacity: .9; }
+  to { transform: scale(3.4); opacity: 0; }
+}
+@keyframes dotbreathe {
+  0%, 100% { box-shadow: 0 0 10px var(--accent), 0 0 22px color-mix(in srgb, var(--accent) 40%, transparent); }
+  50% { box-shadow: 0 0 16px var(--accent), 0 0 38px color-mix(in srgb, var(--accent) 65%, transparent); }
 }
 
 /* ---------- stats / footer ---------- */
@@ -272,11 +338,36 @@ body::after {
   border-radius: 50%; background: var(--ice);
 }
 .cursor.is-on { opacity: 1; }
+.cursor.is-link {
+  width: 52px; height: 52px; margin: -26px 0 0 -26px;
+  border-color: rgba(179, 157, 255, .8);
+  background: rgba(179, 157, 255, .07);
+}
+.cursor.is-link::after { opacity: 0; }
 .cursor.is-down {
   width: 64px; height: 64px; margin: -32px 0 0 -32px;
   border-color: var(--pink);
 }
 .cursor.is-down::after { background: var(--pink); }
+/* charging ring while the well is held open */
+.cursor.is-down::before {
+  content: ""; position: absolute; inset: -7px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 110, 199, .55);
+  animation: curspin 1.4s linear infinite;
+}
+@keyframes curspin { to { transform: rotate(360deg); } }
+/* release flash: the shockwave leaves through the cursor */
+.cursor.is-shock::before {
+  content: ""; position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ice);
+  animation: curshock .55s var(--ease-out) both;
+}
+@keyframes curshock {
+  from { transform: scale(.6); opacity: 1; }
+  to { transform: scale(2.4); opacity: 0; }
+}
 @media (pointer: coarse) { .cursor { display: none; } #scene { cursor: auto; } }
 
 /* ---------- entrances ---------- */
@@ -312,9 +403,11 @@ body::after {
     bottom: 168px;
     max-width: none;
   }
-  .headline { font-size: clamp(1.7rem, 7.4vw, 2.4rem); }
+  .headline { font-size: clamp(1.7rem, 7.2vw, 2.35rem); }
   .deck { font-size: .84rem; max-width: 34ch; }
-  .hint { margin-top: 1.1rem; font-size: .72rem; }
+  .hint { margin-top: 1.1rem; font-size: .72rem; max-width: 38ch; }
+  .hint-more { display: none; }
+  .cycle { width: min(180px, 46%); margin: .7rem 0 1.1rem; }
 
   .formnav {
     top: auto; bottom: 108px;
@@ -344,7 +437,10 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .rise, .formnav.rise { animation: none; opacity: 1; }
   .formnav.rise { transform: translateY(-50%); }
+  .cycle { display: none; } /* no auto-cycle under reduced motion */
   body::after { animation: none; }
+  .headline.is-active, .hint-key, .fbtn.is-active .fdot,
+  .fbtn.is-active .fdot::after, .cursor.is-down::before { animation: none; }
   .headline, .deck, .flab, .fdot, .cursor { transition-duration: .01s; }
   @media (max-width: 760px) { .formnav.rise { transform: none; } }
 }

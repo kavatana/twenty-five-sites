@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOIR — Collection Nº14, "Absence"</title>
+<meta name="description" content="NOIR presents Collection Nº14, 'Absence' — a monochrome lookbook of six looks in restraint. No print, no ornament: weight, fall, and the quiet architecture of a body in a room.">
+<meta property="og:title" content="NOIR — Collection Nº14, \"Absence\"">
+<meta property="og:description" content="Six looks. Nothing added. A severe, monochrome lookbook for a maison built on what it removed.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NOIR">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Cg stroke='%23F5F5F3' stroke-width='1.6' fill='none'%3E%3Cline x1='32' y1='8' x2='32' y2='56'/%3E%3Cline x1='8' y1='32' x2='56' y2='32'/%3E%3Ccircle cx='32' cy='32' r='9'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<noscript><style>
+  .wipe::after{ clip-path: polygon(0 0,100% 0,100% 100%,0 100%) !important; }
+  .look-stage{ filter:none!important; transform:none!important; opacity:1!important; }
+</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="gridlines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <i></i><i></i><i></i><i></i><b></b>
+</div>
+
+<div class="corner corner-tl"><b>NOIR</b></div>
+<div class="corner corner-tr" id="runningPage">P. 01 — Cover</div>
+<div class="corner corner-bl">Collection Nº14 — Absence</div>
+<div class="corner corner-br">MMXXVI</div>
+
+<!-- shared SVG resources: gradients + turbulence-grain filter clipped to garment alpha -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="fabricV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F5F3" stop-opacity=".82"/>
+      <stop offset=".55" stop-color="#F5F5F3" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#F5F5F3" stop-opacity=".05"/>
+    </linearGradient>
+    <radialGradient id="fabricR" cx=".42" cy=".3" r=".8">
+      <stop offset="0" stop-color="#F5F5F3" stop-opacity=".8"/>
+      <stop offset=".6" stop-color="#F5F5F3" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#F5F5F3" stop-opacity=".04"/>
+    </radialGradient>
+    <linearGradient id="fabricD" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5F5F3" stop-opacity=".7"/>
+      <stop offset=".6" stop-color="#F5F5F3" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#F5F5F3" stop-opacity=".04"/>
+    </linearGradient>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0" result="noiseA"/>
+      <feComposite in="noiseA" in2="SourceAlpha" operator="in" result="clipped"/>
+      <feBlend in="SourceGraphic" in2="clipped" mode="overlay"/>
+    </filter>
+  </defs>
+</svg>
+
+<main id="main">
+
+  <!-- ——— COVER ——— -->
+  <section class="cover" id="sec-cover" data-page="P. 01 — Cover">
+    <p class="cover-kicker">NOIR — Paris</p>
+    <h1 class="cover-h1"><span class="wipe" data-text="Absence" aria-hidden="true">Absence</span><span class="sr-only">Absence — Collection Nº14</span></h1>
+    <p class="cover-dek">The collection that removed itself.</p>
+    <ul class="cover-meta">
+      <li><b>Collection Nº14</b></li>
+      <li>Six looks</li>
+      <li>Wool · silk · void</li>
+      <li>No print. No name. No noise.</li>
+    </ul>
+    <div class="cover-scroll" aria-hidden="true"><i></i>Scroll</div>
+  </section>
+
+  <!-- ——— LOOKBOOK ——— -->
+  <section class="lookbook-wrap" id="sec-lookbook" data-page="P. 02–07 — Lookbook">
+    <div class="lookbook-head">
+      <p class="kicker">Lookbook</p>
+      <h2><span class="wipe" data-text="Six looks." aria-hidden="true">Six looks.</span><span class="sr-only">Six looks.</span></h2>
+      <p class="lookbook-hint">Scroll, or press →</p>
+    </div>
+
+    <div class="lookbook" id="lookbook" tabindex="0" role="region" aria-label="Lookbook — six looks, scroll horizontally or use arrow keys">
+
+      <!-- LOOK 01 -->
+      <article class="look" data-i="0">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">01</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette of an unlined A-line coat with broad shoulders">
+            <path d="M118,36 C104,36 92,48 88,64 L70,150 C64,180 58,230 54,290 L40,430 C36,460 42,486 70,494 L230,494 C258,486 264,460 260,430 L246,290 C242,230 236,180 230,150 L212,64 C208,48 196,36 182,36 C170,50 150,58 150,58 C150,58 130,50 118,36 Z" fill="url(#fabricV)" filter="url(#grain)"/>
+            <line x1="150" y1="62" x2="150" y2="480" stroke="#F5F5F3" stroke-opacity=".18" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 01 / 06</p>
+          <h3 class="look-name">The Last Coat</h3>
+          <p class="look-line">Weight, and nothing to prove it.</p>
+        </div>
+      </article>
+
+      <!-- LOOK 02 -->
+      <article class="look" data-i="1">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">02</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette of a narrow floor-length column dress with a straight boat neckline">
+            <path d="M126,46 C120,46 116,50 117,58 C120,116 114,176 118,236 C122,308 112,378 116,438 C118,462 113,482 103,498 L197,498 C187,482 182,462 184,438 C188,378 178,308 182,236 C186,176 180,116 183,58 C184,50 180,46 174,46 L126,46 Z" fill="url(#fabricV)" filter="url(#grain)"/>
+            <line x1="150" y1="70" x2="150" y2="470" stroke="#F5F5F3" stroke-opacity=".16" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 02 / 06</p>
+          <h3 class="look-name">Column</h3>
+          <p class="look-line">A body, standing still.</p>
+        </div>
+      </article>
+
+      <!-- LOOK 03 -->
+      <article class="look" data-i="2">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">03</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette of a V-neck shift dress with a vertical keyhole cut into the bodice">
+            <path d="M120,46 C108,46 98,56 94,72 L86,220 C80,300 84,380 96,460 C100,480 112,494 130,498 L170,498 C188,494 200,480 204,460 C216,380 220,300 214,220 L206,72 C202,56 192,46 178,46 C168,58 150,68 150,68 C150,68 132,58 120,46 Z M150,120 C138,120 132,132 132,148 L132,190 C132,206 138,218 150,218 C162,218 168,206 168,190 L168,148 C168,132 162,120 150,120 Z" fill-rule="evenodd" fill="url(#fabricR)" filter="url(#grain)"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 03 / 06</p>
+          <h3 class="look-name">Negative Dress</h3>
+          <p class="look-line">Cut from what wasn't there.</p>
+        </div>
+      </article>
+
+      <!-- LOOK 04 -->
+      <article class="look" data-i="3">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">04</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette of a close-fitting sheath with a raised, squared turtleneck">
+            <path d="M136,34 C130,34 126,40 126,48 L124,58 C120,92 118,132 122,172 C126,222 118,272 122,322 C126,372 120,422 126,460 C129,480 138,494 150,498 L152,498 C164,494 172,480 170,462 C166,422 174,372 170,322 C166,272 174,222 170,172 C174,132 172,92 168,58 L166,48 C166,40 162,34 156,34 L136,34 Z" fill="url(#fabricR)" filter="url(#grain)"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 04 / 06</p>
+          <h3 class="look-name">Second Skin</h3>
+          <p class="look-line">Closer than a decision.</p>
+        </div>
+      </article>
+
+      <!-- LOOK 05 -->
+      <article class="look" data-i="4">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">05</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette of an asymmetric one-shoulder drape, a single strap on the right and the left shoulder bare, cut on a long diagonal">
+            <path d="M172,36 C184,36 194,44 196,56 C214,92 224,150 220,210 C216,272 226,332 218,392 C213,428 219,458 228,486 C206,502 176,508 148,502 C118,495 92,478 80,452 C68,424 78,388 86,354 C94,318 84,282 90,246 C95,216 88,186 92,158 C96,132 108,108 128,90 C142,78 158,64 172,36 Z" fill="url(#fabricD)" filter="url(#grain)"/>
+            <path d="M150,110 C170,170 145,250 168,330 C182,372 168,420 184,460" fill="none" stroke="#F5F5F3" stroke-opacity=".22" stroke-width="1"/>
+            <path d="M110,190 C135,235 115,300 138,360" fill="none" stroke="#F5F5F3" stroke-opacity=".14" stroke-width="1"/>
+            <path d="M92,158 C104,132 116,110 128,90" fill="none" stroke="#F5F5F3" stroke-opacity=".3" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 05 / 06</p>
+          <h3 class="look-name">Undone Drape</h3>
+          <p class="look-line">Falls the way silence does.</p>
+        </div>
+      </article>
+
+      <!-- LOOK 06 -->
+      <article class="look" data-i="5">
+        <div class="look-stage">
+          <span class="look-num" aria-hidden="true">06</span>
+          <svg viewBox="0 0 300 520" role="img" aria-label="Silhouette reduced to a single line and one soft curve — nearly nothing">
+            <path d="M148,38 C144,150 150,262 146,374 C144,432 148,468 152,498" fill="none" stroke="#F5F5F3" stroke-opacity=".4" stroke-width="1"/>
+            <path d="M130,236 C146,248 166,248 180,238 C185,264 181,290 171,306 C160,324 148,321 141,304 C132,286 128,260 130,236 Z" fill="url(#fabricR)" fill-opacity=".4" filter="url(#grain)"/>
+          </svg>
+        </div>
+        <div class="look-cap">
+          <p class="look-kicker">Look 06 / 06</p>
+          <h3 class="look-name">Study Nº6</h3>
+          <p class="look-line">Nothing left to remove.</p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="lookbook-foot">
+      <div class="lb-progress" aria-hidden="true"><i id="lbProgress"></i></div>
+      <div class="lb-nav">
+        <button class="lb-btn u" id="lbPrev" type="button" aria-label="Previous look">
+          <svg viewBox="0 0 14 10"><path d="M6 1 1 5l5 4M1 5h13"/></svg>
+        </button>
+        <button class="lb-btn u" id="lbNext" type="button" aria-label="Next look">
+          <svg viewBox="0 0 14 10"><path d="M8 1l5 4-5 4M13 5H0"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Collection Nº14</span><span>Absence</span><span>No ornament</span><span>Six looks</span><span>Wool · silk · void</span><span>Collection Nº14</span><span>Absence</span><span>No ornament</span><span>Six looks</span><span>Wool · silk · void</span>
+    </div>
+  </div>
+
+  <!-- ——— MANIFESTO ——— -->
+  <section class="manifesto" id="sec-manifesto" data-page="P. 08 — Manifesto">
+    <div class="manifesto-inner">
+      <p class="kicker">Manifesto</p>
+      <p class="m-text">There is a moment before the garment — before the seam, before the first mark on cloth — when nothing has been decided yet. Collection Nº14 lives inside that moment, and refuses to leave it.</p>
+      <p class="m-pull wipe" data-text="Absence" aria-hidden="true">Absence</p><span class="sr-only">Absence.</span>
+      <p class="m-text">We removed what a dress is expected to say. What is left is weight, fall, the quiet architecture of a body in a room. No print. No slogan. No proof of labor left on the surface. Six looks, one discipline — wool, silk, void.</p>
+      <p class="m-text">Nothing performs here. Everything is worn the way a room holds its silence after the door closes.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot" id="sec-footer" data-page="P. 09 — Index">
+  <div class="hair" style="margin-bottom:0"></div>
+  <p class="foot-colophon">Bodoni Moda, Figtree. Two tones, nothing else.</p>
+  <div class="foot-row">
+    <p class="foot-credit"><b>14 / 25</b> · NOIR — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a class="u" href="/">Index</a>
+      <a class="u" href="guide/">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="noir.js"></script>
+</body>
+</html>

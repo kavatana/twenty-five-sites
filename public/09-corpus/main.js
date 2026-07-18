@@ -48,7 +48,7 @@ function gauss(r) { // Box–Muller, hand-rolled
 
 function genKnot() {
   const out = new Float32Array(N * 3);
-  const P = 2, Q = 3, S = 3.1 * FSCALE, TUBE = 1.15 * FSCALE;
+  const P = 2, Q = 3, S = 3.1 * FSCALE, TUBE = 0.85 * FSCALE;
   const curve = (t) => {
     const r = Math.cos(Q * t) + 2;
     return [r * Math.cos(P * t), r * Math.sin(P * t), -Math.sin(Q * t)];
@@ -116,7 +116,9 @@ function genLattice() {
 // The word: rasterise "CORPUS" on an offscreen canvas, harvest lit pixels.
 function genWord() {
   const lines = SMALL ? ['COR', 'PUS'] : ['CORPUS'];
-  const worldW = SMALL ? 13.5 : 26;
+  const worldW = SMALL ? 14.5 : 32.5; // sized to be the largest formation on
+                                       // screen — the sigil is the climax, not an afterthought
+  const xBias = SMALL ? 0 : -1.55; // shifted clear of the nav dots at the new, wider scale
   const fs = 240;
   const cv = document.createElement('canvas');
   const ctx = cv.getContext('2d', { willReadFrequently: true });
@@ -159,9 +161,9 @@ function genWord() {
     const k = Math.min(count - 1, Math.floor(uArr[i] * count));
     const px = pts[k * 2] + (rng() - 0.5) * 2.4;
     const py = pts[k * 2 + 1] + (rng() - 0.5) * 2.4;
-    out[i * 3] = (px - cx) * scale;
+    out[i * 3] = (px - cx) * scale + xBias;
     out[i * 3 + 1] = (cy - py) * scale;
-    out[i * 3 + 2] = (rng() - 0.5) * 1.5 * FSCALE + gauss(rng) * 0.18;
+    out[i * 3 + 2] = (rng() - 0.5) * (SMALL ? 1.5 : 2.2) * FSCALE + gauss(rng) * 0.22;
   }
   return out;
 }
@@ -188,14 +190,21 @@ const HUES = [
 for (let i = 0; i < N; i++) {
   delays[i] = uArr[i] * 0.86 + rng() * 0.14;
   seeds[i] = rng();
-  sizes[i] = 0.085 + Math.pow(rng(), 2.6) * 0.42;
-  const w = rng();
-  const a = HUES[w < 0.44 ? 0 : w < 0.78 ? 1 : 2];
-  const b = HUES[Math.floor(rng() * 3)];
-  const m = rng() * 0.4, br = 0.5 + rng() * 0.55;
-  colors[i * 3] = (a[0] + (b[0] - a[0]) * m) * br;
-  colors[i * 3 + 1] = (a[1] + (b[1] - a[1]) * m) * br;
-  colors[i * 3 + 2] = (a[2] + (b[2] - a[2]) * m) * br;
+  sizes[i] = 0.075 + Math.pow(rng(), 3.0) * 0.36;
+  // Designed color flow: a gradient ice → violet → pink rides the structural
+  // coordinate u, so hue travels ALONG the knot / out the galaxy / across the
+  // word — with a pinch of random sparkle so it never bands flatly.
+  const u = uArr[i];
+  const g0 = u < 0.5 ? HUES[0] : HUES[1];
+  const g1 = u < 0.5 ? HUES[1] : HUES[2];
+  let f = u < 0.5 ? u * 2 : (u - 0.5) * 2;
+  f = f * f * (3 - 2 * f);
+  const spark = HUES[Math.floor(rng() * 3)];
+  const m = rng() * 0.3, br = 0.42 + rng() * 0.5;
+  for (let c = 0; c < 3; c++) {
+    const base = g0[c] + (g1[c] - g0[c]) * f;
+    colors[i * 3 + c] = (base + (spark[c] - base) * m) * br;
+  }
 }
 geo.setAttribute('aDelay', new THREE.BufferAttribute(delays, 1));
 geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
@@ -214,16 +223,23 @@ const uniforms = {
   uDrift: { value: REDUCED ? 0 : 0.12 },
   uArc: { value: REDUCED ? 0 : 1.5 },
   uTwinkle: { value: REDUCED ? 0.05 : 0.2 },
+  uExposure: { value: SMALL ? 0.72 : 0.56 }, // tame additive blow-out so hue survives the core
   uCamAz: { value: 0 }, // current camera azimuth — keeps the flat word sigil face-on
+  uSwirl: { value: REDUCED ? 0 : 1 }, // galaxy differential rotation gate
+  uShockPos: { value: new THREE.Vector3(0, 0, 0) },
+  uShockT: { value: 9 },   // seconds since last shock; 9 ≈ fully decayed
+  uShockAmp: { value: 0 },
 };
+const BASE_EXPOSURE = uniforms.uExposure.value;
 
 const VERT = /* glsl */`
 attribute vec3 aT0; attribute vec3 aT1; attribute vec3 aT2; attribute vec3 aT3;
 attribute float aDelay; attribute float aSeed; attribute float aSize;
 attribute vec3 aColor;
-uniform float uTime, uProgress, uSpawn, uWell, uPixelScale, uDrift, uArc, uTwinkle, uCamAz;
+uniform float uTime, uProgress, uSpawn, uWell, uPixelScale, uDrift, uArc, uTwinkle, uCamAz, uExposure, uSwirl;
+uniform float uShockT, uShockAmp;
 uniform int uFrom, uTo;
-uniform vec3 uWellPos;
+uniform vec3 uWellPos, uShockPos;
 varying vec3 vColor;
 
 // the word sigil is a flat plane in XY; the camera orbits in azimuth, so
@@ -235,9 +251,19 @@ vec3 faceCam(vec3 v, float a) {
   return vec3(v.x * c + v.z * s, v.y, -v.x * s + v.z * c);
 }
 
+// the galaxy is never still: solid-body spin plus an oscillating differential
+// shear (stronger toward the core) so the arms wind and unwind on a ~57s
+// breath — alive at any moment of a capture, never smearing itself away.
+vec3 swirl(vec3 v) {
+  float r = length(v.xz);
+  float a = (uTime * 0.07 + sin(uTime * 0.11) * 0.9 / (1.0 + 0.45 * r)) * uSwirl;
+  float s = sin(a), c = cos(a);
+  return vec3(v.x * c - v.z * s, v.y, v.x * s + v.z * c);
+}
+
 vec3 pick(int f) {
   if (f == 0) return aT0;
-  if (f == 1) return aT1;
+  if (f == 1) return swirl(aT1);
   if (f == 2) return aT2;
   return faceCam(aT3, uCamAz);
 }
@@ -266,19 +292,37 @@ void main() {
   vec3 sdir = normalize(vec3(sin(aSeed * 127.1), sin(aSeed * 269.5) - 0.4, cos(aSeed * 191.3)) + 0.001);
   p = mix(sdir * (26.0 + fract(aSeed * 7.31) * 34.0), p, sp);
 
+  // shockwave: a luminous ring racing outward through the body — fired when
+  // a held scatter is released (from the pointer) and softly on every morph
+  // arrival (from the core). Particles the ring passes are shoved and lit.
+  vec3 ds = p - uShockPos;
+  float sd = length(ds);
+  float ring = exp(-pow((sd - uShockT * 24.0) / 2.3, 2.0));
+  float shock = ring * exp(-uShockT * 1.7) * uShockAmp;
+  p += (ds / max(sd, 0.5)) * shock * 2.1;
+
   // gravity well: inverse-square shove away from the pointer ray
   vec3 dw = p - uWellPos;
   float d2 = dot(dw, dw);
   p += (dw / sqrt(d2 + 0.01)) * (uWell / (d2 * 0.32 + 3.0));
 
+  // the sigil is the punchline — the body spelling its own name should feel
+  // as weighty as a knot or a galaxy, not thinner. Sprites swell and light
+  // up while formation 3 is on screen (from *or* to, cross-fading with e)
+  // so the boost rides the morph instead of popping in.
+  float wIsFrom = 1.0 - min(1.0, abs(float(uFrom) - 3.0));
+  float wIsTo = 1.0 - min(1.0, abs(float(uTo) - 3.0));
+  float wordAmt = mix(wIsFrom, wIsTo, e);
+
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   float dist = max(0.1, -mv.z);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = clamp(aSize * uPixelScale / dist, 1.0, 90.0);
+  gl_PointSize = clamp(aSize * uPixelScale / dist * (1.0 + 0.34 * wordAmt), 1.0, 78.0);
 
   float fog = exp(-pow(dist * 0.016, 2.0));
   float tw = 1.0 + uTwinkle * sin(uTime * (1.5 + aSeed * 2.5) + aSeed * 93.0);
-  vColor = aColor * fog * tw * (0.2 + 0.8 * sp);
+  vColor = (aColor * fog * tw * (0.2 + 0.8 * sp) + vec3(0.5, 0.68, 1.0) * shock * 0.5)
+           * uExposure * (1.0 + 0.22 * wordAmt);
 }
 `;
 
@@ -363,12 +407,25 @@ const state = {
   auto: 0,
 };
 
+// Per-formation camera clearance: the galaxy's disc is wider than the knot's
+// tube-radius silhouette and was crowding the copy column (the "n" of
+// "billion" sat inside its outer arm). Rather than shrink the galaxy itself,
+// the rig eases a touch farther back while it's on screen — a wide shot for
+// the widest body — so every formation keeps the same clean margin.
+const CLEARANCE = [1, 1.22, 1, 1.05];
+function ease5(x) { return x * x * x * (x * (x * 6 - 15) + 10); }
+
+const CYCLE = 9; // seconds each formation holds before the loop moves on
+const cycleBar = document.getElementById('cycleBar');
 const headlines = [...document.querySelectorAll('.headline')];
 const decks = [...document.querySelectorAll('.deck')];
 const fbtns = [...document.querySelectorAll('.fbtn')];
 const formIndexEl = document.getElementById('formIndex');
+const ACCENTS = ['#7DF9FF', '#B39DFF', '#FF6EC7', '#EDEFFF'];
 
 function setActiveUI(i) {
+  // the UI wears the active formation's color: kicker + cycle bar re-tint
+  document.documentElement.style.setProperty('--fa', ACCENTS[i]);
   headlines.forEach((h) => h.classList.toggle('is-active', +h.dataset.f === i));
   decks.forEach((d) => d.classList.toggle('is-active', +d.dataset.f === i));
   fbtns.forEach((b) => {
@@ -426,32 +483,76 @@ addEventListener('keydown', (e) => {
 const ndc = new THREE.Vector2(0, -2); // offscreen until first move
 const ray = new THREE.Raycaster();
 const wellTarget = new THREE.Vector3(0, 0, 999);
-let wellPower = 0, wellGoal = 0, pressed = false;
+let wellPower = 0, wellGoal = 0, pressed = false, pressAt = 0;
+let pressX = 0, pressY = 0, pressType = 'mouse';
+let shockKick = 0; // decaying camera impulse fired with each shockwave
 
 const cursorEl = document.getElementById('cursor');
+const stageCopyEl = document.querySelector('.stage-copy');
+const formnavEl = document.querySelector('.formnav');
+const metaEl = document.querySelector('.meta');
 const FINE = matchMedia('(pointer: fine)').matches;
+// the ring trails the pointer on a spring — it has weight, not just position
+const cur = { x: innerWidth / 2, y: innerHeight / 2, tx: innerWidth / 2, ty: innerHeight / 2 };
+
+function triggerShock(amp) {
+  uniforms.uShockPos.value.copy(uniforms.uWellPos.value.z > 500
+    ? new THREE.Vector3(0, 0, 0) : uniforms.uWellPos.value);
+  uniforms.uShockT.value = 0;
+  uniforms.uShockAmp.value = REDUCED ? amp * 0.35 : amp;
+  shockKick = Math.min(1.4, amp * 0.55); // the camera feels the blast too
+}
 
 function onMove(e) {
   ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   wellGoal = pressed ? 34 : 4;
-  if (FINE) {
-    cursorEl.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-    cursorEl.classList.add('is-on');
-  }
+  cur.tx = e.clientX; cur.ty = e.clientY;
+  if (FINE) cursorEl.classList.add('is-on');
 }
 addEventListener('pointermove', onMove, { passive: true });
 addEventListener('pointerdown', (e) => {
-  pressed = true; wellGoal = 34; onMove(e);
+  pressed = true; wellGoal = 34; pressAt = performance.now(); onMove(e);
+  pressX = e.clientX; pressY = e.clientY; pressType = e.pointerType;
+  cursorEl.classList.remove('is-shock');
   cursorEl.classList.add('is-down');
 });
-addEventListener('pointerup', () => {
+addEventListener('pointerup', (e) => {
   pressed = false; wellGoal = 4;
   cursorEl.classList.remove('is-down');
+  // touch: a quick flick walks the formations (left/up = next, right/down = back)
+  const dx = e.clientX - pressX, dy = e.clientY - pressY;
+  const dur = performance.now() - pressAt;
+  if (pressType === 'touch' && dur < 600 && Math.hypot(dx, dy) > 70) {
+    const axis = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+    goTo((state.to + (axis < 0 ? 1 : 3)) % 4);
+    return; // a swipe, not a held scatter
+  }
+  // a held scatter earns its payoff: the recall shockwave
+  const wasUI = e.target.closest && e.target.closest('a, button');
+  if (!wasUI && performance.now() - pressAt > 220 && wellPower > 14) {
+    triggerShock(2.6);
+    cursorEl.classList.remove('is-shock');
+    void cursorEl.offsetWidth; // restart the flash animation
+    cursorEl.classList.add('is-shock');
+  }
 });
 document.documentElement.addEventListener('pointerleave', () => {
   wellGoal = 0; ndc.set(0, -2);
   cursorEl.classList.remove('is-on');
 });
+// cursor knows what it's over: swells into a halo on interactive elements
+document.addEventListener('pointerover', (e) => {
+  cursorEl.classList.toggle('is-link', !!(e.target.closest && e.target.closest('a, button')));
+});
+
+// the page doesn't scroll — so the wheel walks the formations instead
+let wheelLock = 0;
+addEventListener('wheel', (e) => {
+  const now = performance.now();
+  if (now - wheelLock < 1000 || Math.abs(e.deltaY) < 10) return;
+  wheelLock = now;
+  goTo((state.to + (e.deltaY > 0 ? 1 : 3)) % 4);
+}, { passive: true });
 
 /* ------------------------------------------------------------- sizing */
 
@@ -495,6 +596,7 @@ const fpsLog = [];
 
 setInterval(() => {
   if (document.hidden) { frames = 0; return; }
+  if (uniforms.uSpawn.value < 1) { frames = 0; return; } // skip cold-start samples
   const fps = frames * 2;
   frames = 0;
   statFps.textContent = String(Math.min(120, fps));
@@ -518,39 +620,74 @@ let raf = 0, running = false;
 
 function frame(now) {
   raf = requestAnimationFrame(frame);
-  const dt = Math.min(0.05, (now - clock.last) / 1000);
-  clock.last = now;
-  clock.t += dt;
+  const rdt = (now - clock.last) / 1000;
+  const dt = Math.min(0.05, rdt);   // visual noise clock: never jumps
+  const cdt = Math.min(0.34, rdt);  // choreography clock: wall-paced, so the
+  clock.last = now;                 // intro, morphs & cycle keep real time
+  clock.t += dt;                    // even when a slow GPU drops frames
   const t = clock.t;
 
   uniforms.uTime.value = t;
 
   // birth
   if (uniforms.uSpawn.value < 1) {
-    uniforms.uSpawn.value = Math.min(1, uniforms.uSpawn.value + dt / 3.2);
+    uniforms.uSpawn.value = Math.min(1, uniforms.uSpawn.value + cdt / 3.2);
   }
 
   // morph progress + queued retarget
   if (state.p < 1) {
-    state.p = Math.min(1, state.p + dt * state.speed);
-    if (state.p >= 1 && state.pending >= 0) {
-      const q = state.pending; state.pending = -1;
-      startMorph(q);
+    state.p = Math.min(1, state.p + cdt * state.speed);
+    if (state.p >= 1) {
+      if (state.pending >= 0) {
+        const q = state.pending; state.pending = -1;
+        startMorph(q);
+      } else if (!REDUCED && uniforms.uSpawn.value >= 1) {
+        // arrival pulse: the settled body rings once, from the core
+        uniforms.uShockPos.value.set(0, 0, 0);
+        uniforms.uShockT.value = 0;
+        uniforms.uShockAmp.value = 1.05;
+        shockKick = Math.max(shockKick, 0.45);
+      }
     }
   } else if (!REDUCED) {
-    state.auto += dt;
-    if (state.auto > 9 && uniforms.uSpawn.value >= 1) goTo((state.to + 1) % 4);
+    state.auto += cdt;
+    if (state.auto > CYCLE && uniforms.uSpawn.value >= 1) goTo((state.to + 1) % 4);
   }
   uniforms.uProgress.value = state.p;
 
-  // camera: slow orbit + gentle bob
+  // cycle bar: fills over the dwell, drains during the morph
+  if (cycleBar && !REDUCED) {
+    const cyc = state.p < 1 ? 0 : Math.min(1, state.auto / CYCLE);
+    cycleBar.style.transform = `scaleX(${cyc.toFixed(4)})`;
+  }
+
+  // shock clock + decaying camera impulse
+  if (uniforms.uShockT.value < 8) uniforms.uShockT.value += cdt;
+  shockKick *= Math.exp(-cdt * 2.6);
+  const kick = REDUCED ? 0 : shockKick;
+
+  // morph flare: exposure swells and the camera leans in mid-flight,
+  // so every transition reads as a breath — inhale, travel, settle.
+  // A shockwave adds its own bloom on top: the blast overexposes for a beat.
+  const flare = state.p < 1 ? Math.sin(Math.PI * state.p) : 0;
+  uniforms.uExposure.value = BASE_EXPOSURE * (1 + (REDUCED ? 0 : 0.22) * flare + 0.3 * kick);
+
+  // camera: slow orbit + gentle bob (+ morph dolly + shock recoil)
   const az = REDUCED ? 0.55 : t * 0.05 + 0.55;
   const el = REDUCED ? 0.28 : 0.26 + Math.sin(t * 0.07) * 0.16;
+  const ce = ease5(state.p);
+  const clearance = CLEARANCE[state.from] + (CLEARANCE[state.to] - CLEARANCE[state.from]) * ce;
+  const cd = camDist * clearance * (1 - (REDUCED ? 0 : 0.055) * flare - 0.04 * Math.min(1.2, kick));
   camera.position.set(
-    camDist * Math.cos(el) * Math.sin(az),
-    camDist * Math.sin(el),
-    camDist * Math.cos(el) * Math.cos(az),
+    cd * Math.cos(el) * Math.sin(az),
+    cd * Math.sin(el),
+    cd * Math.cos(el) * Math.cos(az),
   );
+  if (kick > 0.02) { // the blast rattles the rig, then settles
+    const s = kick * 0.2;
+    camera.position.x += Math.sin(t * 31.0) * s;
+    camera.position.y += Math.sin(t * 27.0 + 1.7) * s * 0.7;
+  }
   camera.lookAt(0, 0.4, 0);
   uniforms.uCamAz.value = az;
 
@@ -563,6 +700,23 @@ function frame(now) {
   }
   wellPower += (wellGoal - wellPower) * (1 - Math.exp(-dt * (pressed ? 9 : 4)));
   uniforms.uWell.value = wellPower;
+
+  // cursor spring: the ring chases the pointer with a touch of lag
+  if (FINE) {
+    const k = 1 - Math.exp(-dt * 22);
+    cur.x += (cur.tx - cur.x) * k;
+    cur.y += (cur.ty - cur.y) * k;
+    cursorEl.style.transform = `translate3d(${cur.x.toFixed(1)}px, ${cur.y.toFixed(1)}px, 0)`;
+    // pointer parallax: copy drifts against the cursor, nav & meta with it —
+    // the UI floats in the same space as the body. CSS `translate` property,
+    // so it never fights the entrance-animation transforms.
+    if (!REDUCED) {
+      const px = cur.x / innerWidth - 0.5, py = cur.y / innerHeight - 0.5;
+      stageCopyEl.style.translate = `${(-px * 10).toFixed(2)}px ${(-py * 7).toFixed(2)}px`;
+      formnavEl.style.translate = `${(px * 7).toFixed(2)}px ${(py * 5).toFixed(2)}px`;
+      metaEl.style.translate = `${(px * 6).toFixed(2)}px ${(py * 4).toFixed(2)}px`;
+    }
+  }
 
   renderer.render(scene, camera);
   frames++;

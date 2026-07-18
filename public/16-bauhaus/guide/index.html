@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BAUHAUS SPIELPLATZ — How it's made</title>
+<meta name="description" content="How BAUHAUS SPIELPLATZ is built: hand-rolled drag physics, a one-declaration flat poster shadow, currentColor palette-switching, and a spring-stagger tween system.">
+<meta property="og:title" content="BAUHAUS SPIELPLATZ — How it's made">
+<meta property="og:description" content="No physics engine, no shadow images, no spring library. The techniques behind site 16 of 25, explained.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="BAUHAUS SPIELPLATZ">
+<meta name="theme-color" content="#F2E8DC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141414'/%3E%3Ccircle cx='20' cy='20' r='12' fill='%23D93829'/%3E%3Cpolygon points='44,10 58,34 30,34' fill='%23F2B705'/%3E%3Crect x='16' y='38' width='24' height='18' fill='%232350A8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../bauhaus.css">
+<style>
+  .g-hero{ padding:clamp(44px,7vw,84px) 0 clamp(30px,4vw,48px); }
+  .g-kicker{ font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:14px; }
+  .g-title{ font-size:clamp(38px,7vw,74px); font-weight:800; letter-spacing:-.01em; line-height:.92; text-transform:uppercase; margin-bottom:18px; }
+  .g-back{ display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; color:var(--blue); border-bottom:1.5px solid var(--blue); padding-bottom:2px; }
+  .g-wrap{ max-width:760px; margin:0 auto; padding:0 clamp(20px,4vw,56px) clamp(70px,8vw,110px); }
+  .g-section{ margin-bottom:clamp(40px,5vw,60px); }
+  .g-h2{ font-size:clamp(22px,3vw,30px); font-weight:800; text-transform:uppercase; letter-spacing:-.005em; margin-bottom:16px; padding-bottom:10px; border-bottom:3px solid var(--black); }
+  .g-p{ font-size:16px; line-height:1.75; color:#2b2620; margin-bottom:16px; }
+  .g-p:last-child{ margin-bottom:0; }
+  .g-list{ margin:0 0 16px; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px; }
+  .g-list li{ padding-left:28px; position:relative; font-size:15.5px; line-height:1.7; color:#2b2620; }
+  .g-list li::before{ content:''; position:absolute; left:0; top:7px; width:11px; height:11px; background:var(--yellow); border-radius:50%; box-shadow:2px 2px 0 var(--black); }
+  code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--black); color:var(--canvas); padding:.12em .42em; border-radius:3px; font-size:.86em; }
+  .g-pass{ border:2px solid var(--black); padding:18px 20px; margin-bottom:14px; box-shadow:5px 5px 0 var(--black); background:var(--canvas); }
+  .g-pass h3{ font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; color:var(--red); }
+  .g-pass p{ font-size:14.5px; line-height:1.65; color:#2b2620; margin:0; }
+  .g-swatches{ display:flex; gap:10px; margin:18px 0 6px; flex-wrap:wrap; }
+  .g-swatch{ display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .g-swatch i{ width:20px; height:20px; display:block; border:2px solid var(--black); }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+
+<header class="topbar" id="top">
+  <a class="brand" href="../">
+    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="brand-word">Spielplatz</span>
+  </a>
+  <span class="topbar-tag">Werkstattbuch</span>
+</header>
+
+<main>
+  <div class="g-hero wrap">
+    <p class="g-kicker">Werkstattbuch · Technical Supplement</p>
+    <h1 class="g-title">How it's<br>made</h1>
+    <a class="g-back" href="../">← Back to the Spielplatz</a>
+  </div>
+
+  <div class="g-wrap">
+
+    <section class="g-section">
+      <h2 class="g-h2">Konzept</h2>
+      <p class="g-p">Site sixteen of twenty-five is a Bauhaus Vorkurs exercise made clickable: the 1923 Weimar poster — circle, square, triangle, three primaries plus black — as the entire material. Nothing photographic, nothing borrowed. Every mark on this page is a <code>&lt;div&gt;</code>, an SVG path, or a line of hand-rolled arithmetic, dragged into balance and left to argue its way back.</p>
+      <div class="g-swatches" aria-hidden="true">
+        <span class="g-swatch"><i style="background:#F2E8DC"></i>Canvas</span>
+        <span class="g-swatch"><i style="background:#D93829"></i>Red</span>
+        <span class="g-swatch"><i style="background:#2350A8"></i>Blue</span>
+        <span class="g-swatch"><i style="background:#F2B705"></i>Yellow</span>
+        <span class="g-swatch"><i style="background:#141414"></i>Black</span>
+      </div>
+    </section>
+
+    <section class="g-section">
+      <h2 class="g-h2">Die Technik</h2>
+      <ul class="g-list">
+        <li><strong>Physics, no engine.</strong> Every shape is a plain object carrying <code>x/y/vx/vy</code>. Each <code>requestAnimationFrame</code> tick raises a friction constant to the power of the frame's real duration (so a 60Hz and a 144Hz screen settle identically), integrates position, and reflects the shape off the stage edges with a restitution coefficient — the elastic boundary bounce. A short pointer-position history (last ~6 samples with timestamps) means a released drag inherits real velocity: a flick, not a snap-to-cursor.</li>
+        <li><strong>One shadow, one declaration.</strong> Instead of a second, offset duplicate element behind every shape, each fill carries <code>filter: drop-shadow(9px 9px 0 #141414)</code> — a zero-blur CSS filter that silhouettes whatever alpha shape sits inside it, ring, triangle, or stroked SVG arc alike. That's the flat screen-print shadow, for free, on any shape.</li>
+        <li><strong>currentColor as the palette switch.</strong> Shapes carry only a <code>data-color</code> attribute; CSS maps that to <code>color</code>, and every fill — <code>background</code>, <code>border-color</code>, or an SVG <code>stroke="currentColor"</code> — inherits it. Four rules cover all thirteen shapes and three poster generators; not one inline hex value.</li>
+        <li><strong>Spring stagger without a spring library.</strong> Reset Komposition and Zufall never touch the physics loop's velocities — they hand each shape a <code>{from, to, start, duration}</code> tween, with a per-shape start delay from a shuffled order, run through a hand-written <code>easeOutBack</code> cubic (the standard overshoot-then-settle curve). The shuffle is what makes the whole stage arrive like it's breathing, not marching.</li>
+        <li><strong>A poster press in about sixty lines.</strong> Die Plakate builds an SVG string on demand from small data pools — fictional Weimar venues, months, ticket numbers — plus three or four freshly placed shapes drawn from the same five-type vocabulary as the hero. Every click is a new plate, not a swap between fixed options.</li>
+      </ul>
+    </section>
+
+    <section class="g-section">
+      <h2 class="g-h2">Der Prozess</h2>
+      <div class="g-pass">
+        <h3>Pass 1 — Komposition</h3>
+        <p>Built the shape vocabulary, the drag/friction/bounce loop, and the ambient idle drift. Caught a real bug in review: the wheel/window/arrow demo icons in Form Folgt Funktion were invisible, because inline <code>&lt;span&gt;</code> elements silently ignore explicit width and height — fixed by promoting them to <code>display:inline-block</code>.</p>
+      </div>
+      <div class="g-pass">
+        <h3>Pass 2 — Kontrast</h3>
+        <p>Ran a numeric WCAG contrast audit across all five palette pairings before writing a line of button CSS. Black-on-blue (2.44:1) and yellow-on-canvas (1.5:1) both failed outright — which is why every red or blue surface on this site carries white or canvas type, never black, and yellow only ever sits on canvas or black as a fill, never as text on canvas.</p>
+      </div>
+      <div class="g-pass">
+        <h3>Pass 3 — Verifikation</h3>
+        <p>Checked both 1440×900 and 390×844, exercised drag, Reset, Zufall, and the keyboard-nudge path (Tab, arrow keys, Enter) for console errors, and confirmed the reduced-motion path mutes ambient bob, spin, and the looping demo animations without removing the interactions themselves.</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot-bar" style="border-top:none;">
+    <p class="foot-id"><b>16 / 25</b> · BAUHAUS SPIELPLATZ — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="/">Index</a>
+      <a href="../">Spielplatz</a>
+      <a href="./" aria-current="page">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

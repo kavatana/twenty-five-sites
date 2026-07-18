@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOIR — How it's made</title>
+<meta name="description" content="How NOIR was built: webkit-text-stroke wipes, SVG turbulence grain clipped to garment alpha, a difference-blend cursor and link invert, and a scroll-snap lookbook with continuous focus interpolation.">
+<meta property="og:title" content="NOIR — How it's made">
+<meta property="og:description" content="The techniques behind Collection Nº14: outline-to-fill type, alpha-clipped grain, mix-blend-mode inversion, and a lookbook that sharpens as it centers.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NOIR">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Cg stroke='%23F5F5F3' stroke-width='1.6' fill='none'%3E%3Cline x1='32' y1='8' x2='32' y2='56'/%3E%3Cline x1='8' y1='32' x2='56' y2='32'/%3E%3Ccircle cx='32' cy='32' r='9'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../noir.css">
+<noscript><style>.wipe::after{ clip-path: polygon(0 0,100% 0,100% 100%,0 100%) !important; }</style></noscript>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+
+<div class="corner corner-tl"><a class="u" href="../" style="text-decoration:none;color:inherit"><b>NOIR</b></a></div>
+<div class="corner corner-tr">How it's made</div>
+<div class="corner corner-bl">Collection Nº14 — Absence</div>
+<div class="corner corner-br">MMXXVI</div>
+
+<main id="main">
+  <div class="guide-hero wrap">
+    <a class="u guide-back" href="../">← Back to the collection</a>
+    <h1 class="guide-title">Notes on <em>absence</em>.</h1>
+    <p class="guide-dek">A technical supplement — the constraints, the four tricks the page leans on, and how six passes got it here.</p>
+  </div>
+
+  <div class="guide-main">
+    <div class="guide-grid">
+
+      <section class="guide-sec">
+        <p class="guide-idx">01</p>
+        <div>
+          <h2>Concept</h2>
+          <p>NOIR is a fictional maison whose Collection Nº14 is called "Absence" — the wager that a fashion site can carry its entire mood on two flat tones, <code>#0A0A0A</code> and <code>#F5F5F3</code>, with every gray produced by opacity rather than a third color value. Bodoni Moda supplies the razor-contrast display sizes (its variable <code>opsz</code> axis is left on <code>auto</code>, so the browser itself chooses a display cut at 20vw and a text cut at 13px); Figtree whispers everything else. Nothing on the page is a photograph — six garments exist only as hand-drawn SVG paths.</p>
+        </div>
+      </section>
+
+      <section class="guide-sec">
+        <p class="guide-idx">02</p>
+        <div>
+          <h2>Outline to fill</h2>
+          <p>Every headline is set twice: once as the real element with <code>color:transparent</code> and <code>-webkit-text-stroke:1px</code> for the outlined look, and once as a <code>::after</code> pseudo-element whose <code>content</code> is pulled from a <code>data-text</code> attribute, solid-filled and hidden behind a collapsed <code>clip-path: polygon()</code>. Hover — or, once, an <code>IntersectionObserver</code> entering the viewport — expands that polygon to a slightly skewed parallelogram, so the fill sweeps in at an angle rather than a flat wipe. It runs on <code>clip-path</code>, not <code>width</code>, so it never triggers layout.</p>
+        </div>
+      </section>
+
+      <section class="guide-sec">
+        <p class="guide-idx">03</p>
+        <div>
+          <h2>Grain, exactly where the garment is</h2>
+          <p>Each silhouette is one <code>&lt;path&gt;</code> filled with a gradient, run through a shared SVG <code>&lt;filter&gt;</code>: <code>feTurbulence</code> generates fractal noise, a <code>feColorMatrix</code> turns it into white-on-alpha, and <code>feComposite operator="in"</code> intersects that noise with the path's own <code>SourceAlpha</code> — so the grain exists only inside the garment's silhouette, never as a rectangle laid over it. A final <code>feBlend mode="overlay"</code> settles it back onto the gradient. Look 03's "void" is the same trick used structurally: one path, two subpaths, <code>fill-rule="evenodd"</code> — the inner ellipse doesn't sit on top of the dress, it subtracts from it.</p>
+        </div>
+      </section>
+
+      <section class="guide-sec">
+        <p class="guide-idx">04</p>
+        <div>
+          <h2>One inversion, two places</h2>
+          <p>Both signature interactions — the crosshair cursor and a link's invert-rectangle — use the same physics: <code>mix-blend-mode: difference</code> against a near-white source. Difference against ink reads as light, difference against paper reads as dark, so one reticle stays visible over both the ink cover and the paper manifesto without a single conditional. Links wrap their text in a <code>::after</code> with <code>transform: scaleX(0)</code>; on hover it grows from the left edge and, because it paints above the glyphs, differences the letters and the ground beneath them together — a precise rectangle that is genuinely inverted, not just re-colored.</p>
+        </div>
+      </section>
+
+      <section class="guide-sec">
+        <p class="guide-idx">05</p>
+        <div>
+          <h2>The lookbook</h2>
+          <p>Six looks sit in a flex row with <code>scroll-snap-type: x mandatory</code>. A scroll listener throttled to <code>requestAnimationFrame</code> reads every look's <code>getBoundingClientRect()</code> each frame and writes three CSS custom properties — <code>--blur</code>, <code>--scale</code>, <code>--op</code> — as a continuous function of distance from the container's center, so focus sharpens gradually rather than snapping in two states. A <code>wheel</code> handler remaps vertical trackpad intent to <code>scrollLeft</code> and releases back to normal page scroll at either edge, so the shelf never traps the page.</p>
+        </div>
+      </section>
+
+      <section class="guide-sec">
+        <p class="guide-idx">06</p>
+        <div>
+          <h2>Passes</h2>
+          <p>Built and audited the same way the rest of the showcase is: a pass lays down structure and real copy, then a fresh look at 1440×900 and 390×844 screenshots catches what reads as unbalanced, undersized, or dead. The corner registration marks and the running "P. 0X" catalog folio were added once the page felt like a website rather than a printed lookbook; the wheel-remap and the per-frame blur interpolation replaced an earlier version that only toggled a class at the snap point and looked mechanical. Everything eases on <code>cubic-bezier(0.16,1,0.3,1)</code>; nothing bounces. <code>prefers-reduced-motion</code> removes the grain drift, the ticker, the cursor's lerp, and the wipe's transition — but the outline, the fill states, and the layout hold, because restraint was always the point.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="hair" style="margin-bottom:0"></div>
+  <p class="foot-colophon">Bodoni Moda, Figtree. Two tones, nothing else.</p>
+  <div class="foot-row">
+    <p class="foot-credit"><b>14 / 25</b> · NOIR — designed &amp; coded by Claude Fable 5</p>
+    <nav class="foot-nav" aria-label="Footer">
+      <a class="u" href="/">Index</a>
+      <a class="u" href="../">Collection</a>
+      <a class="u" href="./" aria-current="page">How it's made</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../noir.js"></script>
+</body>
+</html>

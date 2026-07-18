@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALMANAC — How it's made</title>
+<meta name="description" content="How ALMANAC was built: a live orrery with true orbital ratios, a magnitude-driven star scatter, a counted moon census, a date-mapped eclipse timeline, and a looping light-time diagram — all hand-coded SVG and canvas.">
+<meta property="og:title" content="ALMANAC — How it's made">
+<meta property="og:description" content="The techniques behind the atlas: requestAnimationFrame orbits, IntersectionObserver counters, and hand-rolled tooltips — no charting library, no imagery.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ALMANAC">
+<meta name="theme-color" content="#0B1026">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230B1026'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23D9A441'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23D9A441' stroke-width='1.3'/%3E%3Ccircle cx='32' cy='32' r='23' fill='none' stroke='%23D9A441' stroke-width='1' opacity='.55'/%3E%3Ccircle cx='55' cy='32' r='2.6' fill='%23E8C077'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../almanac.css">
+<style>
+  .guide-main{ position:relative; z-index:2; padding:20px 0 40px; }
+  .guide-head{ padding:36px 0 44px; border-bottom:1px solid var(--line-gold-soft); }
+  .guide-kicker{ color:var(--gold); display:flex; align-items:center; gap:10px; margin:0 0 16px; }
+  .guide-kicker::before{ content:''; width:26px; height:1px; background:var(--gold); display:inline-block; }
+  .guide-title{ font-family:var(--serif); font-style:italic; font-weight:500; font-size:clamp(32px,5vw,54px); line-height:1.06; color:var(--paper); margin:0; max-width:16ch; }
+  .guide-grid{ padding:44px 0; display:grid; grid-template-columns:60px 1fr; gap:0 26px; }
+  .guide-index{ font-family:var(--mono); font-size:12px; color:var(--gold-soft); padding-top:6px; margin:0; }
+  .guide-sec{ padding-bottom:40px; border-bottom:1px solid var(--line-gold-soft); margin-bottom:40px; max-width:74ch; }
+  .guide-sec:last-child{ border-bottom:none; }
+  .guide-sec h2{ font-family:var(--serif); font-style:italic; font-weight:500; font-size:clamp(20px,2.4vw,26px); color:var(--paper); margin:0 0 14px; }
+  .guide-sec p{ font-size:15px; line-height:1.75; color:var(--paper-text); margin:0 0 12px; }
+  .guide-sec code{ font-family:var(--mono); font-size:13px; background:rgba(217,164,65,.12); color:var(--gold-soft); padding:.1em .35em; border-radius:2px; }
+  .back-link{ font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-soft); text-decoration:none; border-bottom:1px solid transparent; }
+  .back-link:hover{ border-color:var(--gold-soft); }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brandmark" href="../">
+      <svg viewBox="0 0 26 26" aria-hidden="true">
+        <circle cx="13" cy="13" r="2" fill="var(--gold)"/>
+        <circle cx="13" cy="13" r="6" fill="none" stroke="var(--gold)" stroke-width="1"/>
+        <circle cx="13" cy="13" r="11.5" fill="none" stroke="var(--gold)" stroke-width=".7" opacity=".55"/>
+      </svg>
+      <span class="word">Almanac</span>
+    </a>
+    <div class="mast-right"><a class="back-link" href="../">&larr; Back to the atlas</a></div>
+  </div>
+  <div class="wrap"><div class="mast-rule"></div></div>
+</header>
+
+<main class="guide-main" id="top">
+  <div class="wrap guide-head">
+    <p class="guide-kicker sc">How it's made</p>
+    <h1 class="guide-title">Every mark on the page is measured, not painted.</h1>
+  </div>
+
+  <div class="wrap guide-grid">
+    <p class="guide-index" aria-hidden="true">01</p>
+    <section class="guide-sec">
+      <h2>Concept</h2>
+      <p>ALMANAC is built on a single wager: that real numbers, drawn honestly, are more beautiful than decoration standing in for them. The mood is a nineteenth-century atlas plate — double-rule borders, corner rosettes, figure numbers, footnote asterisks — but every chart underneath is live data-viz, not an engraving of one. Nothing is a photograph or a stock illustration; the entire surface is inline SVG, one canvas element, and CSS.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">02</p>
+    <section class="guide-sec">
+      <h2>The orrery</h2>
+      <p>The hero is six nested <code>&lt;g&gt;</code> carriers, each holding one planet at its orbital radius, rotated every frame via <code>element.style.transform = 'rotate(...)'</code> inside a single <code>requestAnimationFrame</code> loop. The angles are not arbitrary: each planet's period is its true ratio to Earth's (Mercury 0.2408 yr, Saturn 29.457 yr), all multiplied by one shared constant so Mercury completes a lap every four seconds — visibly quick — while Saturn barely creeps, exactly as the sky actually behaves, just compressed roughly two million times. The multiplier is printed under the diagram so the compression is never hidden.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">03</p>
+    <section class="guide-sec">
+      <h2>Stars, moons, eclipses, light</h2>
+      <p>Figure I plots the twenty brightest stars from a hand-entered table of real apparent magnitudes and distances; a small integer hash of each star's name generates deterministic scatter jitter, so the layout is reproducible rather than random, while dot size and height both encode magnitude. A hand-built tooltip follows <code>pointermove</code>/<code>focus</code> events and repositions with <code>getBoundingClientRect()</code> — no library.</p>
+      <p>Figure II counts real satellite totals (Jupiter 95, Saturn 146, Uranus 28, Neptune 16) with an <code>IntersectionObserver</code> that, on first appearance, both animates a staggered field of dots (via a CSS custom property <code>--i</code> feeding <code>animation-delay</code>) and drives a <code>requestAnimationFrame</code> counter eased with a cubic ease-out, so the numeral and the dots finish together.</p>
+      <p>Figure III maps fourteen real long-range eclipse dates onto a year axis with plain arithmetic — <code>(date − 2026) / (2040.6 − 2026)</code> — then draws a &ldquo;now&rdquo; hairline at the visitor's own <code>Date.now()</code>, with a caption that computes real days-to-next-eclipse on every page load. Figure IV repeats the trick in reverse: five concentric rings at hand-tuned radii, a photon dot travelling outward on a seven-second loop, each ring flipping to a lit state as the pulse's progress crosses that ring's assigned fraction of the loop.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">04</p>
+    <section class="guide-sec">
+      <h2>Atlas details &amp; discipline</h2>
+      <p>Corner rosettes are one inline <code>&lt;symbol&gt;</code> reused four times per plate via <code>&lt;use&gt;</code>. Double rules are a bordered <code>.plate</code> with an inset <code>::before</code> pseudo-border. An ambient canvas starfield twinkles at low cost — one <code>&lt;canvas&gt;</code>, a seeded pseudo-random generator so the field is stable across reloads, and a sine per star rather than per-element DOM animation. Everything respects <code>prefers-reduced-motion</code>: the orrery holds a composed static pose, dots and stars appear at rest, and the eclipse sweep stops shimmering — the page stays legible and intentional either way. Device pixel ratio is capped at 2, and every loop checks <code>document.hidden</code> before requesting its next frame.</p>
+    </section>
+
+    <p class="guide-index" aria-hidden="true">05</p>
+    <section class="guide-sec">
+      <h2>Passes</h2>
+      <p>The build ran in three passes. The first laid the full page and its five figures against real data, favouring accuracy over convenient round numbers wherever a source disagreed with the brief. The second pass was a screenshot audit at 1440×900 and 390×844: dot-strip rows were regrouped to wrap cleanly on narrow widths, the eclipse band was moved into its own horizontally-scrolling track so the page itself never scrolls sideways, and contrast on midnight sections was re-checked so accent colours never carried small body text alone. The third pass tuned motion — easing curves, twinkle timing, the photon's ring-crossing choreography — until the page reads as continuously alive rather than merely animated.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span class="foot-id">15 / 25 · ALMANAC — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="../">Back to the atlas</a>
+    </span>
+  </div>
+</footer>
+
+<script src="../almanac.js"></script>
+</body>
+</html>
