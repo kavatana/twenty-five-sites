@@ -9,7 +9,7 @@ export const meta = {
   ],
 }
 
-const ROOT = '/Users/user/Vibe-Coding/25 2030_Website'
+const ROOT = ROOT
 const BATCH_SLUGS = ['verdant','kowloon','fold','oscillate']
 const BATCH_MODE = 'build'
 

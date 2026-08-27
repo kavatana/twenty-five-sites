@@ -9,7 +9,7 @@ export const meta = {
   ],
 }
 
-const ROOT = '/Users/user/Vibe-Coding/25 2030_Website'
+const ROOT = ROOT
 
 const BRIEFS = [
 {num:'01',slug:'aurelia',brief:`AURELIA — an ethereal luxury perfume house. Mood: liquid light, silk, dawn. HERO: a full-viewport Three.js scene (importmap, three@0.160.0 from unpkg) — an iridescent silk-like surface (plane geometry displaced by layered simplex noise in a custom vertex shader, fragment shader doing thin-film iridescence that shifts with view angle), drifting slowly, reacting subtly to cursor. Palette: pearl #F6F2EC, champagne gold #C9A96A, deep ink #14121C, iridescent rose/teal shimmer accents. Fonts: Cormorant Garamond (display, large italic moments) + Outfit (body). Sections: hero with huge serif wordmark over the silk; three fragrance 'compositions' (Aube, Méridien, Minuit) as cards whose backgrounds are small canvas gradient loops in each scent's palette; an 'accords' section with animated layered translucent circles showing note pyramids; maison manifesto with generous whitespace; footer. Interactions: magnetic hover on nav links, slow parallax, scent cards tilt on hover with sheen sweep. Copy voice: hushed, precise, French-inflected luxury.`},

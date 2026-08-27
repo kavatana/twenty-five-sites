@@ -3,95 +3,369 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>2030 — Twenty-Five Sites</title>
+<title>Twenty-Five Sites &mdash; 2030</title>
+<meta name="description" content="Twenty-five self-contained website designs, each exploring one idea about what the web could look like in 2030. Hand-built, no framework, no build step.">
+<meta property="og:title" content="Twenty-Five Sites — 2030">
+<meta property="og:description" content="Twenty-five self-contained website designs, each exploring one idea about what the web could look like in 2030.">
+<meta property="og:type" content="website">
 <style>
+  /* ---------------------------------------------------------------------
+     An index for twenty-five designs has one job: get out of their way.
+     It is set in one typeface, on one rule, with a single accent used only
+     on hover. Anything more decorative would compete with the work it lists.
+     --------------------------------------------------------------------- */
   :root {
-    --bg: #0c0c0d;
-    --fg: #f2f0ed;
-    --dim: #8a8782;
-    --line: #26262a;
-    --hover: #15151a;
+    color-scheme: light dark;
+    --bg: #faf9f7;
+    --fg: #16151a;
+    --dim: #6b6862;
+    --line: #e3e0db;
+    --hover: #f1efeb;
+    --rule: #16151a;
   }
-  @media (prefers-color-scheme: light) {
-    :root { --bg:#faf9f7; --fg:#16151a; --dim:#6d6a65; --line:#e2dfda; --hover:#f0eeea; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0c0d; --fg: #f2f0ed; --dim: #8f8c86;
+      --line: #24242a; --hover: #141419; --rule: #f2f0ed;
+    }
   }
+
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 400 16px/1.5 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font: 400 16px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  header {
-    padding: 12vh 6vw 6vh;
-    border-bottom: 1px solid var(--line);
+
+  .wrap { max-width: 1080px; margin-inline: auto; padding-inline: clamp(20px, 6vw, 56px); }
+
+  header { padding-block: clamp(64px, 14vh, 160px) clamp(40px, 8vh, 88px); }
+
+  .eyebrow {
+    margin: 0 0 26px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .72rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--dim);
   }
+
   h1 {
-    margin: 0 0 .4em;
-    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin: 0 0 22px;
+    font-size: clamp(2.2rem, 7vw, 4.2rem);
     font-weight: 500;
-    letter-spacing: -.03em;
+    letter-spacing: -.035em;
+    line-height: 1.02;
+    text-wrap: balance;
   }
-  header p { margin: 0; color: var(--dim); max-width: 46ch; }
-  ul { list-style: none; margin: 0; padding: 0; }
-  li { border-bottom: 1px solid var(--line); }
-  a {
+
+  header p { margin: 0; max-width: 58ch; color: var(--dim); font-size: 1.02rem; }
+
+  .counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 34px;
+    margin-top: 34px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .74rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .row { border-bottom: 1px solid var(--line); }
+
+  .row a {
     display: grid;
-    grid-template-columns: 3.5rem 1fr;
-    gap: 0 1.5rem;
+    grid-template-columns: 3.2rem minmax(0, 1fr) auto;
     align-items: baseline;
-    padding: 1.4rem 6vw;
+    gap: 4px 22px;
+    padding: 20px 16px 20px 0;
     color: inherit;
     text-decoration: none;
-    transition: background .15s ease;
+    transition: background-color .18s ease, padding-left .18s ease;
   }
-  a:hover, a:focus-visible { background: var(--hover); }
-  a:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
-  .num { color: var(--dim); font-variant-numeric: tabular-nums; font-size: .875rem; }
-  .name { font-size: 1.1rem; letter-spacing: -.01em; }
-  .desc { grid-column: 2; color: var(--dim); font-size: .9rem; margin-top: .2rem; }
-  footer { padding: 6vh 6vw 10vh; color: var(--dim); font-size: .85rem; }
-  @media (max-width: 34rem) {
-    a { grid-template-columns: 2.5rem 1fr; gap: 0 1rem; }
+
+  .row a:hover, .row a:focus-visible {
+    background: var(--hover);
+    padding-left: 16px;
+    outline: none;
+  }
+
+  .row a:focus-visible { box-shadow: inset 3px 0 0 var(--rule); }
+
+  .idx {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .78rem;
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .name { font-size: 1.06rem; font-weight: 500; letter-spacing: -.012em; }
+
+  .tag {
+    grid-column: 2;
+    color: var(--dim);
+    font-size: .92rem;
+    max-width: 62ch;
+  }
+
+  .go { grid-row: 1; grid-column: 3; color: var(--dim); transition: transform .18s ease; }
+  .row a:hover .go { transform: translateX(4px); }
+
+  footer {
+    padding-block: 56px 88px;
+    color: var(--dim);
+    font-size: .88rem;
+  }
+
+  footer a { color: var(--fg); }
+
+  @media (max-width: 620px) {
+    .row a { grid-template-columns: 2.6rem minmax(0, 1fr); }
+    .go { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row a, .go { transition: none; }
   }
 </style>
 </head>
 <body>
-<header>
-  <h1>Twenty-Five Sites</h1>
-  <p>A set of self-contained pages built with HTML, CSS and JavaScript. Each one stands alone — open any of them.</p>
-</header>
 
-<ul>
-  <li><a href="01-aurelia/"><span class="num">01</span><span class="name">AURELIA</span><span class="desc">Parfums de Lumière</span></a></li>
-  <li><a href="02-grotesk/"><span class="num">02</span><span class="name">GROTESK™</span><span class="desc">Type is infrastructure</span></a></li>
-  <li><a href="03-strata/"><span class="num">03</span><span class="name">STRATA</span><span class="desc">The gallery that paints again</span></a></li>
-  <li><a href="04-deepfield/"><span class="num">04</span><span class="name">DEEPFIELD STATION</span><span class="desc">DSS-4 deep-space console</span></a></li>
-  <li><a href="05-ma/"><span class="num">05</span><span class="name">間 MA</span><span class="desc">Paper &amp; ink, Kyoto</span></a></li>
-  <li><a href="06-descent/"><span class="num">06</span><span class="name">DESCENT</span><span class="desc">10,935 metres in one held breath</span></a></li>
-  <li><a href="07-chromatic/"><span class="num">07</span><span class="name">CHROMATIC.SYS</span><span class="desc">The graphics driver for dreams</span></a></li>
-  <li><a href="08-meridian/"><span class="num">08</span><span class="name">MERIDIAN</span><span class="desc">Issue 04: On Precision</span></a></li>
-  <li><a href="09-corpus/"><span class="num">09</span><span class="name">CORPUS</span><span class="desc">A particle universe</span></a></li>
-  <li><a href="10-verdant/"><span class="num">10</span><span class="name">VERDANT</span><span class="desc">Botanical atelier &amp; seed archive</span></a></li>
-  <li><a href="11-kowloon/"><span class="num">11</span><span class="name">KOWLOON NIGHTS 九龍夜市</span><span class="desc">A neon night-market street</span></a></li>
-  <li><a href="12-fold/"><span class="num">12</span><span class="name">FOLD</span><span class="desc">The smallest mountain</span></a></li>
-  <li><a href="13-oscillate/"><span class="num">13</span><span class="name">OSCILLATE</span><span class="desc">OSC-13 polyphonic wave unit</span></a></li>
-  <li><a href="14-noir/"><span class="num">14</span><span class="name">NOIR</span><span class="desc">Collection Nº14, “Absence”</span></a></li>
-  <li><a href="15-almanac/"><span class="num">15</span><span class="name">ALMANAC</span><span class="desc">An atlas of the visible sky</span></a></li>
-  <li><a href="16-bauhaus/"><span class="num">16</span><span class="name">BAUHAUS SPIELPLATZ</span><span class="desc">Komposition ist Spiel</span></a></li>
-  <li><a href="17-reverie/"><span class="num">17</span><span class="name">REVERIE</span><span class="desc">A hotel that exists only while you sleep</span></a></li>
-  <li><a href="18-verse/"><span class="num">18</span><span class="name">VERSE</span><span class="desc">Kinetic poetry, words with physics</span></a></li>
-  <li><a href="19-hearth/"><span class="num">19</span><span class="name">HEARTH</span><span class="desc">A village you can put to sleep</span></a></li>
-  <li><a href="20-gatsby/"><span class="num">20</span><span class="name">THE GATSBY GRAND</span><span class="desc">A hotel, est. 1928</span></a></li>
-  <li><a href="21-vapor/"><span class="num">21</span><span class="name">VAPOR</span><span class="desc">Kepler-1649c relay weather console</span></a></li>
-  <li><a href="22-riot/"><span class="num">22</span><span class="name">RIOT PRESS</span><span class="desc">NOISE 013 — a zine that hates your algorithm</span></a></li>
-  <li><a href="23-stillness/"><span class="num">23</span><span class="name">STILLNESS</span><span class="desc">A breathing instrument</span></a></li>
-  <li><a href="24-relic/"><span class="num">24</span><span class="name">RELIC</span><span class="desc">Museum of vanished sounds</span></a></li>
-  <li><a href="25-machina/"><span class="num">25</span><span class="name">MACHINA</span><span class="desc">An instrument for diving into the Mandelbrot set</span></a></li>
-</ul>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Open source &middot; 25 of 25 complete</p>
+    <h1>Twenty-five ways a website could look in 2030.</h1>
+    <p>
+      Each one is a self-contained design exploring a single idea, built by hand with no
+      framework and no build step. Open any of them and read the source: what you see is
+      the whole of it.
+    </p>
+    <p class="counts">
+      <span>25 sites</span>
+      <span>No framework</span>
+      <span>No build step</span>
+      <span>MIT licensed</span>
+    </p>
+  </header>
 
-<footer>Best on a desktop browser with sound on. Several sites use audio and motion.</footer>
+  <main>
+    <ul>
+    <li class="row">
+      <a href="./01-aurelia/" >
+        <span class="idx">01</span>
+        <span class="name">AURELIA</span>
+        <span class="tag">La lumière, à fleur de peau.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./02-grotesk/" >
+        <span class="idx">02</span>
+        <span class="name">GROTESK™</span>
+        <span class="tag">Type is infrastructure. Decoration is debt.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./03-strata/" >
+        <span class="idx">03</span>
+        <span class="name">STRATA</span>
+        <span class="tag">Every visit, the gallery paints again</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./04-deepfield/" >
+        <span class="idx">04</span>
+        <span class="name">DEEPFIELD STATION</span>
+        <span class="tag">All systems nominal. Until they aren&#x27;t.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./05-ma/" >
+        <span class="idx">05</span>
+        <span class="name">間 MA</span>
+        <span class="tag">The pause between ink and paper</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./06-descent/" >
+        <span class="idx">06</span>
+        <span class="name">Descent</span>
+        <span class="tag">10,935 metres, one held breath.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./07-chromatic/" >
+        <span class="idx">07</span>
+        <span class="name">CHROMATIC.SYS</span>
+        <span class="tag">The graphics driver for dreams.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./08-meridian/" >
+        <span class="idx">08</span>
+        <span class="name">MERIDIAN</span>
+        <span class="tag">Nothing on this page is an accident.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./09-corpus/" >
+        <span class="idx">09</span>
+        <span class="name">CORPUS</span>
+        <span class="tag">One body, four formations, always remembers its shape.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./10-verdant/" >
+        <span class="idx">10</span>
+        <span class="name">VERDANT — Botanical Atelier &amp;amp; Seed Archi</span>
+        <span class="tag">VERDANT is a working archive of open-pollinated seed — collected by hand, dried </span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./11-kowloon/" >
+        <span class="idx">11</span>
+        <span class="name">KOWLOON NIGHTS · 九龍夜市 — a neon night-market </span>
+        <span class="tag">A neon cyberpunk night-market street built in pure CSS 3D — rain on asphalt, hum</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./12-fold/" >
+        <span class="idx">12</span>
+        <span class="name">FOLD — The Smallest Mountain</span>
+        <span class="tag">A hand-cut paper pop-up storybook in five spreads. Scroll to raise each scene fr</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./13-oscillate/" >
+        <span class="idx">13</span>
+        <span class="name">OSCILLATE</span>
+        <span class="tag">Two detuned oscillators. One filter arbitrates.</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./14-noir/" >
+        <span class="idx">14</span>
+        <span class="name">NOIR — Collection Nº14, &quot;Absence&quot;</span>
+        <span class="tag">NOIR presents Collection Nº14, &#x27;Absence&#x27; — a monochrome lookbook of six looks in</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./15-almanac/" >
+        <span class="idx">15</span>
+        <span class="name">ALMANAC — An Atlas of the Visible Sky</span>
+        <span class="tag">ALMANAC is a hand-drawn astronomical atlas: a live orrery of true relative orbit</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./16-bauhaus/" >
+        <span class="idx">16</span>
+        <span class="name">BAUHAUS SPIELPLATZ — Komposition ist Spiel</span>
+        <span class="tag">A Bauhaus playground where composition is interactive: drag hand-physics geometr</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./17-reverie/" >
+        <span class="idx">17</span>
+        <span class="name">REVERIE — a hotel that exists only while you</span>
+        <span class="tag">REVERIE is a dreamcore hotel reachable only by falling asleep: a floating doorfr</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./18-verse/" >
+        <span class="idx">18</span>
+        <span class="name">VERSE — kinetic poetry, words with physics</span>
+        <span class="tag">VERSE is four original short poems about impermanence, each governed by its own </span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./19-hearth/" >
+        <span class="idx">19</span>
+        <span class="name">Hearth — a village you can put to sleep</span>
+        <span class="tag">Hearth is a hand-coded isometric village in pure CSS 3D: eight roofs, a turning </span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./20-gatsby/" >
+        <span class="idx">20</span>
+        <span class="name">THE GATSBY GRAND — A Hotel, Est. 1928</span>
+        <span class="tag">Twenty-two storeys of brass and velvet above the avenue. Self-drawing art-deco l</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./21-vapor/" >
+        <span class="idx">21</span>
+        <span class="name">VAPOR — Kepler-1649c Relay Weather Console</span>
+        <span class="tag">VAPOR: a live glassmorphic weather console for the Kepler-1649c relay. Rain, sno</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./22-riot/" >
+        <span class="idx">22</span>
+        <span class="name">RIOT PRESS — NOISE 013 (a zine that hates yo</span>
+        <span class="tag">RIOT PRESS presents NOISE 013: an anti-design punk zine built by hand — ransom-l</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./23-stillness/" >
+        <span class="idx">23</span>
+        <span class="name">STILLNESS — a breathing instrument</span>
+        <span class="tag">STILLNESS is a full-viewport hand-coded WebGL gradient that breathes with you: a</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./24-relic/" >
+        <span class="idx">24</span>
+        <span class="name">RELIC — Museum of Vanished Sounds</span>
+        <span class="tag">RELIC is a museum wing for six everyday sounds the world quietly deleted — the r</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    <li class="row">
+      <a href="./25-machina/" >
+        <span class="idx">25</span>
+        <span class="name">MACHINA — an instrument for diving into the </span>
+        <span class="tag">MACHINA is a hand-written canvas renderer that auto-plays a slow, mathematically</span>
+        <span class="go" aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+    </ul>
+  </main>
+
+  <footer>
+    <p>
+      Source on <a href="https://github.com/kavatana/twenty-five-sites">GitHub</a>.
+      Take anything here that is useful to you.
+    </p>
+  </footer>
+</div>
+
 </body>
 </html>

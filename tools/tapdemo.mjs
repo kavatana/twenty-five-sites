@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 import http from 'http'; import fs from 'fs'; import path from 'path';
 
 const FIXED = process.argv.includes('--fixed');
-const OUT = '/Users/user/Vibe-Coding/Claude-Code-Video/exports';
+const OUT = process.env.DEMO_EXPORT_DIR || join(ROOT, 'exports');
 const ROOT = path.join(process.cwd(), 'public');
 const MIME = {'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.mp3':'audio/mpeg'};
 
