@@ -1,5 +1,79 @@
 # BAUHAUS SPIELPLATZ — passes
 
+## Pass 2 — 2026-07-12
+
+Fresh-eyes pass focused on motion & interaction. Ran the snap harness and
+diffed `desktop.png` against `desktop-late.png` (t+3s) pixel-by-pixel
+(`ImageChops.difference` + histogram threshold) instead of eyeballing —
+only **1.6% of pixels** in the stage band differed between the two
+captures. For a site whose entire pitch is "continuous ambient motion so
+a screen recording looks alive," that's a fail hiding behind two
+screenshots that *look* similar enough to wave through. Five real fixes:
+
+- **Ambient drift was nearly invisible.** The idle sinusoidal bob was
+  3–7px over a 12–18s period — a couple of frames of a screen recording
+  would show essentially zero movement. Raised amplitude to 9–19px,
+  shortened the period to roughly 4–8s, and added a second, independent
+  low-amplitude "breathing" scale oscillation (±4.5%) so shapes now
+  visibly drift, rotate and pulse at any moment, not just while dragged.
+  Re-measured the same way post-fix: **8.6%** of pixels in the stage band
+  now differ between two independent loads 3s apart — a 5–6x improvement,
+  confirmed by eye in the new `-desktop`/`-desktop-late` pair.
+- **No entrance choreography — the site's biggest missed "wow" beat.**
+  Shapes previously just appeared at their final position on load, with
+  zero motion. Added `entranceAssemble()`: on first paint every shape
+  starts flung out beyond the stage edge (in the direction of its home
+  position, so it always reads as "arriving") and springs into place
+  through a shuffled cascade (60ms stagger, 820ms `easeOutBack`),
+  reusing the existing tween system. The Komposition now visibly
+  *assembles itself* out of chaos on load — literally dramatizing the
+  hero copy ("watch it argue its way back into balance") before the
+  visitor touches anything. Skipped entirely under reduced-motion (page
+  simply paints at rest, per spec).
+- **No scroll-linked motion anywhere**, despite the brief calling it out
+  specifically. Added a cheap rAF-gated scroll listener that ties the
+  manifesto band's huge type rotation/shift directly to its position in
+  the viewport (`rotate(-3.2deg)` at rest, swinging ±5deg as it crosses
+  center, with a small horizontal shift) — the "Ornament ist Verbrechen"
+  line now visibly unfolds under the reader's own scroll instead of just
+  fading in once via `IntersectionObserver`. Falls back to the static
+  CSS rotation under reduced-motion.
+- **Draggable shapes had zero pre-touch affordance.** Cursor changed to
+  `grab` but nothing else signalled "this is interactive" before you
+  committed to a drag. Introduced a `--lift` custom property per shape
+  driving its drop-shadow offset (9px at rest → 14px on hover/focus →
+  3px while dragging) plus a matching `.fill` scale, all CSS-transitioned
+  — the shadow itself now performs the "about to lift off the page /
+  pressed flat" feedback. Also gave the stage background its own
+  hand-rolled SVG crosshair cursor (data-URI, not the shape's grab
+  cursor) so hovering empty canvas reads as a precision drafting tool,
+  reinforcing "precise, geometric" from the brief.
+- **Form Folgt Funktion cards were dead until clicked**, and the reset/
+  zufall "stamp" buttons had no release feedback beyond the held
+  `:active` state. Gave the wheel/window/arrow demo icons small
+  continuous idle keyframes (rock/tilt/bob, 2.6–4.4s loops, distinct
+  from and overridden by the full on-click demo) so the Form section
+  isn't inert between hero and posters. Added a literal stamp "thud" —
+  a squash-and-settle keyframe fired via class-toggle on click — to
+  Reset/Zufall for tactile release feedback. Both respect
+  `prefers-reduced-motion` (idle keyframes and thud animation removed
+  entirely).
+
+Verified with `node tools/snap.mjs /16-bauhaus/ shots/16-p2v2 3500` — clean,
+zero console/page/request errors — plus a scripted Playwright pass
+exercising drag, Reset, Zufall, all three toggle cards, all three poster
+regenerations, and full-page scroll (triggering the new parallax and
+reveal code paths), and a separate run with `reducedMotion:'reduce'`
+confirming the static/legible fallback and continued zero console errors.
+Full-page mobile/desktop scroll captures also re-checked: the sticky
+header appearing mid-page in the *stitched* full-page screenshot is a
+known Playwright full-page-screenshot artifact (sticky elements render
+pinned in each captured tile) — confirmed not a real bug by screenshotting
+the same scroll position without `fullPage`, where the header is only in
+the normal top bar. No mobile composition issues found beyond that
+artifact; hero, manifesto, form, poster and footer sections all read as
+intentionally composed at 390×844.
+
 ## Build — 2026-07-18
 
 **Concept.** Site 16 of 25: BAUHAUS SPIELPLATZ, a Bauhaus playground where

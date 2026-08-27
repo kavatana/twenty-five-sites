@@ -72,4 +72,30 @@
   document.addEventListener("visibilitychange", function () {
     document.body.classList.toggle("paused", document.hidden);
   });
+
+  /* --- diorama tilt: the open spread leans gently toward the cursor, as
+     though you were tipping the whole pop-up book to peer into it. This
+     is purely event-driven (no rAF loop runs while the mouse is still)
+     and rAF-throttled while it does move; fine pointers only, and never
+     under prefers-reduced-motion. --- */
+  var fine = window.matchMedia("(pointer: fine)");
+  if (fine.matches && !reduced.matches) {
+    var root = document.documentElement;
+    var nx = 0, ny = 0, queued = false;
+    var MAX_X = 3.4, MAX_Y = 2.4; /* degrees */
+    function applyTilt() {
+      queued = false;
+      root.style.setProperty("--tiltX", (nx * MAX_X).toFixed(2));
+      root.style.setProperty("--tiltY", (ny * MAX_Y).toFixed(2));
+    }
+    window.addEventListener("pointermove", function (e) {
+      nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (!queued) { queued = true; requestAnimationFrame(applyTilt); }
+    }, { passive: true });
+    document.addEventListener("pointerleave", function () {
+      nx = 0; ny = 0;
+      if (!queued) { queued = true; requestAnimationFrame(applyTilt); }
+    });
+  }
 })();

@@ -120,26 +120,27 @@
       html: '<span class="zh">金碗麺家</span><small>GOLDEN BOWL</small>' },
     { x: 385, y: 818, z: 258, cls: "tone-cyan-s vert", fs: 30,
       html: '<span class="zh">蘭花酒吧</span>' },
-    { x: 985, y: 930, z: 224, cls: "tone-pink-s", fs: 36,
-      html: 'OK<span class="zh">電器</span><small>ELECTRIC</small>' },
-    { x: 1268, y: 880, z: 150, cls: "tone-red-s vert", fs: 26,
+    { id: "sign-electric", x: 985, y: 930, z: 224, cls: "tone-pink-s", fs: 36,
+      html: 'OK<span class="zh">電器</span><small>ELECTRI<span class="dying">C</span></small>' },
+    { id: "sign-pharmacy", x: 1268, y: 880, z: 150, cls: "tone-red-s vert", fs: 26,
       html: '<span class="zh">藥</span>' },
-    { x: 1400, y: 1040, z: 118, cls: "tone-yellow-s", fs: 18,
+    { id: "sign-leaf", x: 1400, y: 1040, z: 118, cls: "tone-yellow-s", fs: 18,
       html: '<span class="zh">茶</span> MIDNIGHT&nbsp;LEAF<span class="dying">·</span>' },
-    { x: 1500, y: 930, z: 168, cls: "tone-pink-s vert", fs: 24,
+    { id: "sign-fortune", x: 1500, y: 930, z: 168, cls: "tone-pink-s vert", fs: 24,
       html: '<span class="zh">占卜</span>' },
     { x: 655, y: 1005, z: 132, cls: "tone-pink-s", fs: 26,
       html: '<span class="zh">麺</span>' },
-    { x: 1180, y: 1000, z: 104, cls: "tone-cyan-s", fs: 15,
+    { id: "sign-keys", x: 1180, y: 1000, z: 104, cls: "tone-cyan-s", fs: 15,
       html: '<span class="zh">鎖匙</span> KEYS' },
   ];
   for (const s of SIGNS) {
     const el = document.createElement("div");
+    if (s.id) el.id = s.id;
     el.className = "sign " + s.cls;
     el.style.fontSize = s.fs + "px";
     el.style.transform =
       `translate3d(${s.x}px,${s.y}px,${s.z}px) rotateZ(45deg) rotateX(-60deg) translate(-50%,-50%)`;
-    el.style.animationDelay = (-rnd() * 3).toFixed(2) + "s";
+    el.style.animationDelay = (-rnd() * 3).toFixed(2) + "s, " + (-rnd() * 6).toFixed(2) + "s";
     el.innerHTML = s.html;
     world.appendChild(el);
   }
@@ -194,8 +195,29 @@
     el.style.setProperty("--sl", v.sl);
   });
 
-  /* ───────── ambient ignite — one stall wakes at a time ───────── */
+  /* ───────── directory entrance — cards ignite in on scroll, staggered ───────── */
   const cards = [...document.querySelectorAll(".card")];
+  if (cards.length) {
+    if (REDUCED) {
+      cards.forEach((c) => c.classList.add("in"));
+    } else {
+      const entryIO = new IntersectionObserver(
+        (entries) => {
+          for (const en of entries) {
+            if (!en.isIntersecting) continue;
+            const i = cards.indexOf(en.target);
+            en.target.style.transitionDelay = (i % 3) * 0.1 + "s";
+            en.target.classList.add("in");
+            entryIO.unobserve(en.target);
+          }
+        },
+        { threshold: 0.22, rootMargin: "0px 0px -8% 0px" }
+      );
+      cards.forEach((c) => entryIO.observe(c));
+    }
+  }
+
+  /* ───────── ambient ignite — one stall wakes at a time ───────── */
   if (cards.length && !REDUCED) {
     const order = [2, 4, 0, 5, 1, 3];
     let ci = 0;
@@ -237,7 +259,7 @@
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = W < 720 ? 65 : 150;
+    const n = W < 720 ? 85 : 190;
     drops = Array.from({ length: n }, () => newDrop(true));
   }
 
@@ -246,9 +268,10 @@
     return {
       x: Math.random() * (W + 200) - 100,
       y: anywhere ? Math.random() * H : -30 - Math.random() * 120,
-      len: 9 + deep * 17,
-      spd: 9 + deep * 13,
-      a: 0.10 + deep * 0.22,
+      len: 9 + deep * 18,
+      spd: 10 + deep * 15,
+      a: 0.14 + deep * 0.3,
+      lw: 0.9 + deep * 0.7,
       floor: H * (0.62 + Math.random() * 0.36),
     };
   }
@@ -259,8 +282,8 @@
     ctx.clearRect(0, 0, W, H);
     ctx.lineCap = "round";
     for (const d of drops) {
-      ctx.strokeStyle = `rgba(170,200,255,${d.a})`;
-      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = `rgba(180,208,255,${d.a})`;
+      ctx.lineWidth = d.lw;
       ctx.beginPath();
       ctx.moveTo(d.x, d.y);
       ctx.lineTo(d.x - d.len * SLANT, d.y - d.len);
@@ -268,8 +291,8 @@
       d.y += d.spd;
       d.x += d.spd * SLANT;
       if (d.y >= d.floor) {
-        if (splashes.length < 42 && Math.random() < 0.6)
-          splashes.push({ x: d.x, y: d.floor, r: 1, a: 0.4 });
+        if (splashes.length < 56 && Math.random() < 0.68)
+          splashes.push({ x: d.x, y: d.floor, r: 1, a: 0.44 });
         Object.assign(d, newDrop(false));
       }
     }
@@ -299,9 +322,28 @@
     }
   }
 
-  /* ───────── camera: cursor parallax + ambient drift ───────── */
+  /* ───────── custom cursor — a neon dot that trails the pointer ───────── */
+  const finePointer = matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const cursorGlow = document.getElementById("cursorGlow");
+  let mx = innerWidth / 2, my = innerHeight / 2, curX = mx, curY = my;
+  if (finePointer && !REDUCED) {
+    hero.classList.add("has-cursor");
+    hero.addEventListener("pointermove", (e) => {
+      mx = e.clientX; my = e.clientY;
+      cursorGlow.style.opacity = "1";
+    });
+    hero.addEventListener("pointerleave", () => { cursorGlow.style.opacity = "0"; });
+    hero.addEventListener("pointerenter", (e) => { curX = mx = e.clientX; curY = my = e.clientY; });
+    document.querySelectorAll(".mast-cta").forEach((el) => {
+      el.addEventListener("pointerenter", () => cursorGlow.classList.add("cta"));
+      el.addEventListener("pointerleave", () => cursorGlow.classList.remove("cta"));
+    });
+  }
+
+  /* ───────── camera: cursor parallax + ambient drift + scroll dolly ───────── */
   let tx = 0, ty = 0, cx = 0, cy = 0;   // target / current cursor influence
   let heroVisible = true;
+  let scrollP = 0;                     // 0→1 as the hero scrolls out of frame
 
   hero.addEventListener("pointermove", (e) => {
     const r = hero.getBoundingClientRect();
@@ -315,9 +357,16 @@
     { threshold: 0.02 }
   ).observe(hero);
 
+  addEventListener("scroll", () => {
+    const span = Math.max(1, hero.offsetHeight * 0.82);
+    scrollP = Math.min(1, Math.max(0, scrollY / span));
+  }, { passive: true });
+
   const scaleOf = () =>
     parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--scale")) || 1;
   let scale = 1;
+  const masthead = document.querySelector(".masthead");
+  const tickerEl = document.querySelector(".ticker");
 
   function frame(t) {
     requestAnimationFrame(frame);
@@ -325,13 +374,24 @@
     const s = t / 1000;
     cx += (tx - cx) * 0.045;
     cy += (ty - cy) * 0.045;
-    const ax = Math.sin(s * 0.21) * 1.1;          // ambient degrees
-    const az = Math.cos(s * 0.13) * 1.4;
-    const dx = Math.sin(s * 0.09) * 14;           // ambient drift px
+    curX += (mx - curX) * 0.14;
+    curY += (my - curY) * 0.14;
+    const ax = Math.sin(s * 0.21) * 1.7;          // ambient degrees — deliberately visible
+    const az = Math.cos(s * 0.13) * 2.1;
+    const dx = Math.sin(s * 0.09) * 20;           // ambient drift px
+    const dolly = 1 + scrollP * 0.16;             // the street pulls closer as you scroll in
     world.style.transform =
-      `rotateX(${60 + ax + cy * 1.6}deg) rotateZ(${-45 + az + cx * 1.8}deg) scale(${scale})`;
+      `rotateX(${60 + ax + cy * 1.6}deg) rotateZ(${-45 + az + cx * 1.8}deg) scale(${scale * dolly})`;
     rig.style.transform =
-      `translate3d(${dx - cx * 26}px,${Math.cos(s * 0.11) * 8 - cy * 18}px,0)`;
+      `translate3d(${dx - cx * 26}px,${Math.cos(s * 0.11) * 10 - cy * 18 - scrollP * 90}px,0)`;
+    if (masthead) {
+      masthead.style.opacity = String(Math.max(0, 1 - scrollP * 1.7));
+      masthead.style.transform = `translateY(${-scrollP * 52}px)`;
+    }
+    if (tickerEl) tickerEl.style.opacity = String(Math.max(0, 1 - scrollP * 2.4));
+    if (finePointer) {
+      cursorGlow.style.transform = `translate3d(${curX}px,${curY}px,0)`;
+    }
     drawRain();
   }
 

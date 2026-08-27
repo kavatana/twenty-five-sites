@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.goto('http://localhost:4173/15-almanac/guide/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const h = await page.evaluate(() => document.body.scrollHeight);
+await page.setViewportSize({width:1440, height:h});
+await page.waitForTimeout(500);
+await page.screenshot({ path: 'shots/15-guide-full.png', fullPage:true });
+await browser.close();

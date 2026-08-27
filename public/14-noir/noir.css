@@ -114,6 +114,14 @@ a{ color: inherit; }
    printed colophon (footer) is on screen it says the same thing without a
    floating chip sitting on top of it, so the marks stand down. */
 html.footer-in-view .corner{ opacity: 0; }
+/* corner-bl/br ("Collection Nº14 — Absence", "MMXXVI") are front-matter —
+   like a slipcase stamp, they belong on the cover. Everywhere past it, real
+   copy (look captions, the manifesto pull-word) passes directly through
+   that same fixed bottom band on scroll, and an opaque chip sitting on top
+   of it was hiding words, not framing them. corner-tr keeps orienting the
+   reader (it's the one job a running folio can't drop); these two step
+   aside until the cover returns or the real colophon arrives. */
+html.away-from-cover .corner-bl, html.away-from-cover .corner-br{ opacity: 0; }
 .corner b{ color: var(--paper); font-weight: 600; }
 .corner-tl{ top: 18px; left: 18px; border-bottom: .5px solid var(--paper-22); }
 .corner-tr{ top: 18px; right: 18px; text-align: right; border-bottom: .5px solid var(--paper-22); }

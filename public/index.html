@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>2030 — Twenty-Five Sites</title>
+<style>
+  :root {
+    --bg: #0c0c0d;
+    --fg: #f2f0ed;
+    --dim: #8a8782;
+    --line: #26262a;
+    --hover: #15151a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#faf9f7; --fg:#16151a; --dim:#6d6a65; --line:#e2dfda; --hover:#f0eeea; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.5 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 12vh 6vw 6vh;
+    border-bottom: 1px solid var(--line);
+  }
+  h1 {
+    margin: 0 0 .4em;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -.03em;
+  }
+  header p { margin: 0; color: var(--dim); max-width: 46ch; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { border-bottom: 1px solid var(--line); }
+  a {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 0 1.5rem;
+    align-items: baseline;
+    padding: 1.4rem 6vw;
+    color: inherit;
+    text-decoration: none;
+    transition: background .15s ease;
+  }
+  a:hover, a:focus-visible { background: var(--hover); }
+  a:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+  .num { color: var(--dim); font-variant-numeric: tabular-nums; font-size: .875rem; }
+  .name { font-size: 1.1rem; letter-spacing: -.01em; }
+  .desc { grid-column: 2; color: var(--dim); font-size: .9rem; margin-top: .2rem; }
+  footer { padding: 6vh 6vw 10vh; color: var(--dim); font-size: .85rem; }
+  @media (max-width: 34rem) {
+    a { grid-template-columns: 2.5rem 1fr; gap: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Twenty-Five Sites</h1>
+  <p>A set of self-contained pages built with HTML, CSS and JavaScript. Each one stands alone — open any of them.</p>
+</header>
+
+<ul>
+  <li><a href="01-aurelia/"><span class="num">01</span><span class="name">AURELIA</span><span class="desc">Parfums de Lumière</span></a></li>
+  <li><a href="02-grotesk/"><span class="num">02</span><span class="name">GROTESK™</span><span class="desc">Type is infrastructure</span></a></li>
+  <li><a href="03-strata/"><span class="num">03</span><span class="name">STRATA</span><span class="desc">The gallery that paints again</span></a></li>
+  <li><a href="04-deepfield/"><span class="num">04</span><span class="name">DEEPFIELD STATION</span><span class="desc">DSS-4 deep-space console</span></a></li>
+  <li><a href="05-ma/"><span class="num">05</span><span class="name">間 MA</span><span class="desc">Paper &amp; ink, Kyoto</span></a></li>
+  <li><a href="06-descent/"><span class="num">06</span><span class="name">DESCENT</span><span class="desc">10,935 metres in one held breath</span></a></li>
+  <li><a href="07-chromatic/"><span class="num">07</span><span class="name">CHROMATIC.SYS</span><span class="desc">The graphics driver for dreams</span></a></li>
+  <li><a href="08-meridian/"><span class="num">08</span><span class="name">MERIDIAN</span><span class="desc">Issue 04: On Precision</span></a></li>
+  <li><a href="09-corpus/"><span class="num">09</span><span class="name">CORPUS</span><span class="desc">A particle universe</span></a></li>
+  <li><a href="10-verdant/"><span class="num">10</span><span class="name">VERDANT</span><span class="desc">Botanical atelier &amp; seed archive</span></a></li>
+  <li><a href="11-kowloon/"><span class="num">11</span><span class="name">KOWLOON NIGHTS 九龍夜市</span><span class="desc">A neon night-market street</span></a></li>
+  <li><a href="12-fold/"><span class="num">12</span><span class="name">FOLD</span><span class="desc">The smallest mountain</span></a></li>
+  <li><a href="13-oscillate/"><span class="num">13</span><span class="name">OSCILLATE</span><span class="desc">OSC-13 polyphonic wave unit</span></a></li>
+  <li><a href="14-noir/"><span class="num">14</span><span class="name">NOIR</span><span class="desc">Collection Nº14, “Absence”</span></a></li>
+  <li><a href="15-almanac/"><span class="num">15</span><span class="name">ALMANAC</span><span class="desc">An atlas of the visible sky</span></a></li>
+  <li><a href="16-bauhaus/"><span class="num">16</span><span class="name">BAUHAUS SPIELPLATZ</span><span class="desc">Komposition ist Spiel</span></a></li>
+  <li><a href="17-reverie/"><span class="num">17</span><span class="name">REVERIE</span><span class="desc">A hotel that exists only while you sleep</span></a></li>
+  <li><a href="18-verse/"><span class="num">18</span><span class="name">VERSE</span><span class="desc">Kinetic poetry, words with physics</span></a></li>
+  <li><a href="19-hearth/"><span class="num">19</span><span class="name">HEARTH</span><span class="desc">A village you can put to sleep</span></a></li>
+  <li><a href="20-gatsby/"><span class="num">20</span><span class="name">THE GATSBY GRAND</span><span class="desc">A hotel, est. 1928</span></a></li>
+  <li><a href="21-vapor/"><span class="num">21</span><span class="name">VAPOR</span><span class="desc">Kepler-1649c relay weather console</span></a></li>
+  <li><a href="22-riot/"><span class="num">22</span><span class="name">RIOT PRESS</span><span class="desc">NOISE 013 — a zine that hates your algorithm</span></a></li>
+  <li><a href="23-stillness/"><span class="num">23</span><span class="name">STILLNESS</span><span class="desc">A breathing instrument</span></a></li>
+  <li><a href="24-relic/"><span class="num">24</span><span class="name">RELIC</span><span class="desc">Museum of vanished sounds</span></a></li>
+  <li><a href="25-machina/"><span class="num">25</span><span class="name">MACHINA</span><span class="desc">An instrument for diving into the Mandelbrot set</span></a></li>
+</ul>
+
+<footer>Best on a desktop browser with sound on. Several sites use audio and motion.</footer>
+</body>
+</html>

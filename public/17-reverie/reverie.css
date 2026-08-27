@@ -21,7 +21,7 @@
   --disp: "Italiana", "Iowan Old Style", Georgia, serif;
   --body: "Mulish", system-ui, -apple-system, sans-serif;
 
-  --fs-hero: clamp(2.6rem, 1.5rem + 5.2vw, 6.2rem);
+  --fs-hero: clamp(2.4rem, 1.4rem + 4.4vw, 5.4rem);
   --fs-h2: clamp(1.9rem, 1.35rem + 2.6vw, 3.4rem);
   --fs-h3: clamp(1.25rem, 1.05rem + .9vw, 1.7rem);
   --fs-lede: clamp(1.02rem, .92rem + .4vw, 1.22rem);
@@ -78,14 +78,15 @@ img, svg { display: block; max-width: 100%; }
 
 .cloud {
   position: absolute;
-  filter: blur(13px);
+  filter: blur(20px);
+  border-radius: 50%;
   background:
-    radial-gradient(ellipse at 50% 88%, rgba(139, 126, 175, .4), rgba(139, 126, 175, 0) 66%),
-    radial-gradient(circle at 28% 58%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 56%),
-    radial-gradient(circle at 52% 28%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 50%),
-    radial-gradient(circle at 76% 56%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 53%),
-    radial-gradient(circle at 60% 76%, rgba(158, 145, 193, .48), rgba(158, 145, 193, 0) 60%);
-  opacity: .95;
+    radial-gradient(circle at 30% 52%, rgba(255, 255, 255, .98), rgba(255, 255, 255, 0) 40%),
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 72% 50%, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 40%),
+    radial-gradient(circle at 50% 74%, rgba(255, 255, 255, .8), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(ellipse at 50% 100%, rgba(158, 145, 193, .2), rgba(158, 145, 193, 0) 55%);
+  opacity: .85;
   will-change: transform;
 }
 .cloud.c1 { width: 46vw; height: 12vw; top: 8%;  left: -20%; animation: driftA 46s linear infinite, bobA 6s var(--sine) infinite; }
@@ -124,11 +125,11 @@ img, svg { display: block; max-width: 100%; }
 }
 .moon::before, .moon::after {
   content: ""; position: absolute; border-radius: 50%;
-  background: rgba(180, 160, 130, .18);
+  background: radial-gradient(circle at 35% 32%, rgba(180, 160, 130, .22), rgba(180, 160, 130, .05) 72%, transparent);
 }
-.moon::before { width: 22%; height: 22%; top: 22%; left: 24%; }
-.moon::after  { width: 14%; height: 14%; top: 56%; left: 58%; }
-.moon-crater { position: absolute; border-radius: 50%; background: rgba(180, 160, 130, .14); width: 10%; height: 10%; top: 62%; left: 22%; }
+.moon::before { width: 24%; height: 24%; top: 20%; left: 22%; }
+.moon::after  { width: 15%; height: 15%; top: 55%; left: 58%; }
+.moon-crater { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 32%, rgba(180, 160, 130, .18), transparent 72%); width: 11%; height: 11%; top: 62%; left: 22%; }
 
 /* ============ SCROLL PROGRESS ============ */
 
@@ -208,11 +209,13 @@ h1, h2, h3 { font-family: var(--disp); font-weight: 400; letter-spacing: .01em; 
   transform: rotateX(90deg);
 }
 .doorframe::after {
-  content: ""; position: absolute; top: 0; right: -16px; bottom: 0; width: 16px;
+  content: ""; position: absolute; top: 0; right: -22px; bottom: 22%; width: 22px;
+  border-radius: 0 0 10px 10px;
   background: linear-gradient(180deg, var(--blush), var(--sky));
   filter: brightness(.82);
   transform-origin: left center;
   transform: rotateY(90deg);
+  box-shadow: 6px 0 14px -4px rgba(42, 36, 64, .25);
 }
 
 .door-opening {
@@ -250,25 +253,30 @@ h1, h2, h3 { font-family: var(--disp); font-weight: 400; letter-spacing: .01em; 
 }
 @keyframes twinkle { from { opacity: .65; } to { opacity: 1; } }
 
+/* the door's shadow: same silhouette as the doorframe itself, but laid on
+   its side and cast down-and-left into empty air — there is no floor for
+   it to fall on, so it just hangs there, wrong. */
 .door-shadow {
   position: absolute;
-  width: clamp(120px, 15vw, 210px);
-  height: clamp(90px, 11vw, 150px);
-  top: 6%; left: 56%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(42,36,64,.5), rgba(42,36,64,.2) 60%, transparent 78%);
-  filter: blur(15px);
-  transform: rotate(-18deg);
+  width: clamp(190px, 24vw, 340px);
+  height: clamp(300px, 38vw, 520px);
+  top: 8%; left: -6%;
+  border-radius: 8px 8px 130px 130px / 8px 8px 84px 84px;
+  background: linear-gradient(160deg, rgba(42,36,64,.5), rgba(42,36,64,.22) 70%);
+  filter: blur(19px);
+  transform-origin: 30% 20%;
+  transform: rotate(-72deg) scale(.82, .5);
+  opacity: .48;
   animation: shadowDrift 9s var(--sine) infinite;
   z-index: 1;
   pointer-events: none;
 }
 @keyframes shadowDrift {
-  0%, 100% { transform: rotate(-18deg) translate(0, 0) scale(1); opacity: .8; }
-  50%      { transform: rotate(-9deg) translate(1.6vw, 1.2vh) scale(1.08); opacity: .5; }
+  0%, 100% { transform: rotate(-72deg) scale(.82, .5) translate(0, 0); opacity: .48; }
+  50%      { transform: rotate(-66deg) scale(.86, .46) translate(-1vw, 1vh); opacity: .3; }
 }
 
-.hero-copy { max-width: 46rem; }
+.hero-copy { max-width: 54rem; }
 .hero h1 {
   font-size: var(--fs-hero);
   line-height: 1.06;
@@ -402,8 +410,17 @@ h1, h2, h3 { font-family: var(--disp); font-weight: 400; letter-spacing: .01em; 
 .stair-text h2 { font-size: var(--fs-h2); margin-bottom: 1.1rem; }
 .stair-text p { line-height: 1.75; max-width: 32rem; color: var(--ink-dim); }
 
-.stair-stage { position: relative; display: flex; justify-content: center; }
-.stair-svg { width: 100%; max-width: 460px; overflow: visible; }
+.stair-stage { position: relative; display: flex; justify-content: center; align-items: center; }
+.stair-stage::before {
+  content: "";
+  position: absolute;
+  width: min(72vw, 640px); height: min(72vw, 640px);
+  background: radial-gradient(circle, rgba(255, 248, 231, .1), rgba(205, 231, 240, .05) 45%, transparent 72%);
+  filter: blur(4px);
+  animation: glowPulse 8s var(--sine) infinite;
+}
+@keyframes glowPulse { 0%, 100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+.stair-svg { position: relative; width: 100%; max-width: 560px; overflow: visible; }
 .orb {
   filter: drop-shadow(0 0 8px rgba(255, 248, 231, .9)) drop-shadow(0 0 20px rgba(253, 226, 228, .6));
   offset-rotate: 0deg;

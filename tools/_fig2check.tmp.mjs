@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.goto('http://localhost:4173/15-almanac/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+await page.evaluate(() => { document.querySelector('#fig2').scrollIntoView({block:'start'}); });
+await page.waitForTimeout(3000);
+const vals = await page.$$eval('.moon-row .moon-count .n', els => els.map(e => e.textContent));
+console.log(vals);
+await browser.close();

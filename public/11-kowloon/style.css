@@ -13,6 +13,7 @@
   --dim:#9A9DB8;
   --ease-sign: cubic-bezier(.19,1,.22,1);
   --ease-snap: cubic-bezier(.7,-0.2,.25,1.3);
+  --ease-drift: cubic-bezier(.45,0,.55,1);
   --scale: .9;
 }
 
@@ -33,6 +34,42 @@ a:focus-visible, [tabindex]:focus-visible{
   outline:2px solid var(--cyan);
   outline-offset:4px;
   border-radius:2px;
+}
+
+/* ── custom cursor — a neon dot that trails the pointer over the street ── */
+.cursor-glow{
+  position:fixed; left:0; top:0;
+  width:24px; height:24px;
+  margin:-12px 0 0 -12px;
+  border-radius:50%;
+  border:1.5px solid rgba(0,229,255,.85);
+  box-shadow:0 0 10px rgba(0,229,255,.55), inset 0 0 8px rgba(0,229,255,.3);
+  pointer-events:none;
+  z-index:80;
+  opacity:0;
+  will-change:transform;
+  transition:width .4s var(--ease-sign), height .4s var(--ease-sign),
+    margin .4s var(--ease-sign), border-color .4s var(--ease-sign),
+    box-shadow .4s var(--ease-sign), opacity .3s var(--ease-drift);
+}
+.cursor-glow::after{
+  content:"";
+  position:absolute; left:50%; top:50%;
+  width:3px; height:3px;
+  margin:-1.5px 0 0 -1.5px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);
+}
+.cursor-glow.cta{
+  width:56px; height:56px; margin:-28px 0 0 -28px;
+  border-color:rgba(255,227,61,.9);
+  box-shadow:0 0 22px rgba(255,227,61,.6), inset 0 0 14px rgba(255,227,61,.25);
+}
+.hero.has-cursor{ cursor:none; }
+.hero.has-cursor a, .hero.has-cursor [tabindex]{ cursor:none; }
+@media (hover:none), (pointer:coarse){
+  .cursor-glow{ display:none; }
 }
 
 /* ─────────────── HERO ─────────────── */
@@ -179,7 +216,7 @@ a:focus-visible, [tabindex]:focus-visible{
     0 0 14px currentColor,
     inset 0 0 14px rgba(255,255,255,.06);
   text-shadow:0 0 8px currentColor, 0 0 26px currentColor;
-  animation:hum 3.4s ease-in-out infinite;
+  animation:hum 3.4s ease-in-out infinite, sway 6.5s var(--ease-drift) infinite;
 }
 .sign small{
   display:block;
@@ -202,6 +239,15 @@ a:focus-visible, [tabindex]:focus-visible{
 @keyframes hum{
   0%,100%{ filter:brightness(1); }
   50%    { filter:brightness(1.16); }
+}
+
+/* independent rotate/translate compose with the billboard `transform` set
+   inline by JS, so a hung sign can tremble on its own wire without fighting
+   the 3D placement transform */
+@keyframes sway{
+  0%,100%{ rotate:0deg; translate: 0 0; }
+  32%    { rotate:.55deg; translate: 0 -1.5px; }
+  68%    { rotate:-.4deg; translate: 0 .8px; }
 }
 
 /* the dying letter — erratic buzz */
@@ -283,6 +329,22 @@ a:focus-visible, [tabindex]:focus-visible{
 }
 
 /* ── atmosphere overlays ── */
+.mist{
+  position:absolute; inset:-8% -25%;
+  pointer-events:none;
+  opacity:.55;
+  mix-blend-mode:screen;
+  filter:blur(34px);
+  background:
+    radial-gradient(38% 26% at 18% 74%, rgba(0,229,255,.10), transparent 65%),
+    radial-gradient(34% 22% at 62% 68%, rgba(255,46,136,.09), transparent 60%),
+    radial-gradient(30% 20% at 85% 60%, rgba(255,227,61,.07), transparent 62%);
+  animation:mistdrift 24s var(--ease-drift) infinite alternate;
+}
+@keyframes mistdrift{
+  0%  { transform:translate3d(-2.5%,0,0) scaleX(1); }
+  100%{ transform:translate3d(3%,-1%,0) scaleX(1.04); }
+}
 #rain{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
 .grain{
   position:absolute; inset:0;
@@ -383,6 +445,11 @@ a:focus-visible, [tabindex]:focus-visible{
   background:var(--yellow);
   box-shadow:0 0 30px rgba(255,227,61,.55);
   text-shadow:none;
+  translate:0 -2px;
+}
+.mast-cta:active{
+  translate:0 0;
+  transition:translate .15s var(--ease-snap);
 }
 @keyframes fadeup{
   from{ opacity:0; transform:translateY(26px); }
@@ -505,8 +572,12 @@ a:focus-visible, [tabindex]:focus-visible{
   background:linear-gradient(165deg, rgba(20,20,40,.55), rgba(9,9,18,.9));
   overflow:hidden;
   cursor:pointer;
-  transition:border-color .5s var(--ease-sign), transform .5s var(--ease-sign), box-shadow .5s var(--ease-sign);
+  opacity:0;
+  translate:0 30px;
+  transition:border-color .5s var(--ease-sign), transform .5s var(--ease-sign),
+    box-shadow .5s var(--ease-sign), opacity .8s var(--ease-sign), translate .8s var(--ease-sign);
 }
+.card.in{ opacity:1; translate:0 0; }
 .tone-yellow{ --neon:var(--yellow); }
 .tone-cyan  { --neon:var(--cyan); }
 .tone-pink  { --neon:var(--pink); }
@@ -563,6 +634,10 @@ a:focus-visible, [tabindex]:focus-visible{
   animation:ignite .55s steps(1,end) 1;
 }
 .card.lit{ transform:none; }
+.card:active{
+  transform:translateY(-2px) scale(.982);
+  transition:transform .18s var(--ease-snap);
+}
 .card:hover .card-name, .card:focus-visible .card-name, .card.lit .card-name{
   color:var(--neon);
   text-shadow:0 0 9px var(--neon), 0 0 30px color-mix(in srgb, var(--neon) 55%, transparent);
@@ -677,6 +752,12 @@ a:focus-visible, [tabindex]:focus-visible{
   .dir-note{ flex-direction:column; align-items:flex-start; }
   .steam i{ display:none; }
   .steam i:nth-child(-n+2){ display:block; }
+  /* the far-right signs fall outside the narrow frame at this scale — one
+     (OK Electric) used to render half-cropped against the viewport edge,
+     which read as a bug. Drop the ones the crop can't seat cleanly; the
+     dying-letter technique still reads on the masthead's N. */
+  #sign-electric, #sign-pharmacy, #sign-fortune, #sign-leaf, #sign-keys{ display:none; }
+  .mist{ filter:blur(22px); }
 }
 
 /* ─────────────── REDUCED MOTION ─────────────── */
@@ -684,10 +765,13 @@ a:focus-visible, [tabindex]:focus-visible{
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior:auto; }
   .win.flick, .sign, .dying, .lanterns circle, .stall-glow,
-  .puddle, .refl, .tube .wisp, .card:hover, .card:focus-visible, .card.lit, .foot-dot{
+  .puddle, .refl, .tube .wisp, .card:hover, .card:focus-visible, .card.lit, .foot-dot, .mist{
     animation:none !important;
   }
   .steam i{ animation:none; opacity:.4; transform:translate3d(10px,-80px,0) scale(1.3); }
   .ticker-track{ animation:none; }
   .masthead > *{ animation:none; opacity:1; transform:none; }
+  .masthead, .ticker{ opacity:1 !important; transform:none !important; }
+  .card{ opacity:1 !important; translate:0 !important; transition:border-color .5s var(--ease-sign), box-shadow .5s var(--ease-sign) !important; }
+  .cursor-glow{ display:none; }
 }

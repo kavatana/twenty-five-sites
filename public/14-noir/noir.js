@@ -50,6 +50,20 @@
     fio.observe(footerEl);
   }
 
+  /* ————— the two bottom corner stamps only belong on the cover — past it,
+     lookbook captions and the manifesto pull-word pass through that same
+     fixed band on every scroll, and an opaque chip sitting on top of real
+     copy was hiding words rather than framing the page. ————— */
+  const coverEl = document.getElementById('sec-cover');
+  if (coverEl) {
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        document.documentElement.classList.toggle('away-from-cover', !e.isIntersecting);
+      });
+    }, { threshold: 0 });
+    cio.observe(coverEl);
+  }
+
   /* ————— custom crosshair cursor (fine pointers only) ————— */
   if (canHover) {
     document.documentElement.classList.add('has-cursor');

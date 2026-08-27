@@ -1,741 +1,704 @@
-/* STILLNESS — a breathing instrument
-   Raw WebGL fragment-shader gradient (hand-rolled simplex/fbm noise, no library)
-   + a choreographed 4-7-8 breathing ring driven by a single requestAnimationFrame clock. */
-(function () {
+/* STILLNESS — a breathing meditation instrument
+   Raw WebGL fragment-shader gradient (hand-rolled 3D simplex noise + fbm +
+   domain warp), a 4-7-8 breathing state machine driven off wall-clock time,
+   a synthesized bell chime, and a particle dissolve on completion.
+   No external JS libraries. */
+
+(() => {
   'use strict';
 
-  /* ---------------------------------------------------------------------
-   * Palettes — each set runs light/warm (index 0) toward deep (index 3),
-   * which also drives the adaptive-ink luminance read.
-   * ------------------------------------------------------------------ */
-  var PALETTES_HEX = {
-    dawn: ['#F6E7D8', '#F0C2C6', '#D3B2E3', '#D9C1E8'],
-    sea:  ['#CFE8E0', '#9ED2C4', '#7FB5A6', '#173935'],
-    dusk: ['#E8C1B0', '#C48CA6', '#8E7CC3', '#2E2A4F']
+  const reducedMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let REDUCED = reducedMQ.matches;
+  document.documentElement.classList.toggle('reduced', REDUCED);
+
+  /* ============================== palettes ============================== */
+
+  const SET_ORDER = ['dawn', 'sea', 'dusk'];
+  const PALETTES = {
+    dawn: {
+      name: 'Dawn',
+      colors: ['#F6E7D8', '#F0D0C4', '#D9C1E8', '#B98BD1'],
+      ink: '#3B2A44',
+      scrim: 'rgba(255,247,238,0.50)',
+      scrimStrong: 'rgba(255,247,238,0.76)',
+      hairline: 'rgba(59,42,68,0.16)',
+      glow: '#F6E2CE'
+    },
+    sea: {
+      name: 'Sea',
+      colors: ['#CFE8E0', '#8FCBBD', '#3E7566', '#132C25'],
+      ink: '#12332B',
+      scrim: 'rgba(238,250,246,0.52)',
+      scrimStrong: 'rgba(238,250,246,0.78)',
+      hairline: 'rgba(18,51,43,0.16)',
+      glow: '#BFE9DD'
+    },
+    dusk: {
+      name: 'Dusk',
+      colors: ['#E8C1B0', '#B08CC0', '#8E7CC3', '#2E2A4F'],
+      ink: '#241B3A',
+      scrim: 'rgba(247,238,245,0.48)',
+      scrimStrong: 'rgba(247,238,245,0.76)',
+      hairline: 'rgba(36,27,58,0.18)',
+      glow: '#E3B9C9'
+    }
   };
-  var PALETTE_ORDER = ['dawn', 'sea', 'dusk'];
-  var AUTO_CYCLE_MS = 40000;
-  var CROSSFADE_MS = 7000;
 
-  var PHASE_MS = { inhale: 4000, hold: 7000, exhale: 8000 };
-  var PHASE_WORD = { inhale: 'inhale', hold: 'hold', exhale: 'exhale' };
+  const hexToRgb01 = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+  };
 
-  var RING_MIN = 58, RING_MAX = 126, ARC_R = 134, TRACK_R = 140;
-  var ARC_C = 2 * Math.PI * ARC_R;
-  var IDLE_BASE = 64, IDLE_AMP = 7, IDLE_PERIOD = 6.4;
-  var SHIMMER_AMP = 2.4, SHIMMER_PERIOD = 1.9;
-  var DISSOLVE_MS = 900, SETTLE_MS = 460, COMPLETE_PAUSE_MS = 2800;
+  const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
+  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
-  function hexToRgb01(hex) {
-    var h = hex.replace('#', '');
-    return [
-      parseInt(h.substring(0, 2), 16) / 255,
-      parseInt(h.substring(2, 4), 16) / 255,
-      parseInt(h.substring(4, 6), 16) / 255
-    ];
-  }
-  var PALETTES = {};
-  PALETTE_ORDER.forEach(function (name) {
-    PALETTES[name] = PALETTES_HEX[name].map(hexToRgb01);
-  });
+  /* ============================== WebGL ============================== */
 
-  function relLuma(c) { return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function lerpColors(from, to, t, out) {
-    for (var i = 0; i < 4; i++) {
-      out[i][0] = lerp(from[i][0], to[i][0], t);
-      out[i][1] = lerp(from[i][1], to[i][1], t);
-      out[i][2] = lerp(from[i][2], to[i][2], t);
+  const bgCanvas = document.getElementById('bg');
+  let gl = null, glOk = false;
+  let uTimeLoc, uResLoc, uColFromLoc, uColToLoc, uMixLoc;
+  let startTime = performance.now();
+
+  const VERT_SRC = `
+    attribute vec2 aPos;
+    void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
+  `;
+
+  const FRAG_SRC = `
+    precision highp float;
+    uniform vec2 uRes;
+    uniform float uTime;
+    uniform vec3 uColFrom[4];
+    uniform vec3 uColTo[4];
+    uniform float uMix;
+
+    vec3 mod289(vec3 x){ return x - floor(x*(1.0/289.0))*289.0; }
+    vec4 mod289(vec4 x){ return x - floor(x*(1.0/289.0))*289.0; }
+    vec4 permute(vec4 x){ return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
+
+    float snoise(vec3 v){
+      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+      vec3 i  = floor(v + dot(v, C.yyy));
+      vec3 x0 = v - i + dot(i, C.xxx);
+      vec3 g = step(x0.yzx, x0.xyz);
+      vec3 l = 1.0 - g;
+      vec3 i1 = min(g.xyz, l.zxy);
+      vec3 i2 = max(g.xyz, l.zxy);
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+      i = mod289(i);
+      vec4 p = permute(permute(permute(
+                 i.z + vec4(0.0, i1.z, i2.z, 1.0))
+               + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+               + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+      float n_ = 0.142857142857;
+      vec3 ns = n_ * D.wyz - D.xzx;
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_);
+      vec4 x = x_ * ns.x + ns.yyyy;
+      vec4 y = y_ * ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+      vec4 b0 = vec4(x.xy, y.xy);
+      vec4 b1 = vec4(x.zw, y.zw);
+      vec4 s0 = floor(b0)*2.0 + 1.0;
+      vec4 s1 = floor(b1)*2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+      vec3 p0 = vec3(a0.xy, h.x);
+      vec3 p1 = vec3(a0.zw, h.y);
+      vec3 p2 = vec3(a1.xy, h.z);
+      vec3 p3 = vec3(a1.zw, h.w);
+      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
     }
-    return out;
-  }
-  function cloneSet(set) { return set.map(function (c) { return c.slice(); }); }
 
-  /* ---------------------------------------------------------------------
-   * Hand-rolled cubic-bezier easing (Newton-Raphson solve, CSS-style).
-   * ------------------------------------------------------------------ */
-  function makeBezier(x1, y1, x2, y2) {
-    function A(a1, a2) { return 1 - 3 * a2 + 3 * a1; }
-    function B(a1, a2) { return 3 * a2 - 6 * a1; }
-    function C(a1) { return 3 * a1; }
-    function calc(t, a1, a2) { return ((A(a1, a2) * t + B(a1, a2)) * t + C(a1)) * t; }
-    function slope(t, a1, a2) { return 3 * A(a1, a2) * t * t + 2 * B(a1, a2) * t + C(a1); }
-    function solveT(x) {
-      var t = x;
-      for (var i = 0; i < 8; i++) {
-        var s = slope(t, x1, x2);
-        if (Math.abs(s) < 1e-6) break;
-        t -= (calc(t, x1, x2) - x) / s;
+    float fbm(vec3 p){
+      float sum = 0.0; float amp = 0.52; float freq = 1.0;
+      for(int i = 0; i < 4; i++){
+        sum += amp * snoise(p * freq);
+        freq *= 2.02;
+        amp *= 0.55;
       }
-      return t;
+      return sum;
     }
-    return function (x) {
-      if (x <= 0) return 0;
-      if (x >= 1) return 1;
-      return calc(solveT(x), y1, y2);
-    };
-  }
-  var easeBreath = makeBezier(0.37, 0.0, 0.63, 1.0);
-  var easePalette = makeBezier(0.45, 0.0, 0.2, 1.0);
 
-  /* ---------------------------------------------------------------------
-   * WebGL — raw context, no library.
-   * ------------------------------------------------------------------ */
-  var VERT_SRC = [
-    'attribute vec2 aPos;',
-    'varying vec2 vUv;',
-    'void main(){',
-    '  vUv = aPos * 0.5 + 0.5;',
-    '  gl_Position = vec4(aPos, 0.0, 1.0);',
-    '}'
-  ].join('\n');
-
-  var FRAG_SRC = [
-    '#ifdef GL_FRAGMENT_PRECISION_HIGH',
-    'precision highp float;',
-    '#else',
-    'precision mediump float;',
-    '#endif',
-    'varying vec2 vUv;',
-    'uniform vec2 uResolution;',
-    'uniform float uTime;',
-    'uniform float uStatic;',
-    'uniform vec3 uColor0;',
-    'uniform vec3 uColor1;',
-    'uniform vec3 uColor2;',
-    'uniform vec3 uColor3;',
-
-    'vec3 mod289(vec3 x){ return x - floor(x * (1.0/289.0)) * 289.0; }',
-    'vec4 mod289(vec4 x){ return x - floor(x * (1.0/289.0)) * 289.0; }',
-    'vec4 permute(vec4 x){ return mod289(((x*34.0)+1.0)*x); }',
-    'vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }',
-
-    'float snoise(vec3 v){',
-    '  const vec2 C = vec2(1.0/6.0, 1.0/3.0);',
-    '  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);',
-    '  vec3 i  = floor(v + dot(v, C.yyy));',
-    '  vec3 x0 = v - i + dot(i, C.xxx);',
-    '  vec3 g = step(x0.yzx, x0.xyz);',
-    '  vec3 l = 1.0 - g;',
-    '  vec3 i1 = min(g.xyz, l.zxy);',
-    '  vec3 i2 = max(g.xyz, l.zxy);',
-    '  vec3 x1 = x0 - i1 + C.xxx;',
-    '  vec3 x2 = x0 - i2 + C.yyy;',
-    '  vec3 x3 = x0 - D.yyy;',
-    '  i = mod289(i);',
-    '  vec4 p = permute(permute(permute(',
-    '            i.z + vec4(0.0, i1.z, i2.z, 1.0))',
-    '          + i.y + vec4(0.0, i1.y, i2.y, 1.0))',
-    '          + i.x + vec4(0.0, i1.x, i2.x, 1.0));',
-    '  float n_ = 0.142857142857;',
-    '  vec3 ns = n_ * D.wyz - D.xzx;',
-    '  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);',
-    '  vec4 x_ = floor(j * ns.z);',
-    '  vec4 y_ = floor(j - 7.0 * x_);',
-    '  vec4 x = x_ * ns.x + ns.yyyy;',
-    '  vec4 y = y_ * ns.x + ns.yyyy;',
-    '  vec4 h = 1.0 - abs(x) - abs(y);',
-    '  vec4 b0 = vec4(x.xy, y.xy);',
-    '  vec4 b1 = vec4(x.zw, y.zw);',
-    '  vec4 s0 = floor(b0) * 2.0 + 1.0;',
-    '  vec4 s1 = floor(b1) * 2.0 + 1.0;',
-    '  vec4 sh = -step(h, vec4(0.0));',
-    '  vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;',
-    '  vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;',
-    '  vec3 p0 = vec3(a0.xy, h.x);',
-    '  vec3 p1 = vec3(a0.zw, h.y);',
-    '  vec3 p2 = vec3(a1.xy, h.z);',
-    '  vec3 p3 = vec3(a1.zw, h.w);',
-    '  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));',
-    '  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;',
-    '  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);',
-    '  m = m * m;',
-    '  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));',
-    '}',
-
-    'float fbm(vec3 p){',
-    '  float sum = 0.0;',
-    '  float amp = 0.5;',
-    '  for(int i = 0; i < 4; i++){',
-    '    sum += amp * snoise(p);',
-    '    p *= 2.02;',
-    '    amp *= 0.55;',
-    '  }',
-    '  return sum;',
-    '}',
-
-    'float hash(vec2 p){',
-    '  return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);',
-    '}',
-
-    'void main(){',
-    '  vec2 res = uResolution;',
-    '  vec2 uv = gl_FragCoord.xy / res.xy;',
-    '  vec2 p = (uv - 0.5) * vec2(res.x/res.y, 1.0) + 0.5;',
-    '  float t = uTime * 0.018;',
-
-    '  vec2 warp = vec2(',
-    '    fbm(vec3(p * 1.4, t * 0.55)),',
-    '    fbm(vec3(p * 1.4 + 19.0, t * 0.55))',
-    '  );',
-    '  vec3 samplePos = vec3(p * 1.1 + warp * 0.4, t);',
-
-    '  float n1 = fbm(samplePos);',
-    '  float n2 = fbm(samplePos * 1.7 + 8.0);',
-    '  float band = clamp(n1 * 0.5 + 0.5, 0.0, 1.0);',
-
-    '  vec3 col = mix(uColor0, uColor1, smoothstep(0.0, 0.5, band));',
-    '  col = mix(col, uColor2, smoothstep(0.32, 0.72, band));',
-    '  col = mix(col, uColor3, smoothstep(0.58, 1.0, band + n2 * 0.12));',
-
-    '  col += 0.025 * (1.0 - uv.y) * vec3(1.0, 0.97, 0.92);',
-
-    '  float d = length(uv - 0.5) * 1.15;',
-    '  float vig = smoothstep(1.15, 0.25, d);',
-    '  col *= mix(0.9, 1.02, vig);',
-
-    '  float seed = uStatic > 0.5 ? 0.0 : uTime * 55.0;',
-    '  float g = hash(gl_FragCoord.xy + seed) - 0.5;',
-    '  col += g * 0.018;',
-
-    '  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);',
-    '}'
-  ].join('\n');
-
-  var gl = null, glProgram = null, glUniforms = {}, canvas = null;
-
-  function compileShader(src, type) {
-    var s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-      gl.deleteShader(s);
-      return null;
+    vec3 warp(vec3 p){
+      vec3 q = vec3(
+        fbm(p + vec3(0.0, 0.0, 0.0)),
+        fbm(p + vec3(5.2, 1.3, 2.1)),
+        fbm(p + vec3(1.7, 9.2, 3.3))
+      );
+      return p + q * 0.55;
     }
-    return s;
+
+    float hash13(vec3 p3){
+      p3 = fract(p3 * 0.1031);
+      p3 += dot(p3, p3.yzx + 33.33);
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    void main(){
+      vec2 uv = (gl_FragCoord.xy - 0.5 * uRes.xy) / uRes.y;
+      vec3 p = vec3(uv * 1.15, uTime * 0.014);
+      p.xy += vec2(uTime * 0.004, -uTime * 0.003);
+
+      vec3 wp = warp(p);
+      float n = fbm(wp + vec3(0.0, 0.0, uTime * 0.009));
+      n = clamp(n * 0.6 + 0.5, 0.0, 1.0);
+
+      vec3 c0 = mix(uColFrom[0], uColTo[0], uMix);
+      vec3 c1 = mix(uColFrom[1], uColTo[1], uMix);
+      vec3 c2 = mix(uColFrom[2], uColTo[2], uMix);
+      vec3 c3 = mix(uColFrom[3], uColTo[3], uMix);
+
+      vec3 col;
+      if(n < 0.34){
+        col = mix(c0, c1, smoothstep(0.0, 0.34, n));
+      } else if(n < 0.67){
+        col = mix(c1, c2, smoothstep(0.34, 0.67, n));
+      } else {
+        col = mix(c2, c3, smoothstep(0.67, 1.0, n));
+      }
+
+      float d = length(uv);
+      col *= 1.0 - smoothstep(0.85, 1.55, d) * 0.32;
+      float focus = smoothstep(0.5, 0.0, d);
+      col = mix(col, col * 1.05 + 0.015, focus * 0.45);
+
+      float g = hash13(vec3(gl_FragCoord.xy, uTime * 48.0));
+      col += (g - 0.5) * 0.026;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function compile(src, type) {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      const log = gl.getShaderInfoLog(sh);
+      gl.deleteShader(sh);
+      throw new Error('Shader compile error: ' + log);
+    }
+    return sh;
   }
 
   function initGL() {
-    canvas = document.getElementById('glcanvas');
-    if (!canvas || !window.WebGLRenderingContext) return false;
-    try {
-      gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'low-power' }) ||
-           canvas.getContext('experimental-webgl');
-    } catch (e) { gl = null; }
-    if (!gl) return false;
+    gl = bgCanvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false, preserveDrawingBuffer: true }) ||
+         bgCanvas.getContext('experimental-webgl');
+    if (!gl) throw new Error('no webgl');
 
-    var vs = compileShader(VERT_SRC, gl.VERTEX_SHADER);
-    var fs = compileShader(FRAG_SRC, gl.FRAGMENT_SHADER);
-    if (!vs || !fs) return false;
+    const vs = compile(VERT_SRC, gl.VERTEX_SHADER);
+    const fs = compile(FRAG_SRC, gl.FRAGMENT_SHADER);
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      throw new Error('Program link error: ' + gl.getProgramInfoLog(prog));
+    }
+    gl.useProgram(prog);
 
-    glProgram = gl.createProgram();
-    gl.attachShader(glProgram, vs);
-    gl.attachShader(glProgram, fs);
-    gl.linkProgram(glProgram);
-    if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) return false;
-
-    var buf = gl.createBuffer();
+    const quad = new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]);
+    const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    var aPos = gl.getAttribLocation(glProgram, 'aPos');
+    gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
     gl.enableVertexAttribArray(aPos);
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-    glUniforms.uResolution = gl.getUniformLocation(glProgram, 'uResolution');
-    glUniforms.uTime = gl.getUniformLocation(glProgram, 'uTime');
-    glUniforms.uStatic = gl.getUniformLocation(glProgram, 'uStatic');
-    glUniforms.uColor0 = gl.getUniformLocation(glProgram, 'uColor0');
-    glUniforms.uColor1 = gl.getUniformLocation(glProgram, 'uColor1');
-    glUniforms.uColor2 = gl.getUniformLocation(glProgram, 'uColor2');
-    glUniforms.uColor3 = gl.getUniformLocation(glProgram, 'uColor3');
+    uTimeLoc = gl.getUniformLocation(prog, 'uTime');
+    uResLoc = gl.getUniformLocation(prog, 'uRes');
+    uColFromLoc = gl.getUniformLocation(prog, 'uColFrom');
+    uColToLoc = gl.getUniformLocation(prog, 'uColTo');
+    uMixLoc = gl.getUniformLocation(prog, 'uMix');
 
-    gl.useProgram(glProgram);
-    return true;
+    glOk = true;
   }
 
-  function resizeCanvas() {
-    if (!canvas) return;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var w = Math.max(1, Math.floor(window.innerWidth * dpr));
-    var h = Math.max(1, Math.floor(window.innerHeight * dpr));
-    if (canvas.width !== w || canvas.height !== h) {
-      canvas.width = w; canvas.height = h;
-      if (gl) gl.viewport(0, 0, w, h);
+  function resizeGL() {
+    if (!glOk) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.max(1, Math.floor(window.innerWidth * dpr));
+    const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+    if (bgCanvas.width !== w || bgCanvas.height !== h) {
+      bgCanvas.width = w;
+      bgCanvas.height = h;
+      bgCanvas.style.width = window.innerWidth + 'px';
+      bgCanvas.style.height = window.innerHeight + 'px';
+      gl.viewport(0, 0, w, h);
     }
   }
 
-  function drawGradient(colors, timeVal, isStatic) {
-    if (!gl) return;
-    gl.uniform2f(glUniforms.uResolution, canvas.width, canvas.height);
-    gl.uniform1f(glUniforms.uTime, timeVal);
-    gl.uniform1f(glUniforms.uStatic, isStatic ? 1 : 0);
-    gl.uniform3f(glUniforms.uColor0, colors[0][0], colors[0][1], colors[0][2]);
-    gl.uniform3f(glUniforms.uColor1, colors[1][0], colors[1][1], colors[1][2]);
-    gl.uniform3f(glUniforms.uColor2, colors[2][0], colors[2][1], colors[2][2]);
-    gl.uniform3f(glUniforms.uColor3, colors[3][0], colors[3][1], colors[3][2]);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  function flatten(arr3) {
+    const out = new Float32Array(arr3.length * 3);
+    for (let i = 0; i < arr3.length; i++) {
+      out[i * 3] = arr3[i][0];
+      out[i * 3 + 1] = arr3[i][1];
+      out[i * 3 + 2] = arr3[i][2];
+    }
+    return out;
   }
 
-  /* ---------------------------------------------------------------------
-   * DOM refs
-   * ------------------------------------------------------------------ */
-  var els = {};
-  function cacheEls() {
-    els.body = document.body;
-    els.ringSvg = document.getElementById('ringSvg');
-    els.ringArc = document.getElementById('ringArc');
-    els.ringCore = document.getElementById('ringCore');
-    els.phaseWord = document.getElementById('phaseWord');
-    els.breathCount = document.getElementById('breathCount');
-    els.reducedCount = document.getElementById('reducedCount');
-    els.sessionPicker = document.getElementById('sessionPicker');
-    els.endSession = document.getElementById('endSession');
-    els.completionLine = document.getElementById('completionLine');
-    els.particleField = document.getElementById('particleField');
-    els.reducedNote = document.getElementById('reducedNote');
-    els.chimeToggle = document.getElementById('chimeToggle');
-    els.palDots = Array.prototype.slice.call(document.querySelectorAll('.pal-dot'));
-    els.pickerButtons = Array.prototype.slice.call(document.querySelectorAll('.picker-row button'));
+  function renderGL(t) {
+    if (!glOk) return;
+    gl.uniform1f(uTimeLoc, t);
+    gl.uniform2f(uResLoc, bgCanvas.width, bgCanvas.height);
+    gl.uniform3fv(uColFromLoc, flatten(palette.fromColors));
+    gl.uniform3fv(uColToLoc, flatten(palette.toColors));
+    gl.uniform1f(uMixLoc, palette.mixT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
-  /* ---------------------------------------------------------------------
-   * Audio — WebAudio-synthesized bell, off by default.
-   * ------------------------------------------------------------------ */
-  var audioCtx = null;
-  var chimeEnabled = false;
-  function ensureAudio() {
-    if (audioCtx) return audioCtx;
-    var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return null;
-    audioCtx = new Ctx();
-    return audioCtx;
-  }
-  var CHIME_FREQ = { inhale: 587.33, hold: 440.0, exhale: 329.63 };
-  function playChime(kind) {
-    if (!chimeEnabled) return;
-    var ctx = ensureAudio();
-    if (!ctx) return;
-    if (ctx.state === 'suspended') ctx.resume();
-    var now = ctx.currentTime;
-    var base = CHIME_FREQ[kind] || 440;
-    var partials = [
-      { ratio: 1.0, gain: 0.5 },
-      { ratio: 2.02, gain: 0.26 },
-      { ratio: 2.76, gain: 0.14 },
-      { ratio: 4.1, gain: 0.07 }
-    ];
-    var master = ctx.createGain();
-    master.gain.setValueAtTime(0.0001, now);
-    master.gain.exponentialRampToValueAtTime(0.42, now + 0.025);
-    master.gain.exponentialRampToValueAtTime(0.0001, now + 2.6);
-    var filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 2600;
-    master.connect(filter).connect(ctx.destination);
-    partials.forEach(function (p) {
-      var osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.value = base * p.ratio;
-      var g = ctx.createGain();
-      g.gain.value = p.gain;
-      osc.connect(g).connect(master);
-      osc.start(now);
-      osc.stop(now + 2.7);
-    });
-  }
+  /* ============================== palette engine ============================== */
 
-  /* ---------------------------------------------------------------------
-   * State
-   * ------------------------------------------------------------------ */
-  var reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var reduced = reducedMotionQuery.matches;
-
-  var state = {
-    phase: 'idle',
-    phaseElapsed: 0,
-    breathIndex: 0,
-    totalBreaths: 0,
-    sessionActive: false,
-    dissolveElapsed: 0,
-    settleElapsed: 0,
-    settleFrom: IDLE_BASE,
-    completeElapsed: 0,
-    clock: 0,
-    lastReducedSecond: -1,
-    currentR: IDLE_BASE
+  const palette = {
+    currentKey: 'dawn',
+    fromColors: PALETTES.dawn.colors.map(hexToRgb01),
+    toColors: PALETTES.dawn.colors.map(hexToRgb01),
+    mixT: 1,
+    mixStart: 0,
+    mixDur: 4200,
+    lastSwitchAt: performance.now(),
+    autoMs: 40000
   };
 
-  var activeSetName = 'dawn';
-  var fromPalette = cloneSet(PALETTES.dawn);
-  var toPalette = cloneSet(PALETTES.dawn);
-  var blended = cloneSet(PALETTES.dawn);
-  var crossfading = false;
-  var crossfadeElapsed = 0;
-  var paletteTimer = 0;
-  var ink = 'dark';
+  const root = document.documentElement;
 
-  function currentBlended() { return blended.map(function (c) { return c.slice(); }); }
+  function applyCSSVars(key) {
+    const p = PALETTES[key];
+    root.style.setProperty('--ink', p.ink);
+    root.style.setProperty('--scrim', p.scrim);
+    root.style.setProperty('--scrim-strong', p.scrimStrong);
+    root.style.setProperty('--hairline', p.hairline);
+    root.style.setProperty('--ring-glow', p.glow);
+    root.style.setProperty('--accent', p.colors[2]);
+  }
 
-  function startCrossfadeTo(name, instant) {
-    if (name === activeSetName && !crossfading && !instant) return;
-    fromPalette = currentBlended();
-    toPalette = cloneSet(PALETTES[name]);
-    activeSetName = name;
-    crossfadeElapsed = instant ? CROSSFADE_MS : 0;
-    crossfading = !instant;
-    if (instant) blended = cloneSet(PALETTES[name]);
-    paletteTimer = 0;
-    els.palDots.forEach(function (d) {
-      var on = d.getAttribute('data-set') === name;
-      d.classList.toggle('is-active', on);
-      d.setAttribute('aria-pressed', on ? 'true' : 'false');
+  function setPaletteDotsUI(key) {
+    document.querySelectorAll('.pal-dot').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.set === key);
+      b.setAttribute('aria-pressed', String(b.dataset.set === key));
     });
   }
 
-  function updatePalette(dtMs) {
-    if (crossfading) {
-      crossfadeElapsed += dtMs;
-      var ct = Math.min(1, crossfadeElapsed / CROSSFADE_MS);
-      lerpColors(fromPalette, toPalette, easePalette(ct), blended);
-      if (ct >= 1) crossfading = false;
+  function crossfadeTo(key, now) {
+    if (key === palette.currentKey && palette.mixT >= 1) {
+      palette.lastSwitchAt = now;
+      return;
     }
-    if (!reduced) {
-      paletteTimer += dtMs;
-      if (paletteTimer >= AUTO_CYCLE_MS && !crossfading) {
-        var idx = PALETTE_ORDER.indexOf(activeSetName);
-        var next = PALETTE_ORDER[(idx + 1) % PALETTE_ORDER.length];
-        startCrossfadeTo(next, false);
-      }
-    }
-    computeInk();
-  }
-
-  function computeInk() {
-    var avg = (relLuma(blended[0]) + relLuma(blended[1]) + relLuma(blended[2]) + relLuma(blended[3])) / 4;
-    var nextInk = ink;
-    if (avg > 0.6) nextInk = 'dark';
-    else if (avg < 0.42) nextInk = 'light';
-    if (nextInk !== ink) {
-      ink = nextInk;
-      els.body.setAttribute('data-ink', ink);
+    const eased = easeInOutSine(clamp01(palette.mixT));
+    const displayed = palette.fromColors.map((c, i) => [
+      c[0] + (palette.toColors[i][0] - c[0]) * eased,
+      c[1] + (palette.toColors[i][1] - c[1]) * eased,
+      c[2] + (palette.toColors[i][2] - c[2]) * eased
+    ]);
+    palette.fromColors = displayed;
+    palette.toColors = PALETTES[key].colors.map(hexToRgb01);
+    palette.mixStart = now;
+    palette.mixT = 0;
+    palette.currentKey = key;
+    palette.lastSwitchAt = now;
+    applyCSSVars(key);
+    setPaletteDotsUI(key);
+    if (REDUCED) {
+      // no animated crossfade under reduced motion — swap instantly
+      palette.fromColors = palette.toColors.map((c) => c.slice());
+      palette.mixT = 1;
     }
   }
 
-  /* ---------------------------------------------------------------------
-   * Breathing ring
-   * ------------------------------------------------------------------ */
-  function setRingR(r) {
-    state.currentR = r;
-    els.ringCore.setAttribute('r', r.toFixed(2));
-  }
-  function setArcProgress(t, visible) {
-    els.ringArc.style.opacity = visible ? '1' : '0';
-    var offset = ARC_C * (1 - Math.max(0, Math.min(1, t)));
-    els.ringArc.style.strokeDasharray = ARC_C + ' ' + ARC_C;
-    els.ringArc.style.strokeDashoffset = offset.toFixed(2);
-  }
-
-  var wordTimer = null;
-  function setWord(text) {
-    if (els.phaseWord.textContent === text) return;
-    els.phaseWord.classList.add('is-out');
-    if (wordTimer) clearTimeout(wordTimer);
-    wordTimer = setTimeout(function () {
-      els.phaseWord.textContent = text;
-      els.phaseWord.classList.remove('is-out');
-    }, reduced ? 60 : 260);
-  }
-
-  function updateBreathCount() {
-    if (state.totalBreaths > 0 && (state.phase === 'inhale' || state.phase === 'hold' || state.phase === 'exhale')) {
-      els.breathCount.textContent = 'breath ' + (state.breathIndex + 1) + ' of ' + state.totalBreaths;
-    } else {
-      els.breathCount.textContent = '';
+  function updatePalette(now) {
+    if (palette.mixT < 1) {
+      const raw = clamp01((now - palette.mixStart) / palette.mixDur);
+      palette.mixT = raw >= 1 ? 1 : easeInOutSine(raw);
+    }
+    if (!REDUCED && now - palette.lastSwitchAt > palette.autoMs) {
+      const idx = SET_ORDER.indexOf(palette.currentKey);
+      crossfadeTo(SET_ORDER[(idx + 1) % SET_ORDER.length], now);
     }
   }
 
-  function spawnParticles() {
-    if (reduced) return;
-    var field = els.particleField;
-    field.innerHTML = '';
-    var n = 26;
-    for (var i = 0; i < n; i++) {
-      var p = document.createElement('span');
-      p.className = 'particle';
-      var angle = (Math.PI * 2 * i) / n + (Math.random() * 0.5 - 0.25);
-      var dist = 85 + Math.random() * 75;
-      var dx = Math.cos(angle) * dist;
-      var dy = Math.sin(angle) * dist;
-      p.style.setProperty('--dx', dx.toFixed(1) + 'px');
-      p.style.setProperty('--dy', dy.toFixed(1) + 'px');
-      p.style.animationDelay = Math.round(Math.random() * 260) + 'ms';
-      p.style.animationDuration = (1300 + Math.random() * 900).toFixed(0) + 'ms';
-      (function (el) {
-        el.addEventListener('animationend', function () { el.remove(); });
-      })(p);
-      field.appendChild(p);
+  /* ============================== audio (bell chime) ============================== */
+
+  let audioCtx = null;
+  let chimeOn = false;
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      audioCtx = new Ctx();
     }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
   }
 
-  function beginPhase(phase) {
-    state.phase = phase;
-    state.phaseElapsed = 0;
-    if (phase === 'inhale' || phase === 'hold' || phase === 'exhale') {
-      playChime(phase);
-      setWord(PHASE_WORD[phase]);
-      updateBreathCount();
+  function playChime(freq) {
+    if (!chimeOn) return;
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const t0 = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, t0);
+    master.gain.exponentialRampToValueAtTime(0.2, t0 + 0.025);
+    master.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.4);
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.value = 2600;
+    master.connect(filt);
+    filt.connect(ctx.destination);
+
+    const partials = [1, 2.01, 3.42];
+    const gains = [1, 0.32, 0.11];
+    partials.forEach((mult, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = i === 0 ? 'sine' : 'triangle';
+      osc.frequency.value = freq * mult;
+      const g = ctx.createGain();
+      g.gain.value = gains[i];
+      osc.connect(g);
+      g.connect(master);
+      osc.start(t0);
+      osc.stop(t0 + 3.5);
+    });
+  }
+
+  const CHIME_FREQ = { inhale: 349.23, hold: 523.25, exhale: 261.63 };
+
+  const chimeBtn = document.getElementById('chimeToggle');
+  const CHIME_KEY = 'stillness-chime';
+  try {
+    chimeOn = localStorage.getItem(CHIME_KEY) === '1';
+  } catch (e) { /* private mode etc — default off */ }
+  chimeBtn.setAttribute('aria-pressed', String(chimeOn));
+  chimeBtn.classList.toggle('is-on', chimeOn);
+
+  chimeBtn.addEventListener('click', () => {
+    chimeOn = !chimeOn;
+    chimeBtn.setAttribute('aria-pressed', String(chimeOn));
+    try { localStorage.setItem(CHIME_KEY, chimeOn ? '1' : '0'); } catch (e) {}
+    if (chimeOn) {
+      ensureAudio();
+      playChime(523.25);
     }
+  });
+
+  document.querySelectorAll('.pal-dot').forEach((btn) => {
+    btn.addEventListener('click', () => crossfadeTo(btn.dataset.set, performance.now()));
+  });
+
+  /* ============================== breathing state machine ============================== */
+
+  const PHASES = { inhale: 4000, hold: 7000, exhale: 8000 };
+  const CYCLE = PHASES.inhale + PHASES.hold + PHASES.exhale;
+  const R_MIN = 42, R_MAX = 108;
+
+  const ringSvg = document.querySelector('.ring-svg');
+  const ringCore = document.getElementById('ringCore');
+  const ringProgress = document.getElementById('ringProgress');
+  const ringField = document.getElementById('ringField');
+  const ringHalo = document.getElementById('ringHalo');
+  const PROG_R = 128;
+  const PROG_C = 2 * Math.PI * PROG_R;
+  ringProgress.setAttribute('stroke-dasharray', String(PROG_C));
+
+  const stateIdle = document.getElementById('stateIdle');
+  const stateActive = document.getElementById('stateActive');
+  const stateComplete = document.getElementById('stateComplete');
+  const phaseWordEls = document.querySelectorAll('.phase-word-item');
+  const phaseCountEl = document.getElementById('phaseCount');
+  const breathCountEl = document.getElementById('breathCountNum');
+  const completionSub = document.getElementById('completionSub');
+  const tgPhase = document.getElementById('tgPhase');
+  const tgCount = document.getElementById('tgCount');
+  const tgDots = document.getElementById('tgDots');
+
+  let session = { active: false, startAt: 0, endAt: 0, minutes: 3 };
+  let lastPhase = null;
+  let lastRemaining = null;
+  let lastBreathIdx = null;
+  let lastCycleIdx = null;
+  let dissolving = false;
+
+  function showState(name) {
+    [stateIdle, stateActive, stateComplete].forEach((el) => el.classList.remove('is-visible'));
+    ({ idle: stateIdle, active: stateActive, complete: stateComplete }[name]).classList.add('is-visible');
   }
 
   function startSession(minutes) {
-    var totalMs = minutes * 60000;
-    state.totalBreaths = Math.max(1, Math.round(totalMs / (PHASE_MS.inhale + PHASE_MS.hold + PHASE_MS.exhale)));
-    state.breathIndex = 0;
-    state.sessionActive = true;
-    els.sessionPicker.setAttribute('hidden', '');
-    els.completionLine.classList.remove('is-visible');
-    els.completionLine.setAttribute('hidden', '');
-    els.endSession.removeAttribute('hidden');
-    els.ringSvg.style.opacity = '1';
-    beginPhase('inhale');
-  }
-
-  function endSessionToIdle() {
-    state.sessionActive = false;
-    state.settleFrom = state.currentR;
-    state.settleElapsed = 0;
-    state.phase = 'settle';
-    els.endSession.setAttribute('hidden', '');
-    els.breathCount.textContent = '';
-    els.reducedCount.textContent = '';
-    setWord('settle in');
-    els.sessionPicker.removeAttribute('hidden');
-  }
-
-  function startCompletion() {
-    state.sessionActive = false;
-    state.dissolveElapsed = 0;
-    state.phase = 'dissolve';
-    els.endSession.setAttribute('hidden', '');
-    setWord('');
-  }
-
-  function finishCompletion() {
-    state.phase = 'complete';
-    state.completeElapsed = 0;
-    els.breathCount.textContent = '';
-    els.reducedCount.textContent = '';
-    setWord('');
-    spawnParticles();
-    els.completionLine.removeAttribute('hidden');
-    requestAnimationFrame(function () {
-      els.completionLine.classList.add('is-visible');
-    });
-  }
-
-  /* ---------------------------------------------------------------------
-   * Master loop
-   * ------------------------------------------------------------------ */
-  var lastTime = null;
-  var rafId = null;
-  var gradientTime = 0;
-
-  function tickBreath(dtMs) {
-    var dtSec = dtMs / 1000;
-    state.clock += dtSec;
-
-    if (state.phase === 'idle') {
-      var r = IDLE_BASE + Math.sin((state.clock * Math.PI * 2) / IDLE_PERIOD) * IDLE_AMP;
-      setRingR(r);
-      setArcProgress(0, false);
-      els.ringCore.style.opacity = '0.55';
-      return;
-    }
-
-    if (state.phase === 'settle') {
-      state.settleElapsed += dtMs;
-      var st = Math.min(1, state.settleElapsed / SETTLE_MS);
-      setRingR(lerp(state.settleFrom, IDLE_BASE, st));
-      setArcProgress(0, false);
-      els.ringCore.style.opacity = String(lerp(1, 0.55, st));
-      if (st >= 1) state.phase = 'idle';
-      return;
-    }
-
-    if (state.phase === 'inhale' || state.phase === 'hold' || state.phase === 'exhale') {
-      state.phaseElapsed += dtMs;
-      var dur = PHASE_MS[state.phase];
-      var t = Math.min(1, state.phaseElapsed / dur);
-
-      if (!reduced) {
-        if (state.phase === 'inhale') {
-          setRingR(lerp(RING_MIN, RING_MAX, easeBreath(t)));
-          els.ringCore.style.opacity = '1';
-        } else if (state.phase === 'exhale') {
-          setRingR(lerp(RING_MAX, RING_MIN, easeBreath(t)));
-          els.ringCore.style.opacity = '1';
-        } else {
-          var shimmer = Math.sin((state.clock * Math.PI * 2) / SHIMMER_PERIOD) * SHIMMER_AMP;
-          setRingR(RING_MAX + shimmer);
-          els.ringCore.style.opacity = String(0.86 + Math.sin((state.clock * Math.PI * 2) / SHIMMER_PERIOD) * 0.1);
-        }
-        setArcProgress(t, true);
-      } else {
-        var secLeft = Math.max(0, Math.ceil((dur - state.phaseElapsed) / 1000));
-        if (secLeft !== state.lastReducedSecond) {
-          state.lastReducedSecond = secLeft;
-          els.reducedCount.textContent = secLeft > 0 ? String(secLeft) : '';
-        }
-      }
-
-      if (t >= 1) {
-        if (state.phase === 'inhale') beginPhase('hold');
-        else if (state.phase === 'hold') beginPhase('exhale');
-        else {
-          state.breathIndex++;
-          if (state.breathIndex >= state.totalBreaths) {
-            if (reduced) { finishCompletion(); }
-            else startCompletion();
-          } else {
-            beginPhase('inhale');
-          }
-        }
-        state.lastReducedSecond = -1;
-      }
-      return;
-    }
-
-    if (state.phase === 'dissolve') {
-      state.dissolveElapsed += dtMs;
-      var dt2 = Math.min(1, state.dissolveElapsed / DISSOLVE_MS);
-      setRingR(lerp(RING_MIN, 0, dt2));
-      els.ringSvg.style.opacity = String(1 - dt2);
-      setArcProgress(0, false);
-      if (dt2 >= 1) finishCompletion();
-      return;
-    }
-
-    if (state.phase === 'complete') {
-      state.completeElapsed += dtMs;
-      if (state.completeElapsed >= COMPLETE_PAUSE_MS) {
-        state.phase = 'idle';
-        els.ringSvg.style.opacity = '1';
-        setRingR(IDLE_BASE);
-        els.sessionPicker.removeAttribute('hidden');
-      }
-      return;
+    const now = performance.now();
+    session.active = true;
+    session.minutes = minutes;
+    session.startAt = now;
+    session.endAt = now + minutes * 60000;
+    lastPhase = null;
+    lastRemaining = null;
+    lastBreathIdx = null;
+    lastCycleIdx = null;
+    dissolving = false;
+    ringField.classList.remove('is-dissolved');
+    ringField.style.opacity = '';
+    ringField.classList.add('is-session');
+    showState('active');
+    if (REDUCED) {
+      renderTextGuideStatic();
     }
   }
 
-  function loop(now) {
-    if (lastTime === null) lastTime = now;
-    var dt = Math.min(80, now - lastTime);
-    lastTime = now;
-
-    if (!reduced) {
-      gradientTime += dt * 0.001;
-      updatePalette(dt);
-      resizeCanvas();
-      drawGradient(blended, gradientTime, false);
-    }
-
-    tickBreath(dt);
-    rafId = requestAnimationFrame(loop);
+  function endSessionEarly() {
+    if (!session.active) return;
+    triggerCompletion();
   }
 
-  function startLoop() {
-    if (rafId) return;
-    lastTime = null;
-    rafId = requestAnimationFrame(loop);
-  }
-  function stopLoop() {
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  }
+  document.getElementById('endLink').addEventListener('click', endSessionEarly);
 
-  /* ---------------------------------------------------------------------
-   * Wiring
-   * ------------------------------------------------------------------ */
-  function wire() {
-    els.pickerButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var mins = parseFloat(btn.getAttribute('data-mins'));
-        startSession(mins);
-      });
-    });
+  function triggerCompletion() {
+    if (dissolving) return;
+    dissolving = true;
+    session.active = false;
+    const breathsDone = lastBreathIdx || 1;
+    completionSub.textContent = breathsDone === 1
+      ? 'one breath — that was the whole practice.'
+      : breathsDone + ' breaths, unhurried.';
+    showState('complete');
 
-    els.endSession.addEventListener('click', endSessionToIdle);
-
-    els.palDots.forEach(function (dot) {
-      dot.addEventListener('click', function () {
-        var name = dot.getAttribute('data-set');
-        startCrossfadeTo(name, reduced);
-        computeInk();
-        if (reduced) drawGradient(blended, gradientTime, true);
-      });
-    });
-
-    els.chimeToggle.addEventListener('click', function () {
-      chimeEnabled = !chimeEnabled;
-      els.chimeToggle.setAttribute('aria-pressed', chimeEnabled ? 'true' : 'false');
-      if (chimeEnabled) {
-        ensureAudio();
-        playChime('inhale');
-      }
-    });
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) stopLoop();
-      else if (!reduced) startLoop();
-    });
-
-    var resizeRaf = null;
-    window.addEventListener('resize', function () {
-      if (resizeRaf) return;
-      resizeRaf = requestAnimationFrame(function () {
-        resizeRaf = null;
-        resizeCanvas();
-        if (reduced) drawGradient(blended, gradientTime, true);
-      });
-    });
-  }
-
-  /* ---------------------------------------------------------------------
-   * Init
-   * ------------------------------------------------------------------ */
-  function init() {
-    cacheEls();
-    var ok = initGL();
-    resizeCanvas();
-
-    ink = 'dark';
-    els.body.setAttribute('data-ink', ink);
-    computeInk();
-
-    setRingR(IDLE_BASE);
-    setArcProgress(0, false);
-    els.reducedNote.toggleAttribute('hidden', !reduced);
-
-    if (reduced) {
-      els.ringSvg.style.display = 'none';
-      if (ok) drawGradient(blended, 6.0, true);
-      startLoop(); /* still runs the breath state machine + palette-timer skip */
+    if (!REDUCED) {
+      const rect = ringSvg.getBoundingClientRect();
+      const scale = rect.width / 300;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const curR = Number(ringCore.getAttribute('r')) * scale;
+      spawnParticles(cx, cy, curR);
+      ringField.classList.add('is-dissolved');
     } else {
-      if (ok) startLoop();
-      else startLoop(); /* keep breathing choreography alive even if WebGL failed; CSS fallback gradient shows */
+      ringField.classList.add('is-dissolved');
+    }
+  }
+
+  document.getElementById('beginAgain').addEventListener('click', () => {
+    dissolving = false;
+    ringField.classList.remove('is-session');
+    showState('idle');
+  });
+
+  document.querySelectorAll('.session-picker button').forEach((btn) => {
+    btn.addEventListener('click', () => startSession(Number(btn.dataset.min)));
+  });
+
+  function renderTextGuideStatic() {
+    tgPhase.textContent = 'Breathe in';
+    tgCount.textContent = '4 seconds';
+    tgDots.textContent = '● ○ ○';
+  }
+
+  function updateBreath(now) {
+    if (!session.active) return;
+
+    const elapsedSession = now - session.startAt;
+    const cyclePos = elapsedSession % CYCLE;
+    const breathIdx = Math.floor(elapsedSession / CYCLE) + 1;
+
+    let phase, phaseElapsed, phaseDur;
+    if (cyclePos < PHASES.inhale) {
+      phase = 'inhale'; phaseElapsed = cyclePos; phaseDur = PHASES.inhale;
+    } else if (cyclePos < PHASES.inhale + PHASES.hold) {
+      phase = 'hold'; phaseElapsed = cyclePos - PHASES.inhale; phaseDur = PHASES.hold;
+    } else {
+      phase = 'exhale'; phaseElapsed = cyclePos - PHASES.inhale - PHASES.hold; phaseDur = PHASES.exhale;
+    }
+    const t = clamp01(phaseElapsed / phaseDur);
+
+    // graceful stop: only at the inhale boundary of a new cycle, once time's up
+    if (phase !== lastPhase) {
+      if (phase === 'inhale' && lastPhase === 'exhale' && now >= session.endAt) {
+        triggerCompletion();
+        return;
+      }
+      playChime(CHIME_FREQ[phase]);
+      phaseWordEls.forEach((el) => el.classList.toggle('is-active', el.dataset.phase === phase));
+      lastPhase = phase;
     }
 
-    wire();
+    if (breathIdx !== lastBreathIdx) {
+      lastBreathIdx = breathIdx;
+      breathCountEl.textContent = String(breathIdx).padStart(2, '0');
+    }
 
-    reducedMotionQuery.addEventListener ? reducedMotionQuery.addEventListener('change', function (e) {
-      reduced = e.matches;
-      els.reducedNote.toggleAttribute('hidden', !reduced);
-      els.ringSvg.style.display = reduced ? 'none' : '';
-    }) : null;
+    const remaining = Math.max(1, Math.ceil((phaseDur - phaseElapsed) / 1000));
+    if (remaining !== lastRemaining) {
+      lastRemaining = remaining;
+      phaseCountEl.textContent = remaining + 's';
+      if (REDUCED) {
+        tgPhase.textContent = phase === 'inhale' ? 'Breathe in' : phase === 'hold' ? 'Hold' : 'Breathe out';
+        tgCount.textContent = remaining + ' second' + (remaining === 1 ? '' : 's');
+        tgDots.textContent = phase === 'inhale' ? '● ○ ○' : phase === 'hold' ? '○ ● ○' : '○ ○ ●';
+      }
+    }
+
+    if (REDUCED) return; // no ring geometry animation under reduced motion
+
+    let r;
+    if (phase === 'inhale') {
+      r = R_MIN + (R_MAX - R_MIN) * easeInOutSine(t);
+    } else if (phase === 'exhale') {
+      r = R_MAX - (R_MAX - R_MIN) * easeInOutCubic(t);
+    } else {
+      r = R_MAX + Math.sin(now * 0.0018) * 2.4;
+    }
+    ringCore.setAttribute('r', r.toFixed(2));
+    const k = clamp01((r - R_MIN) / (R_MAX - R_MIN));
+    ringHalo.style.setProperty('--halo-k', (0.55 + k * 0.85).toFixed(3));
+
+    if (phase === 'hold') {
+      const shimmer = 0.5 + Math.sin(now * 0.0018) * 0.5;
+      ringCore.style.strokeWidth = (2.8 + shimmer * 1.1).toFixed(2);
+    } else {
+      ringCore.style.strokeWidth = '3';
+    }
+
+    const dashOffset = PROG_C * (1 - t);
+    ringProgress.setAttribute('stroke-dashoffset', dashOffset.toFixed(2));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  function idleAmbient(now) {
+    if (session.active || REDUCED) return;
+    const t = (Math.sin(now * 0.00052) + 1) / 2;
+    const r = R_MIN + 14 + (R_MAX - R_MIN - 14) * 0.4 * t;
+    ringCore.setAttribute('r', r.toFixed(2));
+    const k = clamp01((r - R_MIN) / (R_MAX - R_MIN));
+    ringHalo.style.setProperty('--halo-k', (0.5 + k * 0.7).toFixed(3));
+    ringProgress.setAttribute('stroke-dashoffset', String(PROG_C * 0.86));
   }
+
+  /* ============================== particle dissolve ============================== */
+
+  const pCanvas = document.getElementById('particles');
+  const pCtx = pCanvas.getContext('2d');
+  let particles = [];
+
+  function resizeParticles() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    pCanvas.width = Math.floor(window.innerWidth * dpr);
+    pCanvas.height = Math.floor(window.innerHeight * dpr);
+    pCanvas.style.width = window.innerWidth + 'px';
+    pCanvas.style.height = window.innerHeight + 'px';
+    pCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function spawnParticles(cx, cy, r) {
+    const N = window.innerWidth < 640 ? 46 : 76;
+    const now = performance.now();
+    const glow = PALETTES[palette.currentKey].glow;
+    const rgb = hexToRgb01(glow).map((v) => Math.round(v * 255));
+    particles = [];
+    for (let i = 0; i < N; i++) {
+      const angle = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.15;
+      const speed = 0.012 + Math.random() * 0.028;
+      particles.push({
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.006,
+        size: 1 + Math.random() * 2.4,
+        born: now,
+        life: 4600 + Math.random() * 3200,
+        seed: Math.random() * 1000,
+        rgb
+      });
+    }
+  }
+
+  function updateParticles(now) {
+    if (!particles.length) return;
+    resizeParticlesIfNeeded();
+    pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+    let alive = false;
+    for (const pt of particles) {
+      const age = now - pt.born;
+      if (age >= pt.life) continue;
+      alive = true;
+      const t = age / pt.life;
+      const alpha = Math.pow(1 - t, 1.3) * 0.85;
+      const dt = 16;
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt + Math.sin(now * 0.0007 + pt.seed) * 0.04;
+      pt.vy *= 0.999;
+      pCtx.beginPath();
+      pCtx.fillStyle = `rgba(${pt.rgb[0]},${pt.rgb[1]},${pt.rgb[2]},${alpha.toFixed(3)})`;
+      pCtx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+      pCtx.fill();
+    }
+    if (!alive) {
+      particles = [];
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+    }
+  }
+
+  let lastPW = window.innerWidth, lastPH = window.innerHeight;
+  function resizeParticlesIfNeeded() {
+    if (window.innerWidth !== lastPW || window.innerHeight !== lastPH) {
+      lastPW = window.innerWidth; lastPH = window.innerHeight;
+      resizeParticles();
+    }
+  }
+
+  /* ============================== boot & loop ============================== */
+
+  try {
+    initGL();
+  } catch (e) {
+    document.documentElement.classList.add('no-webgl');
+    glOk = false;
+  }
+
+  resizeGL();
+  resizeParticles();
+  applyCSSVars('dawn');
+  setPaletteDotsUI('dawn');
+  window.addEventListener('resize', () => { resizeGL(); resizeParticles(); });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      // re-sync particle canvas backing store in case of DPR/orientation change while hidden
+      resizeParticles();
+    }
+  });
+
+  reducedMQ.addEventListener?.('change', (e) => {
+    REDUCED = e.matches;
+    document.documentElement.classList.toggle('reduced', REDUCED);
+  });
+
+  function frame() {
+    requestAnimationFrame(frame);
+    if (document.hidden) return;
+    const now = performance.now();
+    updatePalette(now);
+
+    if (REDUCED) {
+      if (!glOk) { /* fallback CSS sky handles visuals */ }
+      else renderGL(6.0); // single static-ish frame, fixed time
+    } else if (glOk) {
+      renderGL((now - startTime) / 1000);
+    }
+
+    if (session.active) updateBreath(now);
+    else idleAmbient(now);
+
+    updateParticles(now);
+  }
+
+  showState('idle');
+  requestAnimationFrame(frame);
 })();

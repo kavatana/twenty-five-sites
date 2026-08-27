@@ -1,0 +1,15 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+await page.goto('http://localhost:4173/10-verdant/', { waitUntil: 'networkidle' });
+await page.evaluate(() => document.querySelector('.packet').focus());
+await page.waitForTimeout(100);
+await page.keyboard.press('Enter');
+await page.waitForTimeout(1000);
+let t1 = await page.evaluate(() => getComputedStyle(document.querySelector('.packet .packet-inner')).transform);
+console.log('after 1st Enter (expect flipped/back):', t1);
+await page.keyboard.press('Enter');
+await page.waitForTimeout(1000);
+let t2 = await page.evaluate(() => getComputedStyle(document.querySelector('.packet .packet-inner')).transform);
+console.log('after 2nd Enter (expect unflipped/front):', t2);
+await browser.close();

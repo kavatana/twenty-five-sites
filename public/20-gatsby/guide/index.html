@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How THE GATSBY GRAND is made — self-drawing deco line work</title>
+<meta name="description" content="The making of THE GATSBY GRAND: stroke-dashoffset line art that draws itself on scroll and on hover, a gold-foil sheen via background-clip text, a canvas champagne-bubble field, and a rotating elevator dial.">
+<meta property="og:title" content="How THE GATSBY GRAND is made">
+<meta property="og:description" content="SVG stroke-draw, gold foil type, a canvas of rising bubbles, and a compass-style floor dial — the full technique breakdown.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#0E1A16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230E1A16'/%3E%3Cg fill='none' stroke='%23C9A227' stroke-width='2.2'%3E%3Cpath d='M32 8 L32 56 M8 32 L56 32'/%3E%3Cpath d='M20 20 L44 44 M44 20 L20 44' opacity='0.5'/%3E%3C/g%3E%3Cpath d='M32 16 L42 32 L32 48 L22 32 Z' fill='%23C9A227'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --emerald: #0E1A16; --emerald-3: #0A130F;
+    --gold: #C9A227; --gold-bright: #E8C766;
+    --champagne: #F3E3C3; --velvet: cubic-bezier(.65,0,.15,1);
+  }
+  body {
+    background:
+      radial-gradient(110vmax 65vmax at 50% -12%, rgba(201,162,39,.09), transparent 55%),
+      linear-gradient(180deg, var(--emerald) 0%, var(--emerald-3) 100%);
+    color: var(--champagne);
+    font-family: "Lora", Georgia, serif;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: rgba(201,162,39,.35); color: #0B0B0B; }
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .045; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+  .wrap { max-width: 700px; margin: 0 auto; padding: clamp(3rem,8vh,5.5rem) 24px 5rem; position: relative; z-index: 1; }
+  .crumb {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-family: "Marcellus", serif; font-size: .72rem; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--gold); text-decoration: none; margin-bottom: 3rem;
+    border-bottom: 1px solid rgba(201,162,39,.35); padding-bottom: 3px;
+    transition: color .4s var(--velvet), border-color .4s var(--velvet);
+  }
+  .crumb:hover, .crumb:focus-visible { color: var(--gold-bright); border-color: var(--gold-bright); }
+  .kicker { font-family: "Marcellus", serif; font-size: .72rem; letter-spacing: .34em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.1rem; }
+  h1 {
+    font-family: "Marcellus", serif; font-weight: 400;
+    font-size: clamp(2rem, 5.4vw, 3.1rem); line-height: 1.08; letter-spacing: .02em;
+    color: var(--champagne);
+    text-shadow: 0 0 28px rgba(201,162,39,.16);
+    margin-bottom: 1.3rem;
+  }
+  .lede { color: var(--champagne); opacity: .88; font-size: 1.06rem; max-width: 58ch; margin-bottom: 3.2rem; }
+  h2 {
+    font-family: "Marcellus", serif; font-weight: 400; letter-spacing: .1em; text-transform: uppercase;
+    font-size: 1.02rem; color: var(--gold-bright);
+    margin: 2.8rem 0 .9rem; display: flex; align-items: center; gap: .6rem;
+  }
+  h2::before { content: "\25C6"; color: var(--gold); font-size: .7rem; }
+  p { margin-bottom: 1.1rem; opacity: .92; }
+  code {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: .87em;
+    background: rgba(201,162,39,.1); border: 1px solid rgba(201,162,39,.22);
+    padding: .1em .4em; border-radius: 3px; color: var(--gold-bright);
+  }
+  ul { padding-left: 1.3rem; margin-bottom: 1.1rem; }
+  li { margin-bottom: .55rem; opacity: .92; }
+  li::marker { color: var(--gold); }
+  .rule { height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 3rem 0; }
+  .passes {
+    border: 1px solid rgba(201,162,39,.22); border-radius: 3px; padding: 1.5rem 1.6rem;
+    background: linear-gradient(165deg, rgba(20,39,31,.5), rgba(10,19,15,.4));
+  }
+  .passes p { margin-bottom: .5rem; opacity: .88; font-size: .96rem; }
+  .passes strong { color: var(--gold-bright); font-weight: 600; }
+  footer.g-foot {
+    margin-top: 3.5rem; padding-top: 1.6rem; border-top: 1px solid rgba(201,162,39,.18);
+    font-family: "Marcellus", serif; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold); opacity: .8;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../">&larr; Back to the Grand</a>
+
+  <p class="kicker">The Making Of</p>
+  <h1>How the line work draws itself</h1>
+  <p class="lede">THE GATSBY GRAND is built on one idea, repeated with variation: ornament that behaves like it was inked in front of you, not stamped on the page. Here is how that trick — and the rest of the room — was assembled.</p>
+
+  <h2>The concept</h2>
+  <p>A hotel established in 1928 asks for a very particular kind of confidence: symmetry, brass, and just enough restraint that the excess reads as taste rather than clutter. The palette is a single deep emerald with two golds and a champagne text color, nothing else — the discipline of a short cocktail list. Marcellus supplies the deco capitals; Lora carries the paragraphs so the voice stays warm rather than shouting.</p>
+
+  <h2>Self-drawing line art</h2>
+  <p>Every gold line on this page — the hero&rsquo;s corner brackets, the suite frames, the chevron dividers, the chandelier&rsquo;s arms — is a real <code>&lt;path&gt;</code>, not a background image. On load, JavaScript walks each one and calls <code>path.getTotalLength()</code>, then sets <code>stroke-dasharray</code> and <code>stroke-dashoffset</code> to that exact length. The line becomes invisible: a dash exactly as long as the path, offset exactly out of view. An <code>IntersectionObserver</code> watches each section; the instant it crosses into view, the dashoffset animates to zero on a staggered delay per path, and the ornament inks itself in, corner by corner, arm by arm.</p>
+  <p>The sunburst fans (above the hotel name, and folded into The Aurora&rsquo;s room illustration) are not hand-plotted rays — a small function walks a count, a spread angle and a min/max length, and generates each radial <code>&lt;path&gt;</code> at runtime so the fan stays perfectly symmetric no matter how many rays it&rsquo;s asked for. The stepped chevron dividers are built the same way: a loop steps across a baseline, jumping up and back down at right angles to produce the ziggurat silhouette, rather than a hand-authored zigzag.</p>
+
+  <h2>Hover-drawn suites</h2>
+  <p>The three suite illustrations use a variant of the same trick, but without JavaScript deciding when to draw. Their path lengths are written into a CSS custom property, <code>--len</code>, and the stylesheet alone owns the transition: <code>stroke-dashoffset: var(--len)</code> at rest, <code>0</code> on <code>:hover</code> or <code>:focus-within</code>. That keeps the interaction fully keyboard-accessible — tabbing onto a card&rsquo;s content draws the coupe glass, the sextant, or the sunrise exactly as a mouse hover would.</p>
+
+  <h2>Gold foil &amp; champagne air</h2>
+  <p>The hero title is a gradient — dim gold, bright gold, a near-white hot spot, back down again — painted onto the text with <code>background-clip: text</code> and a transparent fill. The gradient is twice as wide as the text box and slides via an eight-second <code>background-position</code> keyframe, so a specular highlight sweeps across the letters the way light catches foil stamping when the page tilts. Behind it, a sparse canvas of champagne bubbles rises: a plain 2D context, capped at device-pixel-ratio 2, each bubble a circle plus a tiny highlight dot, drifting on a sine wave and recycled from the bottom when it clears the top. The loop fully cancels on <code>visibilitychange</code> rather than idling in a hidden tab.</p>
+
+  <h2>The elevator dial</h2>
+  <p>The fixed side-nav reinterprets an actual hotel floor indicator as a small brass compass: a needle pinned at the dial&rsquo;s center rotates 90&deg; per floor as an <code>IntersectionObserver</code> — tuned with a &minus;45% top/bottom <code>rootMargin</code> so it fires when a section crosses the vertical middle of the viewport — reports which floor, L, 2, 3 or P, currently holds the room. The rotation runs on the same 600&ndash;900ms &ldquo;velvet&rdquo; cubic-bezier used everywhere else on the page, so the needle settles rather than snaps.</p>
+
+  <h2>Iteration passes</h2>
+  <div class="passes">
+    <p><strong>Pass 1 — structure &amp; signature technique.</strong> Built the frame: hero, suites, ballroom, promenade menu, and the stroke-dashoffset draw system with its IntersectionObserver trigger, shared between scroll-reveal and hover-reveal.</p>
+    <p><strong>Pass 2 — the moving parts.</strong> Added the canvas bubble field, the gold foil sheen keyframe, the chandelier&rsquo;s sway and sparkle glints, and the elevator dial&rsquo;s rotation logic.</p>
+    <p><strong>Pass 3 — verification.</strong> Screenshotted both viewports at load and several seconds later, confirmed zero console errors, checked the reduced-motion path renders fully composed and static, and tuned spacing and contrast against the rubric.</p>
+  </div>
+
+  <div class="rule"></div>
+  <footer class="g-foot">20 / 25 &middot; THE GATSBY GRAND — designed &amp; coded by Claude Fable 5</footer>
+</div>
+</body>
+</html>

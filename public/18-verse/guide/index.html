@@ -15,8 +15,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ivory: #FBF8F1; --ink: #17151F; --ink-70: rgba(23,21,31,.7); --ink-50: rgba(23,21,31,.5);
-    --ink-14: rgba(23,21,31,.13); --gold: #B8963E; --gold-16: rgba(184,150,62,.16);
+    --ivory: #FBF8F1; --ink: #17151F; --ink-70: rgba(23,21,31,.7); --ink-60: rgba(23,21,31,.6); --ink-50: rgba(23,21,31,.5);
+    --ink-14: rgba(23,21,31,.13); --gold: #B8963E; --gold-ink: #8A6B28; --gold-16: rgba(184,150,62,.16);
     --serif: "Crimson Pro", Georgia, serif; --sans: "Work Sans", sans-serif;
     --ease: cubic-bezier(.16,.8,.28,1);
   }
@@ -39,11 +39,11 @@
   .wrap { max-width: 700px; margin: 0 auto; padding: clamp(3rem,8vh,5.5rem) 24px 4rem; position: relative; z-index: 1; }
   .crumb {
     display: inline-block; font-family: var(--sans); font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
-    color: var(--ink-50); text-decoration: none; margin-bottom: 2.8rem;
+    color: var(--ink-60); text-decoration: none; margin-bottom: 2.8rem;
     border-bottom: 1px solid var(--ink-14); padding-bottom: 3px; transition: color .3s, border-color .3s;
   }
-  .crumb:hover { color: var(--gold); border-color: var(--gold); }
-  .kicker { font-family: var(--sans); font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin: 0 0 1rem; }
+  .crumb:hover { color: var(--gold-ink); border-color: var(--gold); }
+  .kicker { font-family: var(--sans); font-size: .74rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold-ink); margin: 0 0 1rem; }
   h1 {
     font-family: var(--serif); font-weight: 400; font-size: clamp(2rem,5.2vw,3rem); line-height: 1.1;
     letter-spacing: -.01em; margin: 0 0 1.3rem;
@@ -54,7 +54,7 @@
     font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 1.28rem; color: var(--ink);
     margin: 2.6rem 0 .7rem;
   }
-  h2 b { font-style: normal; font-family: var(--sans); font-size: .7rem; letter-spacing: .18em; color: var(--gold); display: block; margin-bottom: .4rem; text-transform: uppercase; }
+  h2 b { font-style: normal; font-family: var(--sans); font-size: .7rem; letter-spacing: .18em; color: var(--gold-ink); display: block; margin-bottom: .4rem; text-transform: uppercase; }
   p { line-height: 1.72; color: var(--ink-70); font-size: 1rem; margin: 0 0 1rem; max-width: 62ch; }
   strong { color: var(--ink); font-weight: 600; }
   code {
@@ -68,10 +68,10 @@
   footer {
     margin-top: 2.4rem; padding-top: 1.3rem; border-top: 1px solid var(--ink-14);
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 1.5rem;
-    font-family: var(--sans); font-size: .74rem; color: var(--ink-50); letter-spacing: .05em;
+    font-family: var(--sans); font-size: .74rem; color: var(--ink-60); letter-spacing: .05em;
   }
   footer a { color: var(--ink-70); text-decoration: none; border-bottom: 1px solid var(--ink-14); padding-bottom: 1px; transition: color .3s, border-color .3s; }
-  footer a:hover { color: var(--gold); border-color: var(--gold); }
+  footer a:hover { color: var(--gold-ink); border-color: var(--gold); }
   .foot-links { display: flex; gap: 1.3rem; }
   .fade { opacity: 0; transform: translateY(12px); animation: fade .8s var(--ease) forwards; animation-delay: var(--d,0s); }
   @keyframes fade { to { opacity: 1; transform: none; } }

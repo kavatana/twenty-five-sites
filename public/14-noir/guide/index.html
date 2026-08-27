@@ -23,16 +23,16 @@
 <div class="grain" aria-hidden="true"></div>
 <div class="cursor" id="cursor" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
 
-<div class="corner corner-tl"><a class="u" href="../" style="text-decoration:none;color:inherit"><b>NOIR</b></a></div>
-<div class="corner corner-tr">How it's made</div>
-<div class="corner corner-bl">Collection Nº14 — Absence</div>
-<div class="corner corner-br">MMXXVI</div>
+<div class="corner corner-tl" aria-hidden="true"><b>NOIR</b></div>
+<div class="corner corner-tr" aria-hidden="true">How it's made</div>
+<div class="corner corner-bl" aria-hidden="true">Collection Nº14 — Absence</div>
+<div class="corner corner-br" aria-hidden="true">MMXXVI</div>
 
 <main id="main">
-  <div class="guide-hero wrap">
+  <div class="guide-hero wrap" id="sec-cover">
     <a class="u guide-back" href="../">← Back to the collection</a>
     <h1 class="guide-title">Notes on <em>absence</em>.</h1>
-    <p class="guide-dek">A technical supplement — the constraints, the four tricks the page leans on, and how six passes got it here.</p>
+    <p class="guide-dek">A technical supplement — the constraints, the four tricks the page leans on, and what each pass caught that the last one missed.</p>
   </div>
 
   <div class="guide-main">
@@ -82,7 +82,7 @@
         <p class="guide-idx">06</p>
         <div>
           <h2>Passes</h2>
-          <p>Built and audited the same way the rest of the showcase is: a pass lays down structure and real copy, then a fresh look at 1440×900 and 390×844 screenshots catches what reads as unbalanced, undersized, or dead. The corner registration marks and the running "P. 0X" catalog folio were added once the page felt like a website rather than a printed lookbook; the wheel-remap and the per-frame blur interpolation replaced an earlier version that only toggled a class at the snap point and looked mechanical. Everything eases on <code>cubic-bezier(0.16,1,0.3,1)</code>; nothing bounces. <code>prefers-reduced-motion</code> removes the grain drift, the ticker, the cursor's lerp, and the wipe's transition — but the outline, the fill states, and the layout hold, because restraint was always the point.</p>
+          <p>Built and audited the same way the rest of the showcase is: a pass lays down structure and real copy, then a fresh look at 1440×900 and 390×844 screenshots catches what reads as unbalanced, undersized, or dead. The corner registration marks and the running "P. 0X" catalog folio were added once the page felt like a website rather than a printed lookbook; the wheel-remap and the per-frame blur interpolation replaced an earlier version that only toggled a class at the snap point and looked mechanical. A later pass caught the two bottom corner stamps sitting on top of look captions and the manifesto pull-word at ordinary scroll positions, not just the footer — they now frame the cover alone and step aside for everything real underneath. Everything eases on <code>cubic-bezier(0.16,1,0.3,1)</code>; nothing bounces. <code>prefers-reduced-motion</code> removes the grain drift, the ticker, the cursor's lerp, and the wipe's transition — but the outline, the fill states, and the layout hold, because restraint was always the point.</p>
         </div>
       </section>
 
@@ -90,7 +90,7 @@
   </div>
 </main>
 
-<footer class="foot">
+<footer class="foot" id="sec-footer">
   <div class="hair" style="margin-bottom:0"></div>
   <p class="foot-colophon">Bodoni Moda, Figtree. Two tones, nothing else.</p>
   <div class="foot-row">

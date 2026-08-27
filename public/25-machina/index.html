@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MACHINA — an instrument for diving into the Mandelbrot set</title>
+<meta name="description" content="MACHINA is a hand-written canvas renderer that auto-plays a slow, mathematically exact dive into the Mandelbrot set — five charted waypoints, smooth escape-time coloring, live coordinate telemetry, and a precision guard that returns to sea level before float64 breaks down.">
+<meta property="og:title" content="MACHINA — an instrument for diving into the Mandelbrot set">
+<meta property="og:description" content="A hand-written canvas Mandelbrot renderer executing a pre-planned cinematic zoom — seahorse valley, spiral arm, a minibrot — with live coordinate telemetry and a float64 precision guard.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#05060A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%2305060A'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='21'%20fill='none'%20stroke='%2359F2E8'%20stroke-width='2'%20opacity='.55'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='12.5'%20fill='none'%20stroke='%23F2A03D'%20stroke-width='2'%20opacity='.8'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='3.4'%20fill='%23F7E8C8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="machina.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main-canvas">Skip to the fractal field</a>
+
+<p class="sr-only">MACHINA renders the Mandelbrot set live in your browser and auto-plays a slow zoom through five named locations — the whole set, the coastline boundary, Seahorse Valley, a spiral arm, and a miniature copy of the whole set buried deep inside it — before pulling back and looping. Use the Pause button to freeze the dive, click anywhere in the field to look closer at that point, and the Palette button to cycle three colour treatments.</p>
+
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<main id="main-canvas">
+
+  <header class="hud-top">
+    <div class="brand">
+      <span class="brand-mark">MACHINA</span>
+      <span class="brand-sub">z&nbsp;↦&nbsp;z²&nbsp;+&nbsp;c — an instrument for looking closer</span>
+    </div>
+    <dl class="readouts" id="readouts" aria-hidden="true">
+      <div class="ro"><dt>RE</dt><dd id="roRe">−0.500000000000</dd></div>
+      <div class="ro"><dt>IM</dt><dd id="roIm">&nbsp;0.000000000000</dd></div>
+      <div class="ro"><dt>ZOOM</dt><dd id="roZoom">10^0.00×</dd></div>
+      <div class="ro ro-iter"><dt>ITER</dt><dd id="roIter">140</dd></div>
+      <div class="ro ro-ms"><dt>RENDER</dt><dd id="roMs">0.0 ms</dd></div>
+      <div class="ro ro-status"><dt>STATUS</dt><dd id="roStatus">CALIBRATING</dd></div>
+    </dl>
+  </header>
+
+  <div class="bracket bracket-tl" aria-hidden="true"></div>
+  <div class="bracket bracket-tr" aria-hidden="true"></div>
+  <div class="bracket bracket-bl" aria-hidden="true"></div>
+  <div class="bracket bracket-br" aria-hidden="true"></div>
+
+  <aside class="depth-rail" aria-hidden="true">
+    <span class="rail-caption">DEPTH</span>
+    <div class="rail-track">
+      <div class="rail-indicator" id="railIndicator"></div>
+      <div class="rail-tick" style="--p:0%"><i></i><em>10⁰</em></div>
+      <div class="rail-tick" style="--p:15.38%"><i></i><em>10²</em></div>
+      <div class="rail-tick" style="--p:38.46%"><i></i><em>10⁵</em></div>
+      <div class="rail-tick" style="--p:61.54%"><i></i><em>10⁸</em></div>
+      <div class="rail-tick" style="--p:84.62%"><i></i><em>10¹¹</em></div>
+      <div class="rail-cap" style="--p:100%"><i></i><em>LIMIT</em></div>
+    </div>
+  </aside>
+
+  <section class="narrative" id="narrative" aria-live="polite">
+    <div class="narrative-card" id="narrativeCard">
+      <span class="nc-exp" id="ncExp">×10⁰</span>
+      <h2 class="nc-title" id="ncTitle">THE WHOLE TERRITORY</h2>
+      <p class="nc-coords" id="ncCoords">c = −0.500000000000 + 0.000000000000i</p>
+      <p class="nc-copy" id="ncCopy">One rule, iterated on itself.</p>
+    </div>
+  </section>
+
+  <div class="pullback-flag" id="pullbackFlag" aria-hidden="true">
+    <span>PRECISION LIMIT</span>
+    <em>double-precision floats exhausted near 10¹³ — returning to sea level</em>
+  </div>
+
+  <div class="cursor-reticle" id="reticle" aria-hidden="true"></div>
+
+  <footer class="hud-bottom">
+    <div class="foot-controls">
+      <button class="ctrl-btn" id="btnPause" type="button" aria-pressed="false">
+        <span class="ctrl-icon" id="pauseIcon">❚❚</span><span class="ctrl-label" id="pauseLabel">PAUSE</span>
+      </button>
+      <button class="ctrl-btn" id="btnPalette" type="button">
+        <span class="ctrl-icon">◐</span><span class="ctrl-label" id="paletteLabel">MAGMA</span>
+      </button>
+      <span class="ctrl-hint">click the field to look closer — the dive resumes on its own</span>
+    </div>
+    <div class="foot-id-wrap">
+      <span class="foot-id">25 / 25 · MACHINA — designed &amp; coded by Claude Fable 5</span>
+      <span class="foot-links"><a href="/">Index</a><a href="guide/">How it's made</a></span>
+    </div>
+  </footer>
+
+</main>
+
+<script src="machina.js" defer></script>
+</body>
+</html>

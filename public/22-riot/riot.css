@@ -56,6 +56,13 @@ a { color: inherit; }
   pointer-events: none; z-index: 40; mix-blend-mode: multiply;
 }
 
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 4;
+  opacity: .07; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
 .scanbar {
   position: fixed; left: 0; right: 0; top: -20%; height: 22vh;
   pointer-events: none; z-index: 5;
@@ -260,20 +267,26 @@ main {
 
 /* ============================= PHOTOS =================================== */
 .photos {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 2.6rem 2.2rem;
-  padding: 3.6rem 1rem 1rem;
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center;
+  gap: 1.8rem 1.4rem; padding: 3.8rem 1rem 1.2rem;
 }
 .photo {
   position: relative; width: 190px; background: var(--paper);
   border: 2px solid var(--ink); padding: 14px 14px 34px;
   box-shadow: 6px 8px 0 rgba(13,13,13,.9);
-  transform: rotate(var(--r));
+  transform: rotate(var(--r)) translateY(var(--y, 0px));
   transition: transform .5s var(--ease-snap), box-shadow .5s;
 }
 .photo:hover {
-  transform: rotate(0deg) translateY(-6px) scale(1.03);
+  transform: rotate(0deg) translateY(calc(var(--y, 0px) - 8px)) scale(1.04);
   box-shadow: 9px 13px 0 rgba(13,13,13,.9);
+  z-index: 5;
 }
+/* staggered "corkboard" sizing — a feature print flanked by smaller cuts,
+   pinned at different heights instead of a neat evenly-spaced row */
+.photo--1 { width: 188px; --y: 34px; margin-right: -6px; }
+.photo--2 { width: 240px; --y: -6px; z-index: 2; }
+.photo--3 { width: 168px; --y: 52px; margin-left: -4px; }
 .photo__halftone {
   width: 100%; aspect-ratio: 1 / 1;
   background-image: radial-gradient(circle, var(--ink) 32%, transparent 34%);
@@ -334,12 +347,37 @@ main {
 }
 
 /* ============================= MANIFESTO ================================= */
-.manifesto { padding: 1rem 0 3rem; }
+.manifesto { padding: 1rem 0 3rem; position: relative; }
+.manifesto::before {
+  content: "013"; position: absolute; top: -1.8rem; right: -.5rem;
+  font-family: "Bungee", sans-serif; line-height: 1;
+  font-size: clamp(6rem, 20vw, 14rem);
+  color: rgba(13,13,13,.045);
+  transform: rotate(-6deg); z-index: 0; pointer-events: none;
+}
+.manifesto__card {
+  position: relative; z-index: 1; max-width: 900px;
+  background: var(--paper); border: 3px solid var(--ink);
+  box-shadow: 11px 11px 0 var(--pink);
+  padding: clamp(1.7rem, 4vw, 2.8rem) clamp(1.5rem, 4vw, 2.6rem) 2rem;
+  transform: rotate(var(--r));
+}
+.manifesto__stamp {
+  position: absolute; top: -24px; right: 30px; z-index: 2;
+  background: var(--lime); border: 2px solid var(--ink);
+  font-family: "Rubik Mono One", monospace; font-size: .58rem; letter-spacing: .03em;
+  padding: .55em .75em; text-align: center; line-height: 1.35;
+  transform: rotate(var(--r)); box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .4s var(--ease-snap), box-shadow .3s;
+}
+.manifesto__stamp:hover {
+  transform: rotate(calc(var(--r) * -1)) scale(1.08) translateY(-3px);
+  box-shadow: 5px 6px 0 var(--ink);
+}
 .manifesto__body {
   font-family: "Archivo", sans-serif; font-weight: 800;
-  font-size: clamp(1.25rem, 2.7vw, 2rem);
+  font-size: clamp(1.2rem, 2.5vw, 1.85rem);
   line-height: 1.42; letter-spacing: -.005em;
-  max-width: 900px;
 }
 .manifesto__body .strike {
   text-decoration: line-through; text-decoration-thickness: 3px;
@@ -383,13 +421,20 @@ main {
   .sticker--tv { left: -4px; top: -10px; }
   .sticker--cal { right: -4px; }
   .photo { width: 42vw; }
+  .photo--1 { width: 40vw; --y: 16px; margin-right: 0; }
+  .photo--2 { width: 46vw; --y: -4px; }
+  .photo--3 { width: 34vw; --y: 26px; margin-left: 0; }
   .toc__row { flex-wrap: wrap; }
   .toc__list { gap: .6rem; }
   .toc__page { margin-left: auto; }
   main { padding-left: 1rem; padding-right: 1rem; }
   .barcode-block { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .manifesto__stamp { top: -18px; right: 10px; font-size: .5rem; }
 }
 
 @media (min-width: 641px) and (max-width: 900px) {
   .photo { width: 26vw; }
+  .photo--1 { width: 25vw; --y: 22px; margin-right: 0; }
+  .photo--2 { width: 32vw; --y: -4px; }
+  .photo--3 { width: 22vw; --y: 34px; margin-left: 0; }
 }

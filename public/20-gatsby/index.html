@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE GATSBY GRAND — A Hotel, Est. 1928</title>
+<meta name="description" content="Twenty-two storeys of brass and velvet above the avenue. Self-drawing art-deco line work, gold foil type, a swaying crystal chandelier, and an elevator dial for THE GATSBY GRAND, est. 1928.">
+<meta property="og:title" content="THE GATSBY GRAND — A Hotel, Est. 1928">
+<meta property="og:description" content="Champagne evening, brass and velvet. The lift runs on time; the orchestra tunes at eight. Step inside.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0E1A16">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230E1A16'/%3E%3Cg fill='none' stroke='%23C9A227' stroke-width='2.2'%3E%3Cpath d='M32 8 L32 56 M8 32 L56 32'/%3E%3Cpath d='M20 20 L44 44 M44 20 L20 44' opacity='0.5'/%3E%3C/g%3E%3Cpath d='M32 16 L42 32 L32 48 L22 32 Z' fill='%23C9A227'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gatsby.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<nav class="dial" aria-label="Floor navigation">
+  <div class="dial-face">
+    <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46"></circle>
+      <circle class="dial-hub" cx="50" cy="50" r="2.6"></circle>
+    </svg>
+    <div class="dial-needle" aria-hidden="true"></div>
+    <button class="dial-btn" type="button" data-target="lobby" data-floor="L" aria-current="true" aria-label="Go to the Lobby"><span aria-hidden="true">L</span></button>
+    <button class="dial-btn" type="button" data-target="suites" data-floor="2" aria-label="Go to the Suites, floor 2"><span aria-hidden="true">2</span></button>
+    <button class="dial-btn" type="button" data-target="ballroom" data-floor="3" aria-label="Go to the Ballroom, floor 3"><span aria-hidden="true">3</span></button>
+    <button class="dial-btn" type="button" data-target="promenade" data-floor="P" aria-label="Go to the Promenade Room"><span aria-hidden="true">P</span></button>
+  </div>
+  <p class="dial-caption" aria-live="polite">Lobby</p>
+</nav>
+
+<main id="main">
+
+  <!-- ===================== LOBBY / HERO ===================== -->
+  <section id="lobby" class="floor" data-floor="L" aria-label="Lobby">
+    <canvas id="bubbles" class="bubbles" aria-hidden="true"></canvas>
+    <div class="hero">
+      <div class="hero-frame reveal">
+        <svg class="deco-svg" viewBox="0 0 1000 640" preserveAspectRatio="none" aria-hidden="true">
+          <g class="sunburst" data-cx="500" data-cy="150" data-count="11" data-min="46" data-max="112" data-spread="150"></g>
+          <path class="draw-path corner" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(26,26)"></path>
+          <path class="draw-path corner" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(974,26) scale(-1,1)"></path>
+          <path class="draw-path corner" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(26,614) scale(1,-1)"></path>
+          <path class="draw-path corner" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(974,614) scale(-1,-1)"></path>
+        </svg>
+        <div class="hero-copy">
+          <p class="hero-kicker">MDCCCCXXVIII &middot; Corner of Fifth &amp; Vermouth</p>
+          <h1 class="hero-title">The Gatsby<br>Grand</h1>
+          <p class="hero-sub">Twenty-two storeys of brass and velvet above the avenue, built the year the market still believed in itself. The lift runs on time. The orchestra tunes at eight. No one has ever been asked to leave before dawn.</p>
+          <a class="hero-cta" href="#suites">Ring the Lift <span aria-hidden="true">&darr;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUITES ===================== -->
+  <section id="suites" class="floor" data-floor="2" aria-label="The Suites">
+    <div class="section-head reveal">
+      <p class="kicker">Floor 2 &middot; Accommodations</p>
+      <h2>The Suites</h2>
+      <svg class="chevron" viewBox="0 0 340 28" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path class="draw-path chevron-line" d=""></path>
+        <path class="chevron-diamond" d="M170,4 L182,14 L170,24 L158,14 Z"></path>
+      </svg>
+      <p class="section-lede">Three addresses upstairs, each with its own temperament. Ring twice for ice.</p>
+    </div>
+
+    <div class="suites-grid">
+
+      <article class="suite-card reveal">
+        <div class="suite-frame">
+          <svg class="deco-svg" viewBox="0 0 300 380" preserveAspectRatio="none" aria-hidden="true">
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,14)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,14) scale(-1,1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,366) scale(1,-1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,366) scale(-1,-1)"></path>
+          </svg>
+          <div class="illus" aria-hidden="true">
+            <svg viewBox="0 0 200 200" overflow="visible">
+              <path class="draw-path" d="M55,55 Q100,49 145,55"></path>
+              <path class="draw-path" d="M145,55 C141,92 112,110 101,112"></path>
+              <path class="draw-path" d="M55,55 C59,92 88,110 99,112"></path>
+              <path class="draw-path" d="M100,112 L100,150"></path>
+              <ellipse class="draw-path" cx="100" cy="154" rx="19" ry="5"></ellipse>
+              <path class="draw-path" d="M70,44 L62,28"></path>
+              <path class="draw-path" d="M85,38 L80,20"></path>
+              <path class="draw-path" d="M100,36 L100,16"></path>
+              <path class="draw-path" d="M115,38 L120,20"></path>
+              <path class="draw-path" d="M130,44 L138,28"></path>
+            </svg>
+          </div>
+          <div class="suite-copy">
+            <h3>The Fitzgerald</h3>
+            <p>A corner suite for people who quote the books they haven&rsquo;t finished. Champagne coupes arrive in a pyramid, unbidden, at six.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="suite-card reveal">
+        <div class="suite-frame">
+          <svg class="deco-svg" viewBox="0 0 300 380" preserveAspectRatio="none" aria-hidden="true">
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,14)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,14) scale(-1,1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,366) scale(1,-1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,366) scale(-1,-1)"></path>
+          </svg>
+          <div class="illus" aria-hidden="true">
+            <svg viewBox="0 0 200 200" overflow="visible">
+              <circle class="draw-path" cx="100" cy="100" r="54"></circle>
+              <path class="draw-path" d="M100,46 C76,68 76,132 100,154"></path>
+              <path class="draw-path" d="M100,46 C124,68 124,132 100,154"></path>
+              <path class="draw-path" d="M46,100 L154,100"></path>
+              <path class="draw-path" d="M100,46 L100,34"></path>
+              <path class="draw-path" d="M100,154 L100,166"></path>
+              <path class="draw-path" d="M141,59 L149,51"></path>
+              <path class="draw-path" d="M59,141 L51,149"></path>
+              <path class="draw-path" d="M141,141 L149,149"></path>
+              <path class="draw-path" d="M59,59 L51,51"></path>
+              <path class="draw-path" d="M100,84 L110,100 L100,116 L90,100 Z"></path>
+            </svg>
+          </div>
+          <div class="suite-copy">
+            <h3>The Meridian</h3>
+            <p>For the perpetually departing. A brass sextant on the writing desk, a wardrobe built for steamer trunks, and a view aimed due east.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="suite-card reveal">
+        <div class="suite-frame">
+          <svg class="deco-svg" viewBox="0 0 300 380" preserveAspectRatio="none" aria-hidden="true">
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,14)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,14) scale(-1,1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(14,366) scale(1,-1)"></path>
+            <path class="draw-path corner-sm" d="M0,120 L0,40 L16,40 L16,24 L32,24 L32,8 L48,8 L48,0 L120,0" transform="translate(286,366) scale(-1,-1)"></path>
+          </svg>
+          <div class="illus" aria-hidden="true">
+            <svg viewBox="0 0 200 200" overflow="visible">
+              <path class="draw-path" d="M40,140 L160,140"></path>
+              <g class="sunburst" data-cx="100" data-cy="140" data-count="9" data-min="20" data-max="72" data-spread="168"></g>
+              <path class="draw-path" d="M100,140 A26,26 0 0 1 74,114"></path>
+              <path class="draw-path" d="M100,140 A26,26 0 0 0 126,114"></path>
+            </svg>
+          </div>
+          <div class="suite-copy">
+            <h3>The Aurora</h3>
+            <p>The penthouse corner where the sun arrives first. Curtains open themselves at seven; the staff have learned not to ask why.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== BALLROOM ===================== -->
+  <section id="ballroom" class="floor" data-floor="3" aria-label="The Ballroom">
+    <div class="section-head reveal">
+      <p class="kicker">Floor 3 &middot; After Eight O&rsquo;Clock</p>
+      <h2>The Ballroom</h2>
+      <svg class="chevron" viewBox="0 0 340 28" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path class="draw-path chevron-line" d=""></path>
+        <path class="chevron-diamond" d="M170,4 L182,14 L170,24 L158,14 Z"></path>
+      </svg>
+    </div>
+
+    <div class="chandelier-wrap reveal">
+      <svg class="chandelier" viewBox="0 0 480 300" aria-hidden="true">
+        <g class="chandelier-swing">
+          <path class="canopy" d="M216,4 L264,4 L264,14 L276,14 L276,22 L204,22 L204,14 L216,14 Z"></path>
+          <path class="rod draw-path" d="M240,22 L240,64"></path>
+
+          <path class="arm draw-path" d="M240,64 C224,80 212,98 206,120"></path>
+          <path class="arm draw-path" d="M240,66 C204,86 182,112 172,142"></path>
+          <path class="arm draw-path" d="M240,68 C186,92 150,120 134,158"></path>
+          <path class="arm draw-path" d="M240,64 C256,80 268,98 274,120"></path>
+          <path class="arm draw-path" d="M240,66 C276,86 298,112 308,142"></path>
+          <path class="arm draw-path" d="M240,68 C294,92 330,120 346,158"></path>
+          <path class="arm draw-path" d="M240,64 L240,168"></path>
+
+          <path class="drop" d="M206,120 L201,132 L206,146 L211,132 Z"></path>
+          <path class="drop" d="M172,142 L166,156 L172,172 L178,156 Z"></path>
+          <path class="drop" d="M134,158 L127,174 L134,192 L141,174 Z"></path>
+          <path class="drop" d="M274,120 L269,132 L274,146 L279,132 Z"></path>
+          <path class="drop" d="M308,142 L302,156 L308,172 L314,156 Z"></path>
+          <path class="drop" d="M346,158 L339,174 L346,192 L353,174 Z"></path>
+          <path class="drop" d="M240,168 L233,186 L240,206 L247,186 Z"></path>
+
+          <g class="sparkle">
+            <path d="M206,120 L206,112 M206,120 L206,128 M198,120 L214,120"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M274,120 L274,112 M274,120 L274,128 M266,120 L282,120"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M134,158 L134,150 M134,158 L134,166 M126,158 L142,158"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M346,158 L346,150 M346,158 L346,166 M338,158 L354,158"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M240,168 L240,158 M240,168 L240,178 M230,168 L250,168"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M172,142 L172,135 M172,142 L172,149 M165,142 L179,142"></path>
+          </g>
+          <g class="sparkle">
+            <path d="M308,142 L308,135 M308,142 L308,149 M301,142 L315,142"></path>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <p class="ballroom-copy">Eleven hundred crystal drops, hand-strung, and not one of them has fallen since the night the market did. The band plays until somebody wealthier than the band asks them to stop.</p>
+    <p class="ballroom-note">The chandelier has outlasted four owners, two wars, and one very determined game of indoor croquet.</p>
+  </section>
+
+  <!-- ===================== PROMENADE / MENU ===================== -->
+  <section id="promenade" class="floor" data-floor="P" aria-label="The Promenade Room">
+    <div class="section-head reveal">
+      <p class="kicker">Floor P &middot; Dinner is Served at Eight</p>
+      <h2>The Promenade Room</h2>
+      <svg class="chevron" viewBox="0 0 340 28" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path class="draw-path chevron-line" d=""></path>
+        <path class="chevron-diamond" d="M170,4 L182,14 L170,24 L158,14 Z"></path>
+      </svg>
+      <p class="section-lede">The kitchen keeps its own counsel. The following is merely what we suggest you want.</p>
+    </div>
+
+    <div class="menu reveal">
+      <div class="menu-rule"></div>
+
+      <div class="course">
+        <p class="course-title">Hors d&rsquo;Oeuvre</p>
+        <div class="menu-item"><span class="mi-name">Oysters Rockefeller, mignonette</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">1.25</span></div>
+        <div class="menu-item"><span class="mi-name">Beluga on Toast Points, unapologetically</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">3.00</span></div>
+      </div>
+
+      <div class="course">
+        <p class="course-title">Potage</p>
+        <div class="menu-item"><span class="mi-name">Consomm&eacute; C&eacute;leste, a whisper of sherry</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">.75</span></div>
+      </div>
+
+      <div class="course">
+        <p class="course-title">Poisson</p>
+        <div class="menu-item"><span class="mi-name">Sole V&eacute;ronique, muscat and brown butter</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">2.25</span></div>
+      </div>
+
+      <div class="course">
+        <p class="course-title">Entr&eacute;e</p>
+        <div class="menu-item"><span class="mi-name">Filet Rossini, foie gras, truffle jus</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">3.50</span></div>
+        <div class="menu-item"><span class="mi-name">Squab en Cro&ucirc;te, for the quietly ambitious</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">3.25</span></div>
+      </div>
+
+      <div class="course">
+        <p class="course-title">Dessert</p>
+        <div class="menu-item"><span class="mi-name">Baked Alaska, flambéed at the table</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">1.50</span></div>
+      </div>
+
+      <div class="course">
+        <p class="course-title">Digestif</p>
+        <div class="menu-item"><span class="mi-name">The Last Word, mixed without comment</span><span class="mi-rule"></span><span class="mi-sep">&#9670;</span><span class="mi-price">1.00</span></div>
+      </div>
+
+      <div class="menu-rule bottom"></div>
+      <p class="menu-note">Gratuities are neither expected nor refused.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <span class="foot-id">20 / 25 &middot; THE GATSBY GRAND — designed &amp; coded by Claude Fable 5</span>
+  <span class="foot-links">
+    <a href="/">Index</a>
+    <a href="guide/">How it&rsquo;s made</a>
+  </span>
+</footer>
+
+<script src="gatsby.js"></script>
+</body>
+</html>

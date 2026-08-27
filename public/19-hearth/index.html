@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-time="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hearth — a village you can put to sleep</title>
+<meta name="description" content="Hearth is a hand-coded isometric village in pure CSS 3D: eight roofs, a turning windmill, a living stream, and a sun/moon switch that carries the whole sky — and every window — into night.">
+<meta property="og:title" content="Hearth — a village you can put to sleep">
+<meta property="og:description" content="Eight roofs. One stream. A windmill that never stops turning. Toggle the sky and watch a hand-built CSS 3D village fall asleep, window by window.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1B2440">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B2440'/%3E%3Cpath d='M32 11 L55 30 H47 V51 H17 V30 H9 Z' fill='%23D9A05B'/%3E%3Crect x='26.5' y='34' width='11' height='11' rx='1.5' fill='%23FFC978'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hearth.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-head">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 11 L55 30 H47 V51 H17 V30 H9 Z" fill="currentColor"/>
+      <rect x="26.5" y="34" width="11" height="11" rx="1.5" class="brand-glow"/>
+    </svg>
+    <span class="brand-word">Hearth</span>
+  </div>
+  <p class="head-kicker">eight roofs · one stream · a sky you can turn</p>
+</header>
+
+<main>
+
+  <section class="hero">
+    <p class="eyebrow rise" style="--d:.05s">a village kept by hand</p>
+    <h1 class="hero-title rise" style="--d:.12s">Somewhere the evenings<br>still arrive on time.</h1>
+    <p class="hero-lede rise" style="--d:.2s">Down past the millpond, past the last cold lamp on the ridge road, sits a
+      village that hasn't hurried in three hundred years. The bakery breathes smoke before the sun clears the hill.
+      The windmill turns for no one in particular. And every evening, right on schedule, the sky changes its mind —
+      go on, turn it yourself.</p>
+
+    <div class="time-switch-wrap rise" style="--d:.3s">
+      <span class="time-label" data-side="day">Day</span>
+      <button type="button" class="time-switch" id="timeSwitch" role="switch" aria-checked="true" aria-label="Toggle Hearth between day and night">
+        <span class="switch-track">
+          <span class="switch-stars" aria-hidden="true"></span>
+          <span class="switch-thumb" aria-hidden="true">
+            <span class="switch-sun"></span>
+            <span class="switch-moon"></span>
+          </span>
+        </span>
+      </button>
+      <span class="time-label" data-side="night">Night</span>
+    </div>
+    <p class="hint rise" style="--d:.38s">Hover any roof to meet its household. Nudge the switch and the whole
+      valley follows — walls, windows, and somewhere in the grass, crickets you'll have to imagine.</p>
+  </section>
+
+  <section class="stage-section" aria-label="An isometric village that changes from day to night">
+    <div class="stage" id="stage">
+
+      <div class="sky-layer sky-day" aria-hidden="true"></div>
+      <div class="sky-layer sky-night" aria-hidden="true"></div>
+      <div class="stars" aria-hidden="true"></div>
+      <div class="hillside" aria-hidden="true"></div>
+
+      <div class="clouds" aria-hidden="true">
+        <span class="cloud c1"></span>
+        <span class="cloud c2"></span>
+        <span class="cloud c3"></span>
+      </div>
+
+      <div class="sky-critters" id="skyCritters" aria-hidden="true"></div>
+
+      <div class="scaler">
+        <div class="scene" id="scene">
+
+          <div class="ground" aria-hidden="true">
+            <svg class="stream" viewBox="0 0 1040 720" preserveAspectRatio="none" aria-hidden="true">
+              <path class="stream-path" d="M -20 600 C 160 560, 220 480, 340 460 C 480 436, 520 360, 480 280 C 440 200, 520 150, 700 130 C 850 113, 940 90, 1080 40" />
+              <path class="stream-shine" d="M -20 600 C 160 560, 220 480, 340 460 C 480 436, 520 360, 480 280 C 440 200, 520 150, 700 130 C 850 113, 940 90, 1080 40" />
+            </svg>
+          </div>
+
+          <!-- ===== TREES (behind / around) ===== -->
+          <div class="tree tree-lg" style="--x:44px;--y:372px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-md" style="--x:238px;--y:246px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-sm" style="--x:600px;--y:44px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-lg" style="--x:900px;--y:120px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-md" style="--x:960px;--y:360px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-sm" style="--x:52px;--y:560px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-md" style="--x:760px;--y:600px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-sm" style="--x:340px;--y:660px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-sm" style="--x:960px;--y:600px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+          <div class="tree tree-md" style="--x:150px;--y:110px" aria-hidden="true"><span class="trunk"></span><span class="tier t3"></span><span class="tier t2"></span><span class="tier t1"></span></div>
+
+          <!-- ===== LANTERNS ===== -->
+          <div class="lantern" style="--x:420px;--y:398px" aria-hidden="true"><span class="post"></span><span class="lamp"></span></div>
+          <div class="lantern" style="--x:560px;--y:230px" aria-hidden="true"><span class="post"></span><span class="lamp"></span></div>
+          <div class="lantern" style="--x:300px;--y:520px" aria-hidden="true"><span class="post"></span><span class="lamp"></span></div>
+          <div class="lantern" style="--x:700px;--y:470px" aria-hidden="true"><span class="post"></span><span class="lamp"></span></div>
+
+          <!-- ===== WELL (small centerpiece prop) ===== -->
+          <div class="plot building well" tabindex="0" data-name="The Well House" data-tag="coldest water in the valley" style="--x:452px;--y:352px;--w:70px;--d:70px;--h:56px">
+            <span class="cube wall-slate">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="well-roof"><span class="well-roof-l"></span><span class="well-roof-r"></span></span>
+            <span class="well-post lp"></span>
+            <span class="well-post rp"></span>
+          </div>
+
+          <!-- ===== BUILDINGS ===== -->
+
+          <!-- Bakery -->
+          <button type="button" class="plot building bakery" data-name="The Flour &amp; Ember Bakery" data-tag="opens at dawn" style="--x:96px;--y:432px;--w:220px;--d:170px;--h:150px">
+            <span class="cube wall-cream">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="chimney" style="--cx:36px;--cy:18px"><span class="smoke-anchor"></span></span>
+            <span class="window w1" style="--wd:.15s"></span>
+            <span class="window w2" style="--wd:.55s"></span>
+            <span class="door"></span>
+            <span class="sign">bread &amp; ember</span>
+          </button>
+
+          <!-- Birch Hollow Cottage -->
+          <button type="button" class="plot building cottage" data-name="Birch Hollow Cottage" data-tag="smoke by supper time" style="--x:16px;--y:150px;--w:150px;--d:130px;--h:118px">
+            <span class="cube wall-cream">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="chimney" style="--cx:24px;--cy:12px"><span class="smoke-anchor"></span></span>
+            <span class="window w1" style="--wd:.4s"></span>
+            <span class="door"></span>
+          </button>
+
+          <!-- Moss End Cottage -->
+          <button type="button" class="plot building cottage" data-name="Moss End Cottage" data-tag="the ivy moved in first" style="--x:296px;--y:80px;--w:150px;--d:130px;--h:118px">
+            <span class="cube wall-sage">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="chimney" style="--cx:100px;--cy:14px"><span class="smoke-anchor"></span></span>
+            <span class="window w1" style="--wd:.05s"></span>
+            <span class="ivy"></span>
+            <span class="door"></span>
+          </button>
+
+          <!-- The Quiet Chapter (library) -->
+          <button type="button" class="plot building library" data-name="The Quiet Chapter" data-tag="always one lamp lit" style="--x:392px;--y:498px;--w:150px;--d:130px;--h:112px">
+            <span class="cube wall-sage">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="window round"></span>
+            <span class="door"></span>
+          </button>
+
+          <!-- Amber Gate Cottage -->
+          <button type="button" class="plot building cottage" data-name="Amber Gate Cottage" data-tag="porch light never sleeps" style="--x:580px;--y:322px;--w:150px;--d:130px;--h:118px">
+            <span class="cube wall-ochre">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="chimney" style="--cx:24px;--cy:14px"><span class="smoke-anchor"></span></span>
+            <span class="window w1" style="--wd:.3s"></span>
+            <span class="door"></span>
+          </button>
+
+          <!-- Starwell Observatory -->
+          <button type="button" class="plot building observatory" data-name="Starwell Observatory" data-tag="opens after moonrise" style="--x:742px;--y:98px;--w:150px;--d:150px;--h:220px">
+            <span class="cube wall-sage">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="dome">
+              <span class="dome-base"></span>
+              <span class="dome-cap"></span>
+              <span class="dome-slit"></span>
+            </span>
+            <span class="window round"></span>
+            <span class="door"></span>
+          </button>
+
+          <!-- Miller's Rest (windmill) -->
+          <button type="button" class="plot building windmill" data-name="Miller&#8217;s Rest" data-tag="turns for no one in particular" style="--x:864px;--y:428px;--w:110px;--d:110px;--h:210px">
+            <span class="cube wall-cream">
+              <span class="face top"></span>
+              <span class="face front"></span>
+              <span class="face side"></span>
+            </span>
+            <span class="mill-cap"></span>
+            <span class="mill-hub">
+              <span class="mill-blades">
+                <span class="blade"></span>
+                <span class="blade"></span>
+                <span class="blade"></span>
+                <span class="blade"></span>
+              </span>
+            </span>
+            <span class="window w1" style="--wd:.5s"></span>
+            <span class="door"></span>
+          </button>
+
+          <div class="tooltip" id="tooltip" role="status" aria-live="polite">
+            <b id="tooltipName"></b><span id="tooltipTag"></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="registry">
+    <div class="registry-head">
+      <h2 class="rise">The Village Registry</h2>
+      <p class="rise" style="--d:.06s">Eight addresses, kept current by whoever's awake. Hover a roof above —
+        or tab to it — and it'll introduce itself.</p>
+    </div>
+    <div class="registry-grid">
+
+      <article class="reg-card rise" style="--d:.02s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-cream"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>The Flour &amp; Ember Bakery</h3>
+        <p>First smoke of the morning, last light of the night. Opens at dawn, closes when the ovens say so.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.05s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-sage ri-dome"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span><span class="rf-ball"></span></span></div>
+        <h3>Starwell Observatory</h3>
+        <p>A dome that only opens after moonrise. Bring your own coat — the stars don't heat the place.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.08s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-sage"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>The Quiet Chapter</h3>
+        <p>Six shelves, one armchair, no overdue fines. Always one lamp lit for whoever's still reading.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.11s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-cream ri-mill"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span><span class="rf-blade"></span></span></div>
+        <h3>Miller&#8217;s Rest</h3>
+        <p>Turns the valley's grain — and, most days, just turns. Nobody's checked the gears in years.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.14s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-cream"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>Birch Hollow Cottage</h3>
+        <p>Smoke by supper time, whether or not there's anyone home. The chimney keeps its own hours.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.17s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-sage"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>Moss End Cottage</h3>
+        <p>The ivy arrived before the family did. Neither one shows signs of leaving.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.2s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-ochre"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>Amber Gate Cottage</h3>
+        <p>Porch light never sleeps. Neither, some nights, does the kettle.</p>
+      </article>
+
+      <article class="reg-card rise" style="--d:.23s">
+        <div class="reg-icon" aria-hidden="true"><span class="ri-cube ri-well"><span class="rf-top"></span><span class="rf-front"></span><span class="rf-side"></span></span></div>
+        <h3>The Well House</h3>
+        <p>Coldest water in the valley. Wish-granting unconfirmed, but nobody's stopped trying.</p>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <span class="foot-id">19 / 25 · HEARTH — designed &amp; coded by Claude Fable 5</span>
+  <span class="foot-links">
+    <a href="/">Index</a>
+    <a href="guide/">How it's made</a>
+  </span>
+</footer>
+
+<script src="hearth.js"></script>
+</body>
+</html>

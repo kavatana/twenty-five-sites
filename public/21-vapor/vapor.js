@@ -80,6 +80,7 @@
         {name:'Argon',value:8},
         {name:'H₂O Vapor',value:9,accent:true}
       ],
+      compositionNote:'Trace-gas ratio nominal for a saturated troposphere; spectrometer confidence high.',
       wind_:{angle:100,speed:1.0,swirl:.15}
     },
     snow:{
@@ -95,6 +96,7 @@
         {name:'Argon',value:7},
         {name:'Ice Crystals',value:2,accent:true}
       ],
+      compositionNote:'Dry cold-trap chemistry; ice-crystal seeding suppresses vapor further overnight.',
       wind_:{angle:150,speed:.4,swirl:.05}
     },
     aurora:{
@@ -110,6 +112,7 @@
         {name:'Argon',value:8},
         {name:'Ionized O',value:8,accent:true}
       ],
+      compositionNote:'Ionized oxygen fraction elevated by particle precipitation in the thermosphere.',
       wind_:{angle:200,speed:.3,swirl:.9}
     },
     heat:{
@@ -125,6 +128,7 @@
         {name:'Argon',value:9},
         {name:'Particulate',value:7,accent:true}
       ],
+      compositionNote:'Particulate loading rising with convection; spectrometer flags haze aerosols.',
       wind_:{angle:260,speed:1.4,swirl:.35}
     }
   };
@@ -169,8 +173,8 @@
     }
     buildParticles(){
       const r=this.rand;
-      const rainN=this.small?70:150;
-      this.rain=[]; for(let i=0;i<rainN;i++) this.rain.push({x:r(),y:r(),len:14+r()*22,speed:.55+r()*.5,op:.2+r()*.4});
+      const rainN=this.small?90:190;
+      this.rain=[]; for(let i=0;i<rainN;i++) this.rain.push({x:r(),y:r(),len:16+r()*26,speed:.58+r()*.55,op:.26+r()*.5});
       this.splashes=[];
 
       const snowN=this.small?70:130;
@@ -224,7 +228,7 @@
         const x=d.x*w, y=d.y*h;
         const dx=Math.sin(ANGLE)*d.len, dy=Math.cos(ANGLE)*d.len;
         ctx.strokeStyle=`rgba(198,216,238,${d.op})`;
-        ctx.lineWidth=1.3;
+        ctx.lineWidth=1.5;
         ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+dx,y+dy); ctx.stroke();
         if(y>this.groundY-4 && y<this.groundY+18 && Math.random()<0.02*alpha){
           this.splashes.push({x:x/w,y:this.groundY/h,age:0,max:.5+Math.random()*.3});
@@ -408,7 +412,7 @@
 
       const accentMix=mixRgb(MODES[blend.from].accent,MODES[blend.to].accent,blend.t);
       const glow=ctx.createRadialGradient(w*0.68,h*0.22,10,w*0.68,h*0.22,w*0.62);
-      glow.addColorStop(0,rgbCss(accentMix,0.12));
+      glow.addColorStop(0,rgbCss(accentMix,0.17));
       glow.addColorStop(1,rgbCss(accentMix,0));
       ctx.fillStyle=glow; ctx.fillRect(0,0,w,h);
 
@@ -480,17 +484,29 @@
         seedOff:12
       };
       ctx.save();
-      ctx.strokeStyle=rgbCss(accentRgb,.16);
+
+      // soft instrument vignette, replaces flat black backing
+      const vg=ctx.createRadialGradient(w*0.5,h*0.42,Math.min(w,h)*0.06,w*0.5,h*0.5,Math.max(w,h)*0.75);
+      vg.addColorStop(0,rgbCss(accentRgb,.08));
+      vg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=vg; ctx.fillRect(0,0,w,h);
+
+      // minimal HUD crosshair (elegant instrument, not a spreadsheet grid)
+      ctx.strokeStyle=rgbCss(accentRgb,.12);
       ctx.lineWidth=1;
-      const gridN=6;
-      for(let i=1;i<gridN;i++){
-        const gx=w*i/gridN;
-        ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke();
-      }
-      for(let i=1;i<4;i++){
-        const gy=h*i/4;
-        ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke();
-      }
+      ctx.setLineDash([1,4]);
+      ctx.beginPath(); ctx.moveTo(w/2,h*0.1); ctx.lineTo(w/2,h*0.9); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w*0.06,h/2); ctx.lineTo(w*0.94,h/2); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // corner brackets, radar-instrument framing
+      const m=Math.min(w,h)*0.14;
+      ctx.strokeStyle=rgbCss(accentRgb,.32);
+      ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(7,7+m); ctx.lineTo(7,7); ctx.lineTo(7+m,7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w-7-m,7); ctx.lineTo(w-7,7); ctx.lineTo(w-7,7+m); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(7,h-7-m); ctx.lineTo(7,h-7); ctx.lineTo(7+m,h-7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w-7-m,h-7); ctx.lineTo(w-7,h-7); ctx.lineTo(w-7,h-7-m); ctx.stroke();
 
       for(const a of this.arrows){
         const ang=this.angleAt(a.gx,a.gy,now,windP)+a.seed*0.0001;
@@ -498,8 +514,8 @@
         const len=lerp(7,17,speedNorm)*(0.6+windP.speed*0.5);
         const cx=a.gx*w, cy=a.gy*h;
         const dx=Math.cos(ang)*len, dy=Math.sin(ang)*len;
-        ctx.strokeStyle=rgbCss(accentRgb,.62);
-        ctx.lineWidth=1.5; ctx.lineCap='round';
+        ctx.strokeStyle=rgbCss(accentRgb,.68);
+        ctx.lineWidth=1.7; ctx.lineCap='round';
         ctx.beginPath(); ctx.moveTo(cx-dx*0.5,cy-dy*0.5); ctx.lineTo(cx+dx*0.5,cy+dy*0.5); ctx.stroke();
         const hx=cx+dx*0.5, hy=cy+dy*0.5;
         const ha=ang+Math.PI*0.82, hb=ang-Math.PI*0.82;
@@ -540,6 +556,64 @@
   }
 
   /* ---------------------------------------------------------
+     Telemetry — small oscilloscope-style live waveform strip
+     that fills the current-conditions panel's lower register
+     with a continuously-animating instrument reading (no
+     history buffer needed: an analytic sine+noise field scrolls
+     with time, so it never needs seeding or resetting on resize).
+  --------------------------------------------------------- */
+  class Telemetry{
+    constructor(canvas){
+      this.canvas=canvas;
+      this.ctx=canvas.getContext('2d');
+      this.resize();
+    }
+    resize(){
+      const dpr=this.dpr=Math.min(2,window.devicePixelRatio||1);
+      const rect=this.canvas.getBoundingClientRect();
+      this.w=Math.max(1,Math.round(rect.width));
+      this.h=Math.max(1,Math.round(rect.height));
+      this.canvas.width=Math.round(this.w*dpr);
+      this.canvas.height=Math.round(this.h*dpr);
+      this.ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    draw(now,accentRgb,speedNorm){
+      const ctx=this.ctx,w=this.w,h=this.h,t=now*0.001;
+      ctx.clearRect(0,0,w,h);
+      const midY=h*0.56;
+
+      ctx.strokeStyle='rgba(255,255,255,.09)';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,midY); ctx.lineTo(w,midY); ctx.stroke();
+
+      const amp=h*0.30*(0.45+0.55*clamp(speedNorm||0.6,0,1.4));
+      ctx.beginPath();
+      const step=Math.max(2,w/110);
+      for(let x=0;x<=w;x+=step){
+        const xn=x/w;
+        const n=noise2(xn*3.2,0,t*0.7+xn*2.1);
+        const y=midY - Math.sin(xn*13+t*1.7)*amp*0.42*n - Math.sin(xn*4+t*-0.9)*amp*0.3;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=rgbCss(accentRgb,.9);
+      ctx.lineWidth=1.6; ctx.lineJoin='round';
+      ctx.shadowColor=rgbCss(accentRgb,.65);
+      ctx.shadowBlur=6;
+      ctx.stroke();
+      ctx.shadowBlur=0;
+
+      const sweepX=((t*66)%(w+140))-70;
+      const sw=ctx.createLinearGradient(sweepX-70,0,sweepX+70,0);
+      sw.addColorStop(0,'rgba(255,255,255,0)');
+      sw.addColorStop(.5,'rgba(255,255,255,.12)');
+      sw.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=sw;
+      ctx.fillRect(0,0,w,h);
+    }
+    drawStatic(accentRgb){ this.draw(performance.now(),accentRgb,0.6); }
+  }
+
+  /* ---------------------------------------------------------
      UI / state controller
   --------------------------------------------------------- */
   const $=(sel,ctx)=>(ctx||document).querySelector(sel);
@@ -562,9 +636,12 @@
   const legendEls={
     n2:$('#legN2'), co2:$('#legCO2'), ar:$('#legAr'), accent:$('#legAccent')
   };
+  const compositionNoteEl=$('#compositionNote');
   const windTagEl=$('#windTag');
   const windCanvasEl=$('#windMap');
   const sceneCanvasEl=$('#scene');
+  const telemetryCanvasEl=$('#telemetryCanvas');
+  const trendRangeEl=$('#trendRange');
   const clockEl=$('#solClock');
   const root=document.documentElement;
 
@@ -677,6 +754,7 @@
         trendDot.setAttribute('cx',last[0].toFixed(1));
         trendDot.setAttribute('cy',last[1].toFixed(1));
       }
+      if(trendRangeEl) trendRangeEl.textContent=`${min}° – ${max}°`;
     };
     if(instant||prefersReduced||!trendBlock){ apply(); return; }
     trendBlock.classList.add('swap');
@@ -706,6 +784,7 @@
 
   function updateComposition(mode,instant){
     const m=MODES[mode];
+    swapText(compositionNoteEl,m.compositionNote,80);
     const order=['n2','co2','ar','accent'];
     let cum=0;
     order.forEach((key,i)=>{
@@ -766,13 +845,14 @@
       const rgb=hexToRgb(MODES[mode].accent);
       scene && scene.drawStatic(mode);
       windmap && windmap.drawStatic(mode,rgb);
+      telemetry && telemetry.drawStatic(rgb);
     }
   }
 
   /* ---------------------------------------------------------
      Boot
   --------------------------------------------------------- */
-  let scene=null, windmap=null, running=false, rafId=null, lastTs=null;
+  let scene=null, windmap=null, telemetry=null, running=false, rafId=null, lastTs=null;
 
   function frame(ts){
     if(!lastTs) lastTs=ts;
@@ -782,6 +862,8 @@
     scene.draw(blend,ts,dt);
     const accentRgb=mixRgb(MODES[blend.from].accent,MODES[blend.to].accent,blend.t);
     windmap.draw(blend,ts,dt,accentRgb);
+    const windSpeed=lerp(MODES[blend.from].wind_.speed,MODES[blend.to].wind_.speed,blend.t);
+    telemetry.draw(ts,accentRgb,windSpeed);
     rafId=requestAnimationFrame(frame);
   }
   function startLoop(){
@@ -816,6 +898,7 @@
     setAccentVars('rain');
     scene=new Scene(sceneCanvasEl);
     windmap=new WindMap(windCanvasEl);
+    telemetry=new Telemetry(telemetryCanvasEl);
 
     dialButtons.forEach(btn=>{
       btn.addEventListener('click',()=>setMode(btn.dataset.mode));
@@ -840,15 +923,18 @@
     const ro=new ResizeObserver(debounce(()=>{
       scene.resize();
       windmap.resize();
+      telemetry.resize();
       updateDial(state.mode,true);
       if(prefersReduced){
         const rgb=hexToRgb(MODES[state.mode].accent);
         scene.drawStatic(state.mode);
         windmap.drawStatic(state.mode,rgb);
+        telemetry.drawStatic(rgb);
       }
     },120));
     ro.observe(sceneCanvasEl);
     ro.observe(windCanvasEl);
+    ro.observe(telemetryCanvasEl);
 
     document.fonts && document.fonts.ready && document.fonts.ready.then(()=>updateDial(state.mode,true));
 
@@ -861,6 +947,7 @@
       const rgb=hexToRgb(MODES[state.mode].accent);
       scene.drawStatic(state.mode);
       windmap.drawStatic(state.mode,rgb);
+      telemetry.drawStatic(rgb);
     } else {
       startLoop();
     }

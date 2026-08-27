@@ -1,3 +1,8 @@
 node_modules/
 shots/
 .netlify/
+private-reel-project/
+
+# Browser session artifacts from tooling runs, not project files.
+.playwright-mcp/
+.DS_Store

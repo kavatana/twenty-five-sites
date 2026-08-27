@@ -316,10 +316,13 @@ function buildWheel() {
   el("circle", { cx: C, cy: C, r: 166, fill: "none", stroke: "rgba(247,244,236,.14)", "stroke-width": "1" }, svg);
 
   // season bands  (angles: 0 = Jan 1 at top, clockwise)
+  // SUMMER/AUTUMN nudged a touch lighter than their swatch-key cousins — the dark ink season
+  // labels sit directly on these bands, and the original tones only cleared 3.97:1 / 4.38:1
+  // against #1E2D1F (measured), short of the 4.5:1 body-text bar. Lightened, they clear 4.7 / 5.0.
   const seasons = [
     { name: "SPRING", a0: 59, a1: 151, col: "#B9C46A" },
-    { name: "SUMMER", a0: 149, a1: 241, col: "#6E8F5E" },
-    { name: "AUTUMN", a0: 239, a1: 331, col: "#C67B4F" },
+    { name: "SUMMER", a0: 149, a1: 241, col: "#7C9C6A" },
+    { name: "AUTUMN", a0: 239, a1: 331, col: "#CC8861" },
     { name: "WINTER", a0: -31, a1: 61, col: "#8E9F8B" },
   ];
   seasons.forEach((s, i) => {
@@ -367,7 +370,7 @@ function buildWheel() {
   };
   band(150, 44, 152, "#B9C46A", "sowA", "SOW UNDER GLASS → DIRECT");
   band(150, 244, 262, "#B9C46A", "sowB", "AUTUMN SOW");
-  band(132, 166, 302, "#C67B4F", "harv", "HARVEST · COLLECT · DRY SEED");
+  band(132, 166, 302, "#CC8861", "harv", "HARVEST · COLLECT · DRY SEED"); // same lightened terracotta as the AUTUMN band — was 4.38:1 on pine, now 5.0
   band(132, 312, 402, "#8E9F8B", "rest", "REST · NOTES · REPAIRS");
 
   // center
@@ -406,15 +409,19 @@ function specimenInk(svg) {
     "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
 }
 function finishSpecimen(svg, g) {
-  let i = 0;
-  g.querySelectorAll("path,circle,ellipse").forEach(p => {
-    if (p.classList.contains("wash")) return;
-    if (p.tagName === "path") {
-      p.classList.add("draw");
-      p.setAttribute("pathLength", "1");
-      p.style.setProperty("--dd", (i++ * 0.045) + "s");
-      p.style.transitionDuration = REDUCED ? "0.001s" : rand(0.8, 1.4) + "s";
-    }
+  // Budget the stagger instead of a flat per-path delay: yarrow's feathered leaves alone run
+  // to ~280 barb strokes, and a fixed 45ms/path stagger made it take ~14s to finish drawing —
+  // nearly bald for most of a viewer's dwell — while the poppy (22 paths) finished in ~2s.
+  // Capping the total spread to a fixed budget keeps every specimen finishing in the same
+  // few seconds, so the level of drawn detail no longer punishes the busiest plant.
+  const draws = [...g.querySelectorAll("path")].filter(p => !p.classList.contains("wash"));
+  const budget = 1.35; // seconds of total stagger spread, regardless of path count
+  const step = draws.length ? Math.min(0.045, budget / draws.length) : 0.045;
+  draws.forEach((p, i) => {
+    p.classList.add("draw");
+    p.setAttribute("pathLength", "1");
+    p.style.setProperty("--dd", (i * step).toFixed(4) + "s");
+    p.style.transitionDuration = REDUCED ? "0.001s" : rand(0.7, 1.2) + "s";
   });
 }
 

@@ -13,6 +13,11 @@
   --gold-soft: #E8C077;
   --teal: #3E8989;
   --mars: #C2543A;
+  /* darkened, text-safe variants of teal/mars for small labels set on
+     star-paper — the bright marks read fine as strokes/dots/fills but
+     fall under 4.5:1 as body-weight text; these hold ≥4.5:1. */
+  --teal-ink: #2E6B6B;
+  --mars-ink: #A2461E;
   --ink: #14172A;
   --ink-soft: rgba(20,23,42,.68);
   --line-gold: rgba(217,164,65,.4);
@@ -261,7 +266,7 @@ a{color:inherit}
 }
 .fig-label{
   font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--mars);
+  color:var(--mars-ink);
   font-weight:600;
 }
 .plate-title{
@@ -291,7 +296,7 @@ a{color:inherit}
   color:var(--ink-soft);
   max-width:76ch;
 }
-.footnote b{ color:var(--mars); font-weight:600; }
+.footnote b{ color:var(--mars-ink); font-weight:600; }
 
 /* ================= FIG I — star chart ================= */
 .starchart-fig{ position:relative; }
@@ -412,7 +417,7 @@ a{color:inherit}
 .eclipse-figwrap.has-overflow + .scroll-hint{ opacity:1; height:auto; }
 .eclipse-figwrap.has-overflow.at-end + .scroll-hint{ opacity:.4; }
 .scroll-hint .arrow{
-  display:inline-block; color:var(--mars); font-size:12px;
+  display:inline-block; color:var(--mars-ink); font-size:12px;
   animation:hint-nudge 1.6s ease-in-out infinite;
 }
 @keyframes hint-nudge{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
@@ -454,8 +459,8 @@ a{color:inherit}
 .eclipse-entry.below .card{ margin-top:6px; }
 .eclipse-entry .e-date{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.02em; white-space:nowrap; }
 .eclipse-entry .e-type{ font-family:var(--mono); font-size:8.5px; text-transform:uppercase; letter-spacing:.1em; margin-top:2px; }
-.eclipse-entry.total .e-type{ color:var(--mars); }
-.eclipse-entry.annular .e-type{ color:var(--teal); }
+.eclipse-entry.total .e-type{ color:var(--mars-ink); }
+.eclipse-entry.annular .e-type{ color:var(--teal-ink); }
 .eclipse-entry .e-path{ font-family:var(--serif); font-size:11px; font-style:italic; color:var(--ink-soft); margin-top:3px; line-height:1.28; }
 
 .now-hairline{
@@ -476,12 +481,12 @@ a{color:inherit}
   position:absolute; top:-20px;
   transform:translateX(-50%);
   font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.14em;
-  color:var(--mars); white-space:nowrap; z-index:4;
+  color:var(--mars-ink); white-space:nowrap; z-index:4;
 }
 .now-cap{
   position:absolute; top:10px;
   transform:translateX(-50%);
-  font-family:var(--mono); font-size:9px; color:var(--mars); white-space:nowrap; z-index:4;
+  font-family:var(--mono); font-size:9px; color:var(--mars-ink); white-space:nowrap; z-index:4;
 }
 
 /* ================= FIG IV — light rings ================= */
@@ -506,7 +511,7 @@ a{color:inherit}
 }
 .legend-rings .li:last-child{ border-bottom:none; }
 .legend-rings .nm{ font-family:var(--serif); font-style:italic; font-size:16px; }
-.legend-rings .tm{ font-family:var(--mono); font-size:12px; color:var(--mars); font-weight:600; font-variant-numeric:tabular-nums; }
+.legend-rings .tm{ font-family:var(--mono); font-size:12px; color:var(--mars-ink); font-weight:600; font-variant-numeric:tabular-nums; }
 
 /* ================= FOOTER / COLOPHON ================= */
 .colophon-section{ padding:70px 0 30px; position:relative; z-index:2; }

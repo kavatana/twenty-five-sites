@@ -170,3 +170,75 @@ tuned very conservatively (4.5% opacity) to stay out of the way; a future
 pass could consider a second, larger-scale structural mark (e.g. a single
 faint diagonal or center crosshair) if the cover still reads as under-
 composed at a glance.
+
+## Pass 3 — 2026-07-12
+
+Fresh-eyes craft-and-finish pass. `tools/snap.mjs` alone only proves the
+first viewport is clean, and this site's real content is almost entirely
+below it, so this pass wrote a small scroll-and-screenshot harness (scroll
+the live page to specific fractions, screenshot, repeat) to actually look
+at the lookbook, ticker, manifesto, and both footers at rest — at both
+viewports, and once more with `prefers-reduced-motion: reduce` emulated.
+That surfaced one real, recurring bug and a few finish items; four
+concrete fixes went in:
+
+- **The bottom corner stamps collided with real copy, repeatedly, not just
+  at the footer.** Pass 1 added an opaque ink chip behind each fixed corner
+  mark so it would stay legible over any content scrolled beneath it, and
+  Pass 2 faded all four out once the real footer colophon arrived. Neither
+  fix addressed the fact that `position: fixed` marks sit in the *same*
+  bottom-band of the viewport at every scroll position — and on a page
+  where a look's caption or the manifesto's 8×-scale "Absence" pull-word
+  can legitimately come to rest in exactly that band (most reliably on
+  mobile, where 844px of viewport height doesn't leave much clearance),
+  the opaque chip was sitting squarely on top of real words and hiding
+  them — confirmed in screenshots at three separate scroll positions,
+  independent of any hover/click state, and present in the reduced-motion
+  render too. The two bottom marks ("Collection Nº14 — Absence", "MMXXVI")
+  are front matter, not a running index — that job already belongs to the
+  top-right catalog folio, which updates continuously and never collides
+  with anything. So they now show only while the cover is on screen (a new
+  `IntersectionObserver` on `#sec-cover` toggles `html.away-from-cover`,
+  which the existing corner-opacity mechanism already knew how to fade);
+  everywhere past the cover — lookbook, ticker, manifesto — they stay out
+  of the way, and the top-right folio keeps orienting the reader alone.
+- **The guide page had the identical bug, worse: permanently.** The
+  collision-avoidance script keys off `#sec-cover` and `#sec-footer`, but
+  `guide/index.html`'s hero block and footer never had those ids, so
+  neither observer ever attached there — the bottom corner chips sat fixed
+  and *fully opaque for the entire page*, including directly on top of the
+  guide's own footer navigation ("Collection" was unreadable behind the
+  chip at the bottom of a mobile scroll). Added `id="sec-cover"` to the
+  guide's hero wrap and `id="sec-footer"` to its footer, wiring the guide
+  page into the exact same mechanism instead of inventing a second one.
+- **Decorative corner marks were exposed to assistive tech as page
+  content.** The four fixed corner divs (print-style registration marks:
+  wordmark, running folio, collection line, year) sat immediately after the
+  skip link with no `aria-hidden`, so a screen-reader user's very first
+  content after "Skip to content" was four disconnected fragments —
+  "NOIR", "P. 01 — Cover", "Collection Nº14 — Absence", "MMXXVI" — read
+  out of visual context, ahead of the actual page. All four are now
+  `aria-hidden="true"` on both pages; the same information already exists
+  in the real reading order (cover kicker, cover meta, footer colophon).
+  The guide page's top-left mark was also a live link to `/` duplicating
+  the visible "← Back to the collection" link one paragraph down — hiding
+  a focusable element from the accessibility tree is itself a failure, so
+  it was unwrapped to plain text (matching the main page) before adding
+  `aria-hidden`, rather than hiding a still-tabbable link.
+- **Guide copy overclaimed.** The guide's dek said "how six passes got it
+  here" — at the time of writing there had been two. Fashion-poetic
+  restraint means the numbers that are there should be true; replaced with
+  language that doesn't need updating every pass (`what each pass caught
+  that the last one missed`), and added one sentence to the guide's own
+  "Passes" section documenting the corner-mark fix above, so the write-up
+  stays accurate to what the code actually does.
+
+Re-verified `tools/snap.mjs` CLEAN on both `/14-noir/` and `/14-noir/guide/`
+at both viewports, then re-ran the scroll harness at the exact fractions
+that previously showed a collision (mobile, 0.4 / 0.55 / 0.7, plus the
+guide page's final scroll position) — the bottom corner marks are now
+absent exactly where content occupies that band, and reappear cleanly on
+the cover and stay hidden through the reduced-motion render. Checked the
+rubric line by line: footer links (`Index` → `/`, `guide/` → `guide/`),
+favicon, meta/og on both pages, `prefers-reduced-motion` path, and both
+1440×900 and 390×844 compositions all hold.

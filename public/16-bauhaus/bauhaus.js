@@ -11,6 +11,10 @@
   reducedMQ.addEventListener('change', (e) => {
     reduced = e.matches;
     document.documentElement.classList.toggle('reduced', reduced);
+    if (reduced) {
+      const mh = document.querySelector('.manifest-huge');
+      if (mh) mh.style.transform = '';
+    }
   });
 
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -93,10 +97,14 @@
       vx: 0, vy: 0,
       dragging: false, tween: null,
       spin: cfg.spin,
-      bf: 0.00035 + Math.random() * 0.00035,
+      // ambient idle drift — deliberately punchy (not a subtle wobble) so the
+      // stage reads as visibly alive within a couple of seconds on camera
+      bf: 0.0008 + Math.random() * 0.0009,
       bpx: Math.random() * 10,
       bpy: Math.random() * 10,
-      bamp: 3 + Math.random() * 4,
+      bamp: 9 + Math.random() * 10,
+      bsf: 0.0011 + Math.random() * 0.0007,
+      bsp: Math.random() * 10,
       history: [],
     };
     shapes.push(s);
@@ -149,6 +157,7 @@
       if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       s.el.setPointerCapture(e.pointerId);
       s.dragging = true;
+      s.el.classList.add('dragging');
       s.tween = null;
       s.vx = 0; s.vy = 0;
       s.el.style.zIndex = String(++zTop);
@@ -170,6 +179,7 @@
     function release(e) {
       if (!s.dragging) return;
       s.dragging = false;
+      s.el.classList.remove('dragging');
       const h = s.history;
       if (h.length >= 2) {
         const a = h[0], b = h[h.length - 1];
@@ -202,19 +212,46 @@
   /* ------------------------- reset / zufall ------------------------- */
   const STAGGER_MS = 45;
 
-  function startTween(s, tx, ty, tr, i) {
+  function startTween(s, tx, ty, tr, i, opts) {
+    const stagger = (opts && opts.stagger != null) ? opts.stagger : STAGGER_MS;
+    const dur = (opts && opts.dur != null) ? opts.dur : 620;
     s.dragging = false;
+    s.el.classList.remove('dragging');
     s.vx = 0; s.vy = 0;
     s.tween = {
-      start: performance.now() + (reduced ? 0 : i * STAGGER_MS),
+      start: performance.now() + (reduced ? 0 : i * stagger),
       fx: s.x, fy: s.y, fr: s.rot,
       tx, ty, tr,
-      dur: reduced ? 220 : 620,
+      dur: reduced ? 220 : dur,
     };
   }
 
   function resetKomposition() {
     shuffle(shapes).forEach((s, i) => startTween(s, s.homeX, s.homeY, s.homeRot, i));
+  }
+
+  /* ---------------------------------------------------------------
+     ENTRANCE — the Komposition assembles itself on first load: every
+     shape starts flung out beyond the stage edge (in the direction of
+     its home position, so the motion always reads as "arriving") and
+     springs into place in a shuffled cascade. The signature first
+     beat of the page — geometry snapping into balance out of chaos,
+     which is the whole thesis of the site made physical.
+  --------------------------------------------------------------- */
+  function entranceAssemble() {
+    if (reduced) return; // shapes already sit at their home position — a static, composed first paint
+    const order = shuffle(shapes);
+    const cx = stageW / 2, cy = stageH / 2;
+    order.forEach((s, i) => {
+      let dx = s.homeX - cx, dy = s.homeY - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      dx /= len; dy /= len;
+      const outDist = Math.max(stageW, stageH) * 0.6 + 140;
+      s.x = cx + dx * outDist;
+      s.y = cy + dy * outDist;
+      s.rot = s.homeRot + (Math.random() < 0.5 ? -1 : 1) * (120 + Math.random() * 180);
+      startTween(s, s.homeX, s.homeY, s.homeRot, i, { stagger: 60, dur: 820 });
+    });
   }
 
   function balancedCells(n) {
@@ -238,8 +275,16 @@
     });
   }
 
-  document.getElementById('resetBtn').addEventListener('click', resetKomposition);
-  document.getElementById('zufallBtn').addEventListener('click', zufall);
+  function thud(btn) {
+    if (reduced) return;
+    btn.classList.remove('thud');
+    void btn.offsetWidth; // restart the keyframe
+    btn.classList.add('thud');
+  }
+  const resetBtn = document.getElementById('resetBtn');
+  const zufallBtn = document.getElementById('zufallBtn');
+  resetBtn.addEventListener('click', () => { resetKomposition(); thud(resetBtn); });
+  zufallBtn.addEventListener('click', () => { zufall(); thud(zufallBtn); });
 
   /* ------------------------- animation loop ------------------------- */
   let lastT = performance.now();
@@ -277,12 +322,13 @@
           if (!reduced) s.rot += s.spin * dt;
         }
 
-        let rx = s.x, ry = s.y;
+        let rx = s.x, ry = s.y, sc = 1;
         if (!reduced && !s.dragging && !s.tween) {
           rx += Math.sin(now * s.bf + s.bpx) * s.bamp;
           ry += Math.cos(now * s.bf * 0.86 + s.bpy) * s.bamp;
+          sc = 1 + Math.sin(now * s.bsf + s.bsp) * 0.045;
         }
-        s.el.style.transform = `translate(${(rx - s.w / 2).toFixed(2)}px, ${(ry - s.h / 2).toFixed(2)}px) rotate(${s.rot.toFixed(2)}deg)`;
+        s.el.style.transform = `translate(${(rx - s.w / 2).toFixed(2)}px, ${(ry - s.h / 2).toFixed(2)}px) rotate(${s.rot.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
       }
     }
     requestAnimationFrame(frame);
@@ -290,6 +336,7 @@
 
   SHAPES.forEach(buildShape);
   relayout(true);
+  entranceAssemble();
   requestAnimationFrame(frame);
 
   let resizePending = false;
@@ -391,6 +438,33 @@
       btn.classList.add('regen');
     });
   });
+
+  /* ---------------------------------------------------------------
+     SCROLL-LINKED PARALLAX — the red manifesto band's huge type
+     tightens its rotation as it crosses the viewport, so the poster
+     line visibly "unfolds" under the reader's own scroll rather than
+     just fading in once. Cheap: one element, rAF-gated scroll listener.
+  --------------------------------------------------------------- */
+  const manifestBand = document.querySelector('.manifest-band');
+  const manifestHuge = document.querySelector('.manifest-huge');
+  let scrollTicking = false;
+  function updateManifestParallax() {
+    scrollTicking = false;
+    if (reduced || !manifestBand || !manifestHuge) return;
+    const rect = manifestBand.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    const center = rect.top + rect.height / 2;
+    const progress = clamp((vh / 2 - center) / (vh / 2 + rect.height / 2), -1, 1);
+    const rot = -3.2 + progress * 5.2;
+    const shift = progress * 20;
+    manifestHuge.style.transform = `rotate(${rot.toFixed(2)}deg) translateX(${shift.toFixed(1)}px)`;
+  }
+  window.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(updateManifestParallax);
+  }, { passive: true });
+  updateManifestParallax();
 
   /* ------------------------- reveal on scroll ------------------------- */
   const rv = document.querySelectorAll('.rv');

@@ -6,6 +6,7 @@
   --moss:#3E5C3A;
   --pine:#1E2D1F;
   --terracotta:#C67B4F;
+  --terracotta-text:#9C5B37; /* darkened terracotta — passes 4.5:1 on cream/paper, used wherever the hue carries actual reading text */
   --chartreuse:#B9C46A;
   --ink:#22301F;
   --ink-soft:#4A5A45;
@@ -63,7 +64,7 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
 .ital{font-style:italic;color:var(--moss)}
 .eyebrow{
   font-family:var(--sans);font-size:.72rem;font-weight:700;
-  letter-spacing:.24em;text-transform:uppercase;color:var(--terracotta);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--terracotta-text);
 }
 .eyebrow.lt{color:var(--chartreuse)}
 .lede{font-size:clamp(1.05rem,1.4vw,1.22rem);max-width:34em;color:var(--ink-soft)}
@@ -143,7 +144,7 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
 }
 .plate-no{
   position:absolute;top:.8rem;right:1rem;font-family:var(--sans);font-size:.62rem;
-  letter-spacing:.28em;color:var(--terracotta);font-weight:700;
+  letter-spacing:.28em;color:var(--terracotta-text);font-weight:700;
 }
 #hero-plate{width:100%;height:auto;display:block}
 .plate-caption{
@@ -191,7 +192,7 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
 .manifesto{padding:clamp(3rem,8vh,5.5rem) clamp(1.2rem,4.5vw,4rem) clamp(4rem,9vh,6rem)}
 .creed{max-width:44em;margin:2.6rem auto 0;text-align:center}
 .creed p{font-size:clamp(1.35rem,2.4vw,1.9rem);line-height:1.42;font-style:italic;color:var(--moss)}
-.creed cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--sans);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta)}
+.creed cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--sans);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta-text)}
 
 /* ---------- catalog ---------- */
 .catalog{position:relative;padding:clamp(3rem,8vh,6rem) clamp(1.2rem,4.5vw,4rem) clamp(4.5rem,10vh,7rem)}
@@ -212,7 +213,11 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
   position:relative;width:100%;height:100%;transform-style:preserve-3d;
   transition:transform .85s var(--ease-bloom);
 }
-.packet:hover .packet-inner,.packet:focus-visible .packet-inner,.packet.flipped .packet-inner{transform:rotateY(180deg)}
+.packet:hover .packet-inner,.packet.flipped .packet-inner{transform:rotateY(180deg)}
+/* focus alone no longer forces the flip — that trapped keyboard users on the back face, since :focus-visible
+   never clears while tabbed in and so Enter/Space (which only toggles .flipped) had nothing to undo.
+   Now the global :focus-visible ring marks the packet; Enter/Space (or a tap) does the actual flipping,
+   matching what the aria-label promises. */
 .face{
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
   position:absolute;inset:0;display:flex;flex-direction:column;
@@ -244,7 +249,7 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
 }
 .packet-art svg{width:5.4rem;height:5.4rem}
 .packet-name{font-family:var(--serif);font-weight:500;font-size:1.65rem;text-align:center;color:var(--pine);letter-spacing:.01em}
-.packet-latin{text-align:center;font-style:italic;color:var(--terracotta);font-size:1.02rem;margin-bottom:.6rem}
+.packet-latin{text-align:center;font-style:italic;color:var(--terracotta-text);font-size:1.02rem;margin-bottom:.6rem}
 .packet-note{
   font-size:.94rem;line-height:1.5;color:var(--ink-soft);text-align:center;padding:0 .2rem;
   flex-grow:1;display:flex;align-items:center;justify-content:center;
@@ -340,14 +345,14 @@ h2{font-size:clamp(2rem,3.6vw,3rem);line-height:1.08;margin:.4em 0 .45em}
   display:flex;flex-direction:column;gap:.15rem;
 }
 .specimen-label .latin{font-style:italic;font-size:1.05rem;color:var(--pine)}
-.specimen-label .common{font-family:var(--sans);font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta)}
+.specimen-label .common{font-family:var(--sans);font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta-text)}
 
 /* ---------- closing ---------- */
 .closing{padding:clamp(3rem,8vh,5rem) clamp(1.2rem,4.5vw,4rem) clamp(4rem,9vh,6rem);text-align:center}
 .closing-line{margin-top:2.6rem;font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.35;color:var(--pine);text-wrap:balance}
 .closing-meta{
   margin-top:1.6rem;font-family:var(--sans);font-size:.66rem;font-weight:700;
-  letter-spacing:.24em;text-transform:uppercase;color:var(--terracotta);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--terracotta-text);
 }
 
 /* ---------- footer ---------- */

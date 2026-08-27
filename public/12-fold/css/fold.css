@@ -32,6 +32,10 @@
   --swing-e: cubic-bezier(.36,.07,.19,.97);
 
   --foldY: 62%;
+
+  /* diorama tilt — set by pointermove in fold.js, degrees, 0 at rest */
+  --tiltX: 0;
+  --tiltY: 0;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -179,11 +183,22 @@ body.flipping .pageflip::before{ animation: page-sweep .75s var(--pop-out); }
   min-height: 100svh;
   overflow: hidden;
   scroll-snap-align: start;
+  /* outer perspective the whole stage leans within — see the diorama tilt below */
+  perspective: 2200px;
+  perspective-origin: 50% 40%;
 }
 .stage{
   position: absolute; inset: 0;
   perspective: 1250px;
   perspective-origin: 50% 22%;
+  /* the signature move, extended: the open page leans gently toward the
+     cursor, as though you were tipping the whole pop-up book to peer
+     into it. --tiltX/--tiltY are written by a rAF-throttled pointermove
+     listener in fold.js (fine pointers only); they stay 0 — an identity
+     transform — for touch devices and prefers-reduced-motion. */
+  transform: rotateY(calc(var(--tiltX, 0) * 1deg)) rotateX(calc(var(--tiltY, 0) * -1deg));
+  transition: transform .8s cubic-bezier(.16, 1, .3, 1);
+  will-change: transform;
 }
 
 /* fold crease across each spread */
@@ -313,6 +328,34 @@ body.flipping .pageflip::before{ animation: page-sweep .75s var(--pop-out); }
   top: 58%;
 }
 .blush.bl{ left: 30%; } .blush.br{ left: 62%; }
+
+/* Pip notices you: a hover reaction on the story's hero. Each part gets
+   its own one-shot keyframe swapped in on :hover, rather than fighting
+   the continuous blink/breathe animations already running on .eye/.pip —
+   CSS animations beat plain declarations on a shared property, so the
+   only reliable way to interrupt one is to hand it a different animation
+   entirely for the hover state. */
+.piprig:hover .eye, .pip-cameo:hover .eye{ animation: eye-delight .45s var(--pop-out) 1; }
+@keyframes eye-delight{
+  0%{ transform: scaleY(1); }
+  45%{ transform: scaleY(1.34) scaleX(1.16); }
+  100%{ transform: scaleY(1); }
+}
+.piprig .smile, .pip-cameo .smile{ transition: width .3s var(--pop-out), height .3s var(--pop-out), left .3s var(--pop-out); }
+.piprig:hover .smile, .pip-cameo:hover .smile{ width: 12.5%; height: 8.5%; left: 44.5%; }
+.piprig:hover .blush, .pip-cameo:hover .blush{ animation: blush-bloom .4s var(--pop-out) 1; }
+@keyframes blush-bloom{
+  0%{ transform: scale(1); opacity: .45; }
+  50%{ transform: scale(1.4); opacity: .7; }
+  100%{ transform: scale(1); opacity: .45; }
+}
+.piprig:hover .dandelion, .pip-cameo:hover .dandelion{ animation: happy-hop .55s var(--pop-out) 1; }
+@keyframes happy-hop{
+  0%{ transform: translate(0, 0) rotate(0); }
+  30%{ transform: translate(-1%, -12%) rotate(-7deg); }
+  62%{ transform: translate(.5%, 3%) rotate(4deg); }
+  100%{ transform: translate(0, 0) rotate(0); }
+}
 
 .dandelion{ position: absolute; left: 55%; top: -30%; width: 30%; height: 44%; }
 .dandelion .stem{
@@ -467,7 +510,7 @@ body.flipping .pageflip::before{ animation: page-sweep .75s var(--pop-out); }
 .driftcloud::after{ width: 30px; height: 30px; right: 22px; top: -13px; }
 .dc1{ top: 13%; animation-duration: 85s; }
 .dc2{ top: 26%; opacity: .55; transform-origin: 50% 50%; scale: .62; animation-duration: 130s; animation-delay: -58s; }
-.dc3{ top: 7%; opacity: .8; scale: .85; animation-duration: 105s; animation-delay: -30s; }
+.dc3{ top: 17%; opacity: .8; scale: .85; animation-duration: 105s; animation-delay: -30s; }
 .dc4{ top: 33%; opacity: .4; scale: .48; animation-duration: 150s; animation-delay: -95s; }
 @keyframes drift{
   from{ translate: -170px 0; }
@@ -773,6 +816,15 @@ body.flipping .pageflip::before{ animation: page-sweep .75s var(--pop-out); }
   position: absolute; top: 0; left: 50%;
   width: 88px; height: 88px;
   transform: translateX(-50%);
+}
+/* a little paper applause of its own — perk on hover, without disturbing
+   the constant translateX(-50%) centering baked into every keyframe */
+.flower:hover .head{ animation: flower-perk .5s var(--pop-out) 1; }
+@keyframes flower-perk{
+  0%{ transform: translateX(-50%) scale(1) rotate(0); }
+  40%{ transform: translateX(-50%) scale(1.14) rotate(-5deg); }
+  70%{ transform: translateX(-50%) scale(.96) rotate(3deg); }
+  100%{ transform: translateX(-50%) scale(1) rotate(0); }
 }
 .flower .head i{
   position: absolute; left: 50%; top: 50%;
@@ -1109,6 +1161,7 @@ body.paused *{ animation-play-state: paused !important; }
     transition: none !important;
   }
   .pop, .in .pop{ transform: none; opacity: 1; }
+  .stage{ transform: none !important; }
   .cloudrig, .in .cloudrig{ transform: none; }
   .bannerrig, .in .bannerrig{ transform: none; }
   .flower .head i, .in .flower .head i{ transform: rotate(var(--a)) translateY(-27px) scale(1); }

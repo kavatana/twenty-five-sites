@@ -117,12 +117,20 @@
       </div>
       <p class="current-note" id="conditionNote">Convective cells drifting east across the basin. Streak angle holding at twelve degrees; ground saturation climbing.</p>
       <div class="trend-block">
-        <span class="trend-label">7-Sol Trend</span>
+        <div class="trend-head">
+          <span class="trend-label">7-Sol Trend</span>
+          <span class="trend-range" id="trendRange">6° – 11°</span>
+        </div>
         <svg class="trend-svg" viewBox="0 0 280 70" preserveAspectRatio="none" aria-hidden="true">
+          <line class="trend-grid" x1="10" y1="35" x2="270" y2="35"></line>
           <path id="trendArea" class="trend-area" d="M10.0,30.0 L53.3,50.0 L96.7,60.0 L140.0,40.0 L183.3,20.0 L226.7,30.0 L270.0,10.0 L270.0,60.0 L10.0,60.0 Z"></path>
           <polyline id="trendPoly" class="trend-line" points="10.0,30.0 53.3,50.0 96.7,60.0 140.0,40.0 183.3,20.0 226.7,30.0 270.0,10.0"></polyline>
           <circle id="trendDot" class="trend-dot" r="3.4" cx="270.0" cy="10.0"></circle>
         </svg>
+      </div>
+      <div class="telemetry-block">
+        <span class="trend-label">Live Telemetry</span>
+        <canvas class="telemetry-canvas" id="telemetryCanvas" aria-hidden="true"></canvas>
       </div>
       <dl class="stat-row">
         <div><dt>Wind</dt><dd id="statWind">14 km/h · SSE</dd></div>
@@ -165,6 +173,7 @@
           <li id="legAccent"><span class="leg-swatch accent-swatch"></span><span class="leg-name">H₂O Vapor</span><span class="leg-val">9%</span></li>
         </ul>
       </div>
+      <p class="composition-note" id="compositionNote">Trace-gas ratio nominal for a saturated troposphere; spectrometer confidence high.</p>
     </section>
 
     <section class="panel wind glass" aria-label="Wind field">

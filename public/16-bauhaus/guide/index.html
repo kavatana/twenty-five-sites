@@ -73,11 +73,12 @@
     <section class="g-section">
       <h2 class="g-h2">Die Technik</h2>
       <ul class="g-list">
-        <li><strong>Physics, no engine.</strong> Every shape is a plain object carrying <code>x/y/vx/vy</code>. Each <code>requestAnimationFrame</code> tick raises a friction constant to the power of the frame's real duration (so a 60Hz and a 144Hz screen settle identically), integrates position, and reflects the shape off the stage edges with a restitution coefficient — the elastic boundary bounce. A short pointer-position history (last ~6 samples with timestamps) means a released drag inherits real velocity: a flick, not a snap-to-cursor.</li>
-        <li><strong>One shadow, one declaration.</strong> Instead of a second, offset duplicate element behind every shape, each fill carries <code>filter: drop-shadow(9px 9px 0 #141414)</code> — a zero-blur CSS filter that silhouettes whatever alpha shape sits inside it, ring, triangle, or stroked SVG arc alike. That's the flat screen-print shadow, for free, on any shape.</li>
+        <li><strong>Physics, no engine.</strong> Every shape is a plain object carrying <code>x/y/vx/vy</code>. Each <code>requestAnimationFrame</code> tick raises a friction constant to the power of the frame's real duration (so 60Hz and 144Hz screens settle identically), integrates position, and reflects the shape off the stage edges with a restitution coefficient. A short pointer-history buffer means a released drag inherits real velocity — a flick, not a snap-to-cursor.</li>
+        <li><strong>One shadow, one declaration.</strong> Instead of a duplicate offset element behind every shape, each fill carries <code>filter: drop-shadow(var(--lift) var(--lift) 0 #141414)</code> — a zero-blur CSS filter silhouetting whatever alpha shape sits inside it. <code>--lift</code> itself grows on hover, shrinks while dragging: the shadow doubles as the touch affordance.</li>
         <li><strong>currentColor as the palette switch.</strong> Shapes carry only a <code>data-color</code> attribute; CSS maps that to <code>color</code>, and every fill — <code>background</code>, <code>border-color</code>, or an SVG <code>stroke="currentColor"</code> — inherits it. Four rules cover all thirteen shapes and three poster generators; not one inline hex value.</li>
         <li><strong>Spring stagger without a spring library.</strong> Reset Komposition and Zufall never touch the physics loop's velocities — they hand each shape a <code>{from, to, start, duration}</code> tween, with a per-shape start delay from a shuffled order, run through a hand-written <code>easeOutBack</code> cubic (the standard overshoot-then-settle curve). The shuffle is what makes the whole stage arrive like it's breathing, not marching.</li>
         <li><strong>A poster press in about sixty lines.</strong> Die Plakate builds an SVG string on demand from small data pools — fictional Weimar venues, months, ticket numbers — plus three or four freshly placed shapes drawn from the same five-type vocabulary as the hero. Every click is a new plate, not a swap between fixed options.</li>
+        <li><strong>Choreographed, not just animated.</strong> First paint runs an <code>entranceAssemble()</code> pass — every shape starts flung out past the stage edge and springs home through a shuffled cascade, reusing the same tween system Reset and Zufall already run on. A single <code>requestAnimationFrame</code>-gated scroll listener ties the manifesto band's rotation to its position in the viewport: real scroll-linked motion, not a fade triggered once by <code>IntersectionObserver</code>.</li>
       </ul>
     </section>
 
@@ -85,15 +86,15 @@
       <h2 class="g-h2">Der Prozess</h2>
       <div class="g-pass">
         <h3>Pass 1 — Komposition</h3>
-        <p>Built the shape vocabulary, the drag/friction/bounce loop, and the ambient idle drift. Caught a real bug in review: the wheel/window/arrow demo icons in Form Folgt Funktion were invisible, because inline <code>&lt;span&gt;</code> elements silently ignore explicit width and height — fixed by promoting them to <code>display:inline-block</code>.</p>
+        <p>Built the shape vocabulary, the drag/friction/bounce loop, and the ambient idle drift. Caught a real bug in review: the wheel/window/arrow demo icons were invisible, because inline <code>&lt;span&gt;</code> elements ignore explicit width/height — fixed with <code>display:inline-block</code>.</p>
       </div>
       <div class="g-pass">
-        <h3>Pass 2 — Kontrast</h3>
-        <p>Ran a numeric WCAG contrast audit across all five palette pairings before writing a line of button CSS. Black-on-blue (2.44:1) and yellow-on-canvas (1.5:1) both failed outright — which is why every red or blue surface on this site carries white or canvas type, never black, and yellow only ever sits on canvas or black as a fill, never as text on canvas.</p>
+        <h3>Pass 2 — Kontrast &amp; Verifikation</h3>
+        <p>Ran a numeric WCAG contrast audit across all five palette pairings before writing button CSS — black-on-blue (2.44:1) and yellow-on-canvas (1.5:1) both fail, which is why red/blue surfaces carry white or canvas type, never black. Then exercised drag, Reset, Zufall and keyboard-nudge for console errors at both viewports, and confirmed reduced-motion mutes ambient drift and the demo loops without removing any interaction.</p>
       </div>
       <div class="g-pass">
-        <h3>Pass 3 — Verifikation</h3>
-        <p>Checked both 1440×900 and 390×844, exercised drag, Reset, Zufall, and the keyboard-nudge path (Tab, arrow keys, Enter) for console errors, and confirmed the reduced-motion path mutes ambient bob, spin, and the looping demo animations without removing the interactions themselves.</p>
+        <h3>Iteration Pass 2 — Bewegung</h3>
+        <p>A pixel diff between two screenshots taken three seconds apart caught what eyeballing missed: the idle drift moved under 2% of the stage's pixels — invisible on camera. Punched up its amplitude and period (8.6% after), added the load-in assembly, the scroll-linked manifesto rotation, a <code>--lift</code> custom property driving hover/press shadow depth on every shape, and small idle keyframes on the Form Folgt Funktion icons so nothing on the page sits dead between interactions.</p>
       </div>
     </section>
 

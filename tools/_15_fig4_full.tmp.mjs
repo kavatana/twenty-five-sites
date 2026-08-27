@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 1400 } });
+await page.goto('http://localhost:4173/15-almanac/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+await page.evaluate(() => { document.querySelector('#fig4').scrollIntoView({block:'start'}); });
+await page.waitForTimeout(800);
+await page.screenshot({ path: 'shots/15-fig4-full.png' });
+await page.waitForTimeout(2500);
+await page.screenshot({ path: 'shots/15-fig4-full-late.png' });
+await browser.close();

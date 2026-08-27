@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How RELIC is made — reconstructing six vanished sounds</title>
+<meta name="description" content="The making of RELIC: six extinct sounds synthesized live with the Web Audio API — no samples — plus a scroll-snap horizontal gallery, IntersectionObserver-driven spotlights, and an AnalyserNode waveform on canvas.">
+<meta property="og:title" content="How RELIC is made">
+<meta property="og:description" content="Oscillators, filtered noise, and gain envelopes standing in for six sounds the world deleted. The full technique breakdown.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#121110">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23121110'/%3E%3Ccircle cx='32' cy='30' r='19' fill='none' stroke='%23B08D57' stroke-width='2'/%3E%3Ccircle cx='32' cy='30' r='3' fill='%23B08D57'/%3E%3Cpath d='M18 50h28' stroke='%236E2B25' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&amp;family=Assistant:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --noir: #121110; --bone: #E5DFD3; --bone-dim: rgba(229,223,211,.62); --bone-faint: rgba(229,223,211,.34);
+    --brass: #B08D57; --brass-bright: #D4AE79; --oxblood: #6E2B25;
+    --ease: cubic-bezier(.22,.61,.16,1);
+  }
+  body {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(50,43,33,.35), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% 110%, rgba(0,0,0,.6), transparent 60%),
+      var(--noir);
+    color: var(--bone-dim);
+    font-family: 'Assistant', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: rgba(176,141,87,.35); color: var(--bone); }
+  :focus-visible { outline: 1.5px solid var(--brass-bright); outline-offset: 3px; }
+  .wrap { max-width: 700px; margin: 0 auto; padding: clamp(3rem,8vh,5.5rem) 24px 4rem; }
+  .crumb {
+    display: inline-block; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--bone-faint); text-decoration: none; margin-bottom: 2.6rem;
+    border-bottom: 1px solid rgba(176,141,87,.3); padding-bottom: 2px;
+    transition: color .3s var(--ease), border-color .3s var(--ease);
+  }
+  .crumb:hover { color: var(--brass-bright); border-color: var(--brass-bright); }
+  .kicker { font-size: .74rem; letter-spacing: .26em; text-transform: uppercase; color: var(--brass); margin-bottom: 1.1rem; }
+  h1 {
+    font-family: 'Prata', serif; font-weight: 400; color: var(--bone);
+    font-size: clamp(2rem, 5vw, 3rem); line-height: 1.08; letter-spacing: .005em;
+    margin-bottom: 1.3rem;
+  }
+  .lede { color: var(--bone-dim); font-size: 1.02rem; line-height: 1.7; max-width: 58ch; margin-bottom: 2.8rem; }
+  h2 {
+    font-family: 'Prata', serif; font-weight: 400; color: var(--bone);
+    font-size: 1.18rem; letter-spacing: .01em; margin: 2.6rem 0 .8rem;
+    padding-bottom: .6rem; border-bottom: 1px solid rgba(176,141,87,.2);
+  }
+  p { line-height: 1.72; font-size: .97rem; margin-bottom: 1rem; max-width: 62ch; }
+  strong { color: var(--bone); font-weight: 600; }
+  code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .84em; color: var(--brass-bright);
+    background: rgba(176,141,87,.09); border: 1px solid rgba(176,141,87,.2);
+    border-radius: 3px; padding: .08em .38em;
+  }
+  .plate {
+    margin: 2.8rem 0; padding: 1.1rem 1.3rem; border-left: 2px solid var(--brass);
+    background: linear-gradient(155deg, rgba(30,27,23,.5), rgba(16,14,12,.4));
+    font-size: .84rem; letter-spacing: .02em; color: var(--brass-bright);
+  }
+  footer {
+    margin-top: 3rem; padding-top: 1.3rem; border-top: 1px solid rgba(176,141,87,.18);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: .7rem 1.5rem;
+    font-size: .78rem; color: var(--bone-faint); letter-spacing: .03em;
+  }
+  footer a { color: var(--bone-dim); text-decoration: none; border-bottom: 1px solid rgba(176,141,87,.35); padding-bottom: 1px; transition: color .3s, border-color .3s; }
+  footer a:hover { color: var(--brass-bright); border-color: var(--brass-bright); }
+  .foot-links { display: flex; gap: 1.3rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../">← Back to RELIC</a>
+
+  <p class="kicker">Curatorial Notes</p>
+  <h1>Nothing in this wing was ever recorded.</h1>
+  <p class="lede">RELIC reconstructs six extinct sounds — a rotary dial, a typewriter bell, a
+    modem handshake, a degaussing tube, a film projector, a telegraph sounder — entirely with
+    the Web Audio API. No <code>&lt;audio&gt;</code> tags, no sample libraries, no base64 blobs.
+    Every click, thunk and warble is oscillators and filtered noise, scheduled node by node.</p>
+
+  <h2>Synthesis, not sampling</h2>
+  <p>Each exhibit is a small generator function that schedules raw nodes against a shared
+    <code>AudioContext</code>. Clicks and thunks are short bursts of white noise run through a
+    <code>BiquadFilterNode</code> — bandpass for a dial's ratchet, lowpass for a mechanical thud
+    — shaped by a <code>GainNode</code> envelope that ramps up in a couple of milliseconds and
+    decays with <code>exponentialRampToValueAtTime</code>. Tones (the modem's dial digits, the
+    carriage bell, the telegraph's key-clacks) are plain oscillators with the same envelope
+    treatment. The degauss wobble and the modem's answer tone are hand-built amplitude
+    modulation: an LFO oscillator feeding another oscillator's gain, so a single carrier note
+    breathes and buzzes without ever touching a sample.</p>
+
+  <h2>Six problems, six solutions</h2>
+  <p>The <strong>rotary dial</strong> is a train of clicks whose gap widens by 15% each time —
+    geometric deceleration standing in for a spring running out of tension. The
+    <strong>typewriter</strong> layers a high, clacky noise burst with a low thud per keystroke,
+    then a swept-bandpass noise burst for the carriage's zip and a triangle-wave bell.
+    The <strong>modem</strong> is the site's densest cue: DTMF-style dial digits, a rising
+    carrier tone, an AM-modulated ANSam warble, four sawtooth sweeps paired with noise bursts,
+    and a staccato of random tones — all budgeted into six seconds and driving a
+    <code>Dialing → Handshaking → Synchronizing → Connected</code> status readout. The
+    <strong>degauss</strong> thunk is a sine burst plus noise transient, followed by a
+    frequency-and-LFO-decaying sawtooth that reads as the classic descending buzz, settling into
+    a plain 60Hz hum. The <strong>projector</strong> is a filtered motor bed under a train of
+    clicks that first hold steady, then decelerate into silence — the reels freeze mid-turn by
+    reading their live CSS transform matrix rather than snapping to zero. The
+    <strong>telegraph</strong> is the odd one out on purpose: real sounders don't sing a tone,
+    they clack down and clack up, so a dot is a short silence between two clicks and a dash is a
+    long one — no pitch was invented.</p>
+
+  <h2>The room that is also a museum</h2>
+  <p>The gallery is a flex row with <code>scroll-snap-type: x mandatory</code>; a wheel listener
+    converts vertical scroll into horizontal on desktop, and collapses to a plain vertical stack
+    under 860px. An <code>IntersectionObserver</code> watches every room, toggling
+    <code>is-active</code> to bloom each spotlight cone (a blurred, clipped radial gradient) and
+    sliding a brass dot along the floor-plan strip to the active room's measured position. While
+    an exhibit plays, an <code>AnalyserNode</code> feeds <code>getByteTimeDomainData</code> into
+    a canvas on every <code>requestAnimationFrame</code>, so the placard's waveform is the actual
+    signal, not a decorative loop.</p>
+
+  <div class="plate">Three passes: build the six generators and verify each one schedules
+    cleanly against a live <code>AudioContext</code>; then screenshot every room at both
+    viewports and fix what only a real render shows — spacing, contrast, a reel that snapped
+    instead of coasting to a stop; then a last pass for focus states, reduced-motion parity, and
+    console silence.</div>
+
+  <footer>
+    <span>24 / 25 · RELIC — designed &amp; coded by Claude Fable 5</span>
+    <span class="foot-links">
+      <a href="/">Index</a>
+      <a href="./">How it's made</a>
+    </span>
+  </footer>
+</div>
+</body>
+</html>
