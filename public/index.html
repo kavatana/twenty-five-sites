@@ -4,368 +4,357 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Twenty-Five Sites &mdash; 2030</title>
-<meta name="description" content="Twenty-five self-contained website designs, each exploring one idea about what the web could look like in 2030. Hand-built, no framework, no build step.">
+<meta name="description" content="Twenty-five self-contained website designs, each exploring one idea about what the web could look like in 2030. Hand-built, no framework, no build step, MIT licensed.">
 <meta property="og:title" content="Twenty-Five Sites — 2030">
 <meta property="og:description" content="Twenty-five self-contained website designs, each exploring one idea about what the web could look like in 2030.">
 <meta property="og:type" content="website">
 <style>
   /* ---------------------------------------------------------------------
-     An index for twenty-five designs has one job: get out of their way.
-     It is set in one typeface, on one rule, with a single accent used only
-     on hover. Anything more decorative would compete with the work it lists.
+     An index for twenty-five designs has one job: get out of their way, and
+     show them. One typeface, one rule, the work as the colour. Each card
+     borrows its accent from its own screenshot, so the page's palette is the
+     collection's palette and nothing here competes with what it lists.
      --------------------------------------------------------------------- */
   :root {
     color-scheme: light dark;
-    --bg: #faf9f7;
-    --fg: #16151a;
-    --dim: #6b6862;
-    --line: #e3e0db;
-    --hover: #f1efeb;
-    --rule: #16151a;
+    --bg: #faf9f7; --fg: #16151a; --dim: #6b6862; --line: #e3e0db; --hover: #f1efeb; --rule: #16151a; --card: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0c0c0d; --fg: #f2f0ed; --dim: #8f8c86;
-      --line: #24242a; --hover: #141419; --rule: #f2f0ed;
-    }
+    :root { --bg: #0c0c0d; --fg: #f2f0ed; --dim: #8f8c86; --line: #24242a; --hover: #141419; --rule: #f2f0ed; --card: #111114; }
   }
-
   * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font: 400 16px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { max-width: 1080px; margin-inline: auto; padding-inline: clamp(20px, 6vw, 56px); }
-
-  header { padding-block: clamp(64px, 14vh, 160px) clamp(40px, 8vh, 88px); }
-
-  .eyebrow {
-    margin: 0 0 26px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: .72rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--dim);
-  }
-
-  h1 {
-    margin: 0 0 22px;
-    font-size: clamp(2.2rem, 7vw, 4.2rem);
-    font-weight: 500;
-    letter-spacing: -.035em;
-    line-height: 1.02;
-    text-wrap: balance;
-  }
-
-  header p { margin: 0; max-width: 58ch; color: var(--dim); font-size: 1.02rem; }
-
-  .counts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 34px;
-    margin-top: 34px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: .74rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--dim);
-  }
-
-  ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-  .row { border-bottom: 1px solid var(--line); }
-
-  .row a {
-    display: grid;
-    grid-template-columns: 3.2rem minmax(0, 1fr) auto;
-    align-items: baseline;
-    gap: 4px 22px;
-    padding: 20px 16px 20px 0;
-    color: inherit;
-    text-decoration: none;
-    transition: background-color .18s ease, padding-left .18s ease;
-  }
-
-  .row a:hover, .row a:focus-visible {
-    background: var(--hover);
-    padding-left: 16px;
-    outline: none;
-  }
-
-  .row a:focus-visible { box-shadow: inset 3px 0 0 var(--rule); }
-
-  .idx {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: .78rem;
-    color: var(--dim);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .name { font-size: 1.06rem; font-weight: 500; letter-spacing: -.012em; }
-
-  .tag {
-    grid-column: 2;
-    color: var(--dim);
-    font-size: .92rem;
-    max-width: 62ch;
-  }
-
-  .go { grid-row: 1; grid-column: 3; color: var(--dim); transition: transform .18s ease; }
-  .row a:hover .go { transform: translateX(4px); }
-
-  footer {
-    padding-block: 56px 88px;
-    color: var(--dim);
-    font-size: .88rem;
-  }
-
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 400 16px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1240px; margin-inline: auto; padding-inline: clamp(20px, 5vw, 56px); }
+  header { position: relative; overflow: clip; padding-block: clamp(56px, 12vh, 140px) clamp(36px, 6vh, 64px); display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { header { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); align-items: center; gap: 48px; } }
+  .eyebrow { margin: 0 0 22px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+  h1 { margin: 0 0 18px; font-size: clamp(2.2rem, 6.4vw, 4.4rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.02; text-wrap: balance; }
+  header p { margin: 0; max-width: 56ch; color: var(--dim); font-size: 1.04rem; }
+  .counts { display: flex; flex-wrap: wrap; gap: 10px 30px; margin-top: 30px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); font-size: .92rem; font-weight: 500; transition: border-color .18s ease, transform .18s ease; }
+  .btn:hover, .btn:focus-visible { border-color: var(--rule); transform: translateY(-1px); outline: none; }
+  .btn--fill { background: var(--rule); color: var(--bg); border-color: var(--rule); }
+  /* the fan: five screenshots leaning like prints on a shelf, drawn from the collection */
+  .fan { position: relative; height: clamp(220px, 32vw, 360px); perspective: 1400px; --spread: 34%; }
+  @media (max-width: 899px) { .fan { --spread: 26%; height: 230px; } }
+  .fan img { position: absolute; top: 50%; left: 50%; width: 52%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; box-shadow: 0 30px 60px -28px rgba(0,0,0,.45), 0 0 0 1px var(--line); transform-origin: 50% 100%; transform: translate(-50%, -50%) rotateY(calc(var(--k) * -14deg)) translateX(calc(var(--k) * var(--spread))) translateZ(calc(var(--k) * var(--k) * -60px)) rotateZ(calc(var(--k) * 1.5deg)); animation: fan-in 1.1s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(.08s * (var(--k) + 2)); }
+  @keyframes fan-in { from { opacity: 0; transform: translate(-50%, -40%) rotateY(0) translateX(0) translateZ(0); } }
+  /* the grid */
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px 20px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); padding-block: 8px 24px; }
+  .card { margin: 0; }
+  .card a { display: grid; gap: 12px; height: 100%; }
+  .shot { display: block; position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 12px; background: rgb(var(--tone)); box-shadow: 0 0 0 1px var(--line), 0 18px 40px -30px rgba(0,0,0,.5); transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transform: scale(1.01); transition: transform 1.2s cubic-bezier(.16,1,.3,1); }
+  .card a:hover .shot, .card a:focus-visible .shot { transform: translateY(-4px); box-shadow: 0 0 0 2px rgb(var(--accent)), 0 30px 50px -28px rgba(0,0,0,.6); }
+  .card a:hover .shot img { transform: scale(1.04); }
+  .card a:focus-visible { outline: none; }
+  .meta { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 2px 12px; align-items: baseline; }
+  .idx { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .74rem; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .idx::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: rgb(var(--accent)); margin-right: 7px; vertical-align: 1px; }
+  .name { font-size: 1.02rem; font-weight: 500; letter-spacing: -.012em; grid-column: 2; }
+  .tag { grid-column: 2; color: var(--dim); font-size: .9rem; max-width: 52ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  @media (min-width: 900px) { .card--wide { grid-column: span 2; } .card--wide .shot { aspect-ratio: 16 / 8.2; } }
+  /* reveal on entry, once */
+  .card { opacity: 0; transform: translateY(14px); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+  .card.in { opacity: 1; transform: none; }
+  footer { padding-block: 48px 88px; color: var(--dim); font-size: .88rem; border-top: 1px solid var(--line); margin-top: 24px; }
   footer a { color: var(--fg); }
-
-  @media (max-width: 620px) {
-    .row a { grid-template-columns: 2.6rem minmax(0, 1fr); }
-    .go { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .row a, .go { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .fan img, .card, .shot, .shot img, .btn { animation: none; transition: none; } .card { opacity: 1; transform: none; } }
 </style>
 </head>
 <body>
-
 <div class="wrap">
   <header>
-    <p class="eyebrow">Open source &middot; 25 of 25 complete</p>
-    <h1>Twenty-five ways a website could look in 2030.</h1>
-    <p>
-      Each one is a self-contained design exploring a single idea, built by hand with no
-      framework and no build step. Open any of them and read the source: what you see is
-      the whole of it.
-    </p>
-    <p class="counts">
-      <span>25 sites</span>
-      <span>No framework</span>
-      <span>No build step</span>
-      <span>MIT licensed</span>
-    </p>
+    <div>
+      <p class="eyebrow">Open source · 25 of 25 complete</p>
+      <h1>Twenty-five ways a website could look in 2030.</h1>
+      <p>Each one is a self-contained design exploring a single idea, built by hand with no framework and no build step. Open any of them and read the source: what you see is the whole of it.</p>
+      <div class="counts"><span>25 sites</span><span>No frameworks</span><span>No build step</span><span>MIT licensed</span></div>
+      <div class="actions"><a class="btn btn--fill" href="#sites">Browse the collection</a><a class="btn" href="./01-aurelia/" id="random">Open one at random →</a></div>
+    </div>
+    <div class="fan" aria-hidden="true">
+      <img src="./_thumbs/01-aurelia.jpg" alt="" style="--k:-2" loading="eager" decoding="async">
+      <img src="./_thumbs/07-chromatic.jpg" alt="" style="--k:-1" loading="eager" decoding="async">
+      <img src="./_thumbs/11-kowloon.jpg" alt="" style="--k:0" loading="eager" decoding="async">
+      <img src="./_thumbs/20-gatsby.jpg" alt="" style="--k:1" loading="eager" decoding="async">
+      <img src="./_thumbs/23-stillness.jpg" alt="" style="--k:2" loading="eager" decoding="async">
+    </div>
   </header>
 
-  <main>
-    <ul>
-    <li class="row">
-      <a href="./01-aurelia/" >
-        <span class="idx">01</span>
-        <span class="name">AURELIA</span>
-        <span class="tag">La lumière, à fleur de peau.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./02-grotesk/" >
-        <span class="idx">02</span>
-        <span class="name">GROTESK™</span>
-        <span class="tag">Type is infrastructure. Decoration is debt.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./03-strata/" >
-        <span class="idx">03</span>
-        <span class="name">STRATA</span>
-        <span class="tag">Every visit, the gallery paints again</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./04-deepfield/" >
-        <span class="idx">04</span>
-        <span class="name">DEEPFIELD STATION</span>
-        <span class="tag">All systems nominal. Until they aren&#x27;t.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./05-ma/" >
-        <span class="idx">05</span>
-        <span class="name">間 MA</span>
-        <span class="tag">The pause between ink and paper</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./06-descent/" >
-        <span class="idx">06</span>
-        <span class="name">Descent</span>
-        <span class="tag">10,935 metres, one held breath.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./07-chromatic/" >
-        <span class="idx">07</span>
-        <span class="name">CHROMATIC.SYS</span>
-        <span class="tag">The graphics driver for dreams.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./08-meridian/" >
-        <span class="idx">08</span>
-        <span class="name">MERIDIAN</span>
-        <span class="tag">Nothing on this page is an accident.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./09-corpus/" >
-        <span class="idx">09</span>
-        <span class="name">CORPUS</span>
-        <span class="tag">One body, four formations, always remembers its shape.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./10-verdant/" >
-        <span class="idx">10</span>
-        <span class="name">VERDANT — Botanical Atelier &amp;amp; Seed Archi</span>
-        <span class="tag">VERDANT is a working archive of open-pollinated seed — collected by hand, dried </span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./11-kowloon/" >
-        <span class="idx">11</span>
-        <span class="name">KOWLOON NIGHTS · 九龍夜市 — a neon night-market </span>
-        <span class="tag">A neon cyberpunk night-market street built in pure CSS 3D — rain on asphalt, hum</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./12-fold/" >
-        <span class="idx">12</span>
-        <span class="name">FOLD — The Smallest Mountain</span>
-        <span class="tag">A hand-cut paper pop-up storybook in five spreads. Scroll to raise each scene fr</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./13-oscillate/" >
-        <span class="idx">13</span>
-        <span class="name">OSCILLATE</span>
-        <span class="tag">Two detuned oscillators. One filter arbitrates.</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./14-noir/" >
-        <span class="idx">14</span>
-        <span class="name">NOIR — Collection Nº14, &quot;Absence&quot;</span>
-        <span class="tag">NOIR presents Collection Nº14, &#x27;Absence&#x27; — a monochrome lookbook of six looks in</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./15-almanac/" >
-        <span class="idx">15</span>
-        <span class="name">ALMANAC — An Atlas of the Visible Sky</span>
-        <span class="tag">ALMANAC is a hand-drawn astronomical atlas: a live orrery of true relative orbit</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./16-bauhaus/" >
-        <span class="idx">16</span>
-        <span class="name">BAUHAUS SPIELPLATZ — Komposition ist Spiel</span>
-        <span class="tag">A Bauhaus playground where composition is interactive: drag hand-physics geometr</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./17-reverie/" >
-        <span class="idx">17</span>
-        <span class="name">REVERIE — a hotel that exists only while you</span>
-        <span class="tag">REVERIE is a dreamcore hotel reachable only by falling asleep: a floating doorfr</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./18-verse/" >
-        <span class="idx">18</span>
-        <span class="name">VERSE — kinetic poetry, words with physics</span>
-        <span class="tag">VERSE is four original short poems about impermanence, each governed by its own </span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./19-hearth/" >
-        <span class="idx">19</span>
-        <span class="name">Hearth — a village you can put to sleep</span>
-        <span class="tag">Hearth is a hand-coded isometric village in pure CSS 3D: eight roofs, a turning </span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./20-gatsby/" >
-        <span class="idx">20</span>
-        <span class="name">THE GATSBY GRAND — A Hotel, Est. 1928</span>
-        <span class="tag">Twenty-two storeys of brass and velvet above the avenue. Self-drawing art-deco l</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./21-vapor/" >
-        <span class="idx">21</span>
-        <span class="name">VAPOR — Kepler-1649c Relay Weather Console</span>
-        <span class="tag">VAPOR: a live glassmorphic weather console for the Kepler-1649c relay. Rain, sno</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./22-riot/" >
-        <span class="idx">22</span>
-        <span class="name">RIOT PRESS — NOISE 013 (a zine that hates yo</span>
-        <span class="tag">RIOT PRESS presents NOISE 013: an anti-design punk zine built by hand — ransom-l</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./23-stillness/" >
-        <span class="idx">23</span>
-        <span class="name">STILLNESS — a breathing instrument</span>
-        <span class="tag">STILLNESS is a full-viewport hand-coded WebGL gradient that breathes with you: a</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./24-relic/" >
-        <span class="idx">24</span>
-        <span class="name">RELIC — Museum of Vanished Sounds</span>
-        <span class="tag">RELIC is a museum wing for six everyday sounds the world quietly deleted — the r</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-    <li class="row">
-      <a href="./25-machina/" >
-        <span class="idx">25</span>
-        <span class="name">MACHINA — an instrument for diving into the </span>
-        <span class="tag">MACHINA is a hand-written canvas renderer that auto-plays a slow, mathematically</span>
-        <span class="go" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
+  <main id="sites">
+    <ul class="grid">
+      <li class="card card--wide" style="--accent:186 162 141;--tone:118 111 105">
+        <a href="./01-aurelia/" aria-label="AURELIA">
+          <span class="shot"><img src="./_thumbs/01-aurelia.jpg" width="960" height="600" alt="" loading="eager" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">01</span>
+            <span class="name">AURELIA</span>
+            <span class="tag">La lumière, à fleur de peau.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:238 45 47;--tone:230 228 228">
+        <a href="./02-grotesk/" aria-label="GROTESK™">
+          <span class="shot"><img src="./_thumbs/02-grotesk.jpg" width="960" height="600" alt="" loading="eager" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">02</span>
+            <span class="name">GROTESK™</span>
+            <span class="tag">Type is infrastructure. Decoration is debt.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:137 107 57;--tone:34 27 20">
+        <a href="./03-strata/" aria-label="STRATA">
+          <span class="shot"><img src="./_thumbs/03-strata.jpg" width="960" height="600" alt="" loading="eager" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">03</span>
+            <span class="name">STRATA</span>
+            <span class="tag">Every visit, the gallery paints again</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:23 92 38;--tone:8 21 11">
+        <a href="./04-deepfield/" aria-label="DEEPFIELD STATION">
+          <span class="shot"><img src="./_thumbs/04-deepfield.jpg" width="960" height="600" alt="" loading="eager" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">04</span>
+            <span class="name">DEEPFIELD STATION</span>
+            <span class="tag">All systems nominal. Until they aren&amp;#x27;t.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:237 228 219;--tone:237 233 225">
+        <a href="./05-ma/" aria-label="間 MA">
+          <span class="shot"><img src="./_thumbs/05-ma.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">05</span>
+            <span class="name">間 MA</span>
+            <span class="tag">The pause between ink and paper</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:158 212 228;--tone:158 201 213">
+        <a href="./06-descent/" aria-label="Descent">
+          <span class="shot"><img src="./_thumbs/06-descent.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">06</span>
+            <span class="name">Descent</span>
+            <span class="tag">10,935 metres, one held breath.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:134 184 203;--tone:45 50 60">
+        <a href="./07-chromatic/" aria-label="CHROMATIC.SYS">
+          <span class="shot"><img src="./_thumbs/07-chromatic.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">07</span>
+            <span class="name">CHROMATIC.SYS</span>
+            <span class="tag">The graphics driver for dreams.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card card--wide" style="--accent:179 137 132;--tone:202 198 193">
+        <a href="./08-meridian/" aria-label="MERIDIAN">
+          <span class="shot"><img src="./_thumbs/08-meridian.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">08</span>
+            <span class="name">MERIDIAN</span>
+            <span class="tag">Nothing on this page is an accident.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:156 86 139;--tone:30 28 45">
+        <a href="./09-corpus/" aria-label="CORPUS">
+          <span class="shot"><img src="./_thumbs/09-corpus.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">09</span>
+            <span class="name">CORPUS</span>
+            <span class="tag">One body, four formations, always remembers its shape.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:83 109 78;--tone:238 236 227">
+        <a href="./10-verdant/" aria-label="VERDANT — Botanical Atelier &amp;amp; Seed Archi">
+          <span class="shot"><img src="./_thumbs/10-verdant.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">10</span>
+            <span class="name">VERDANT — Botanical Atelier &amp;amp; Seed Archi</span>
+            <span class="tag">VERDANT is a working archive of open-pollinated seed — collected by hand, dried</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:2 193 215;--tone:37 31 42">
+        <a href="./11-kowloon/" aria-label="KOWLOON NIGHTS · 九龍夜市 — a neon night-market">
+          <span class="shot"><img src="./_thumbs/11-kowloon.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">11</span>
+            <span class="name">KOWLOON NIGHTS · 九龍夜市 — a neon night-market</span>
+            <span class="tag">A neon cyberpunk night-market street built in pure CSS 3D — rain on asphalt, hum</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:235 180 75;--tone:202 201 178">
+        <a href="./12-fold/" aria-label="FOLD — The Smallest Mountain">
+          <span class="shot"><img src="./_thumbs/12-fold.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">12</span>
+            <span class="name">FOLD — The Smallest Mountain</span>
+            <span class="tag">A hand-cut paper pop-up storybook in five spreads. Scroll to raise each scene fr</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:241 73 161;--tone:52 39 68">
+        <a href="./13-oscillate/" aria-label="OSCILLATE">
+          <span class="shot"><img src="./_thumbs/13-oscillate.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">13</span>
+            <span class="name">OSCILLATE</span>
+            <span class="tag">Two detuned oscillators. One filter arbitrates.</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:149 149 147;--tone:19 19 19">
+        <a href="./14-noir/" aria-label="NOIR — Collection Nº14, &amp;quot;Absence&amp;quot;">
+          <span class="shot"><img src="./_thumbs/14-noir.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">14</span>
+            <span class="name">NOIR — Collection Nº14, &amp;quot;Absence&amp;quot;</span>
+            <span class="tag">NOIR presents Collection Nº14, &amp;#x27;Absence&amp;#x27; — a monochrome lookbook of six looks in</span>
+          </span>
+        </a>
+      </li>
+      <li class="card card--wide" style="--accent:126 97 53;--tone:22 25 43">
+        <a href="./15-almanac/" aria-label="ALMANAC — An Atlas of the Visible Sky">
+          <span class="shot"><img src="./_thumbs/15-almanac.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">15</span>
+            <span class="name">ALMANAC — An Atlas of the Visible Sky</span>
+            <span class="tag">ALMANAC is a hand-drawn astronomical atlas: a live orrery of true relative orbit</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:241 181 4;--tone:216 205 190">
+        <a href="./16-bauhaus/" aria-label="BAUHAUS SPIELPLATZ — Komposition ist Spiel">
+          <span class="shot"><img src="./_thumbs/16-bauhaus.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">16</span>
+            <span class="name">BAUHAUS SPIELPLATZ — Komposition ist Spiel</span>
+            <span class="tag">A Bauhaus playground where composition is interactive: drag hand-physics geometr</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:245 235 210;--tone:203 204 213">
+        <a href="./17-reverie/" aria-label="REVERIE — a hotel that exists only while you">
+          <span class="shot"><img src="./_thumbs/17-reverie.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">17</span>
+            <span class="name">REVERIE — a hotel that exists only while you</span>
+            <span class="tag">REVERIE is a dreamcore hotel reachable only by falling asleep: a floating doorfr</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:235 230 219;--tone:244 240 233">
+        <a href="./18-verse/" aria-label="VERSE — kinetic poetry, words with physics">
+          <span class="shot"><img src="./_thumbs/18-verse.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">18</span>
+            <span class="name">VERSE — kinetic poetry, words with physics</span>
+            <span class="tag">VERSE is four original short poems about impermanence, each governed by its own</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:234 201 146;--tone:232 231 220">
+        <a href="./19-hearth/" aria-label="Hearth — a village you can put to sleep">
+          <span class="shot"><img src="./_thumbs/19-hearth.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">19</span>
+            <span class="name">Hearth — a village you can put to sleep</span>
+            <span class="tag">Hearth is a hand-coded isometric village in pure CSS 3D: eight roofs, a turning</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:203 166 52;--tone:20 30 23">
+        <a href="./20-gatsby/" aria-label="THE GATSBY GRAND — A Hotel, Est. 1928">
+          <span class="shot"><img src="./_thumbs/20-gatsby.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">20</span>
+            <span class="name">THE GATSBY GRAND — A Hotel, Est. 1928</span>
+            <span class="tag">Twenty-two storeys of brass and velvet above the avenue. Self-drawing art-deco l</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:96 138 191;--tone:50 57 110">
+        <a href="./21-vapor/" aria-label="VAPOR — Kepler-1649c Relay Weather Console">
+          <span class="shot"><img src="./_thumbs/21-vapor.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">21</span>
+            <span class="name">VAPOR — Kepler-1649c Relay Weather Console</span>
+            <span class="tag">VAPOR: a live glassmorphic weather console for the Kepler-1649c relay. Rain, sno</span>
+          </span>
+        </a>
+      </li>
+      <li class="card card--wide" style="--accent:248 6 164;--tone:200 193 185">
+        <a href="./22-riot/" aria-label="RIOT PRESS — NOISE 013 (a zine that hates yo">
+          <span class="shot"><img src="./_thumbs/22-riot.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">22</span>
+            <span class="name">RIOT PRESS — NOISE 013 (a zine that hates yo</span>
+            <span class="tag">RIOT PRESS presents NOISE 013: an anti-design punk zine built by hand — ransom-l</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:204 171 222;--tone:232 204 212">
+        <a href="./23-stillness/" aria-label="STILLNESS — a breathing instrument">
+          <span class="shot"><img src="./_thumbs/23-stillness.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">23</span>
+            <span class="name">STILLNESS — a breathing instrument</span>
+            <span class="tag">STILLNESS is a full-viewport hand-coded WebGL gradient that breathes with you: a</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:188 183 172;--tone:23 22 20">
+        <a href="./24-relic/" aria-label="RELIC — Museum of Vanished Sounds">
+          <span class="shot"><img src="./_thumbs/24-relic.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">24</span>
+            <span class="name">RELIC — Museum of Vanished Sounds</span>
+            <span class="tag">RELIC is a museum wing for six everyday sounds the world quietly deleted — the r</span>
+          </span>
+        </a>
+      </li>
+      <li class="card" style="--accent:13 10 22;--tone:13 10 22">
+        <a href="./25-machina/" aria-label="MACHINA — an instrument for diving into the">
+          <span class="shot"><img src="./_thumbs/25-machina.jpg" width="960" height="600" alt="" loading="lazy" decoding="async"></span>
+          <span class="meta">
+            <span class="idx">25</span>
+            <span class="name">MACHINA — an instrument for diving into the</span>
+            <span class="tag">MACHINA is a hand-written canvas renderer that auto-plays a slow, mathematically</span>
+          </span>
+        </a>
+      </li>
     </ul>
   </main>
 
   <footer>
-    <p>
-      Source on <a href="https://github.com/kavatana/twenty-five-sites">GitHub</a>.
-      Take anything here that is useful to you.
-    </p>
+    <p>Source on <a href="https://github.com/kavatana/twenty-five-sites">GitHub</a>. Take anything here that is useful to you.</p>
   </footer>
 </div>
-
+<script>
+(function () {
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) { cards.forEach(function (c) { c.classList.add('in'); }); }
+  else {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    cards.forEach(function (c, i) { c.style.transitionDelay = (i % 3) * 60 + 'ms'; io.observe(c); });
+  }
+  var links = cards.map(function (c) { return c.querySelector('a').getAttribute('href'); });
+  var random = document.getElementById('random');
+  random.addEventListener('click', function (e) { e.preventDefault(); location.href = links[Math.floor(Math.random() * links.length)]; });
+})();
+</script>
 </body>
 </html>
